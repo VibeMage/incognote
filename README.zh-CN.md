@@ -19,6 +19,7 @@
 只需要下载一个文件。
 
 1. 从[最新版本](https://github.com/VibeMage/incognote/releases/latest)下载 **[incognote.html](https://github.com/VibeMage/incognote/releases/latest/download/incognote.html)**，放在哪里都行，比如放在笔记文件夹旁边。
+   也可以在仓库里打开 [incognote.html](incognote.html)，点 **Download raw file** 下载，是同一个文件。
 2. 用 **Chrome 或 Edge** 打开它（直接双击文件即可，不需要服务器）。
 3. 点 **选择文件夹**，选你的笔记文件夹，在弹窗里允许 **查看和编辑** 文件。
 4. 下次打开时点欢迎页上的 **继续使用上次的文件夹**，浏览器会请你再确认一次。

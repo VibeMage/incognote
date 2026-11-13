@@ -19,6 +19,7 @@ Open `incognote.html` in Chrome or Edge, pick a folder of `.md` notes, and you c
 You only need one file.
 
 1. Download **[incognote.html](https://github.com/VibeMage/incognote/releases/latest/download/incognote.html)** from the [latest release](https://github.com/VibeMage/incognote/releases/latest) and put it anywhere, for example next to your notes.
+   You can also open [incognote.html](incognote.html) in this repository and click **Download raw file**. It is the same file.
 2. Open it in **Chrome or Edge** (double-clicking the file is fine, no server needed).
 3. Click **选择文件夹** (Choose folder), pick your notes folder and allow **View and edit** files.
 4. Next time, click **继续使用上次的文件夹** (Continue with last folder) on the welcome screen. The browser asks you to confirm access once per session.
