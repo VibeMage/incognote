@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; media-src blob:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Incognote</title>
+<style>
+/* Cupertino tokens (subset) */
+:root{
+  color-scheme: light dark;
+  --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --font-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --label:#000;--label-secondary:#6e6e73;--label-tertiary:rgba(60,60,67,.3);
+  --bg:#fff;--bg-secondary:#f2f2f7;--bg-grouped:#f2f2f7;--bg-grouped-secondary:#fff;--bg-elevated:#fff;
+  --fill:rgba(120,120,128,.2);--fill-secondary:rgba(120,120,128,.16);--fill-tertiary:rgba(118,118,128,.12);--fill-quaternary:rgba(116,116,128,.08);--fill-raised:#fff;
+  --separator:rgba(60,60,67,.29);--edge:rgba(0,0,0,0);
+  --accent:#0071e3;--on-accent:#fff;--link:#0063c7;--accent-soft:rgba(0,113,227,.1);
+  --danger:#cc0004;--success:#007831;--success-soft:rgba(52,199,89,.14);--warning:#b04500;--warning-soft:rgba(255,141,40,.14);
+  --glass:rgba(255,255,255,.62);
+  --overlay:rgba(0,0,0,.2);
+  --shadow-float:0 12px 40px rgba(0,0,0,.14),0 2px 6px rgba(0,0,0,.06);
+  --shadow-glass:inset 0 1px 0 rgba(255,255,255,.75),inset 0 0 0 .5px rgba(255,255,255,.5),0 0 0 .5px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.12);
+  --shadow-thumb:0 3px 8px rgba(0,0,0,.15),0 3px 1px rgba(0,0,0,.06);
+  --focus-ring:0 0 0 2px #fff,0 0 0 4px #0071e3;
+  --ease:cubic-bezier(.42,0,.58,1);--ease-out:cubic-bezier(.32,.72,0,1);
+}
+@media (prefers-color-scheme: dark){:root{
+  --label:#fff;--label-secondary:#98989f;--label-tertiary:rgba(235,235,245,.3);
+  --bg:#000;--bg-secondary:#1c1c1e;--bg-grouped:#000;--bg-grouped-secondary:#1c1c1e;--bg-elevated:#1c1c1e;
+  --fill:rgba(120,120,128,.36);--fill-secondary:rgba(120,120,128,.32);--fill-tertiary:rgba(118,118,128,.24);--fill-quaternary:rgba(118,118,128,.18);--fill-raised:#636366;
+  --separator:rgba(84,84,88,.6);
+  --link:#319dff;--accent-soft:rgba(41,151,255,.14);
+  --danger:#ff666a;--success:#4ad968;--success-soft:rgba(74,217,104,.16);--warning:#ffa056;--warning-soft:rgba(255,160,86,.16);
+  --glass:rgba(44,44,46,.58);--overlay:rgba(0,0,0,.48);
+  --shadow-float:0 12px 40px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.1);
+  --shadow-glass:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 .5px rgba(255,255,255,.1),0 0 0 .5px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 2px #000,0 0 0 4px #319dff;
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg-grouped);color:var(--label);font-family:var(--font-sans);font-size:17px;line-height:22px;letter-spacing:-.43px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.ic{flex:none;display:inline-block;vertical-align:middle}
+[hidden]{display:none!important}
+.footnote{font-size:13px;line-height:18px;letter-spacing:-.08px}
+.caption{font-size:12px;line-height:16px;letter-spacing:0}
+.sub{font-size:15px;line-height:20px;letter-spacing:-.23px}
+.secondary{color:var(--label-secondary)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 16px;border:0;border-radius:999px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px;cursor:pointer;white-space:nowrap;transition:transform .15s var(--ease),opacity .15s var(--ease),filter .15s var(--ease);user-select:none}
+.btn:active{transform:scale(.97)}
+.btn.filled{background:var(--accent);color:var(--on-accent)}
+.btn.filled:hover{filter:brightness(1.08)}
+.btn.gray{background:var(--fill-tertiary);color:var(--label)}
+.btn.tinted{background:var(--accent-soft);color:var(--link)}
+.btn.plain{background:none;color:var(--link);padding:0 8px}
+.btn.plain:active{opacity:.5;transform:none}
+.btn.icon{width:34px;padding:0}
+.btn.large{height:50px;padding:0 28px;font-size:17px;line-height:22px;letter-spacing:-.43px}
+.btn.small{height:28px;padding:0 12px;font-size:13px}
+.btn:disabled{background:var(--fill-tertiary);color:var(--label-tertiary);cursor:default;transform:none}
+
+/* segmented */
+.seg{position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;height:32px;padding:2px;border-radius:999px;background:var(--fill-tertiary)}
+.seg button{position:relative;z-index:1;border:0;background:none;padding:0 16px;border-radius:999px;font-size:13px;line-height:18px;cursor:pointer;color:var(--label)}
+.seg button[aria-pressed="true"]{background:var(--fill-raised);box-shadow:var(--shadow-thumb);font-weight:600}
+
+/* ===== welcome ===== */
+#welcome{min-height:100%;display:flex;justify-content:center;padding:12vh 16px 64px}
+#welcome .inner{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center}
+.tile{width:72px;height:72px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center}
+.large-title{font-size:34px;line-height:41px;font-weight:700;letter-spacing:.4px;margin:0;text-wrap:balance}
+#welcome p{margin:0;color:var(--label-secondary);text-wrap:balance}
+.notice{width:100%;padding:14px 16px;border-radius:18px;background:var(--warning-soft);color:var(--label);text-align:left;font-size:15px;line-height:20px}
+.group{width:100%;text-align:left}
+.group-h{padding:0 16px 6px;font-size:13px;line-height:18px;color:var(--label-secondary)}
+.group-b{background:var(--bg-grouped-secondary);border-radius:26px;padding:6px;box-shadow:inset 0 0 0 1px var(--edge)}
+.group-f{padding:6px 16px 0;font-size:13px;line-height:18px;color:var(--label-secondary)}
+.row{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:20px;cursor:pointer}
+.row:hover{background:var(--fill-quaternary)}
+.row:focus-visible{box-shadow:var(--focus-ring)}
+.row .mini{width:29px;height:29px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center;flex:none}
+
+/* ===== app layout ===== */
+#app{height:100vh;display:flex;overflow:hidden}
+#side{flex:0 0 280px;padding:8px;display:flex;flex-direction:column;gap:4px;min-height:0}
+.panel{flex:1;min-height:0;overflow:auto;border-radius:26px;padding:12px 8px;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass)}
+.side-title{margin:6px 12px 10px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px}
+.fakesearch{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:calc(100% - 8px);margin:0 4px 10px;height:36px;padding:0 10px;border-radius:999px;background:var(--fill-tertiary);color:var(--label-secondary);cursor:text}
+.fakesearch kbd{margin-left:auto;font:inherit;font-size:12px;color:var(--label-secondary)}
+.fakesearch:focus-visible{box-shadow:var(--focus-ring)}
+.sec-h{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:14px;padding:6px 12px;font-size:15px;line-height:20px;font-weight:600;color:var(--label-secondary);cursor:pointer;border-radius:12px}
+.sec-h .ic{color:var(--link);transition:transform .25s var(--ease)}
+.sec-h[aria-expanded="false"] .ic{transform:rotate(-90deg)}
+.item{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:0 12px;border-radius:18px;cursor:pointer;font-size:17px;line-height:22px}
+.item .ic.lead{color:var(--link)}
+.item .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .cnt{font-size:15px;color:var(--label-secondary);font-variant-numeric:tabular-nums}
+.item:hover:not(.sel){background:var(--fill-quaternary)}
+.item.sel{background:var(--accent);color:var(--on-accent)}
+.item.sel .ic.lead,.item.sel .cnt,.item.sel .twisty{color:var(--on-accent)}
+.item:focus-visible{box-shadow:var(--focus-ring)}
+.twisty{all:unset;display:grid;place-items:center;width:16px;height:16px;margin-left:-6px;color:var(--label-secondary);border-radius:4px;transition:transform .25s var(--ease)}
+.twisty.closed{transform:rotate(-90deg)}
+.twisty.none{visibility:hidden}
+.side-foot{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px}
+.side-foot .txt{flex:1;min-width:0}
+.side-foot .txt div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+#list{flex:0 0 320px;padding:20px 8px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.list-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 4px 0 12px}
+.list-h h2{margin:0;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-b{flex:1;min-height:0;overflow:auto;background:var(--bg-grouped-secondary);border-radius:26px;padding:6px;box-shadow:inset 0 0 0 1px var(--edge)}
+.note{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 14px;border-radius:20px;cursor:pointer;position:relative}
+.note+.note::before{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;background:var(--separator)}
+.note.sel::before,.note.sel+.note::before{display:none}
+.note:hover:not(.sel){background:var(--fill-quaternary)}
+.note.sel{background:var(--fill-tertiary)}
+.note:focus-visible{box-shadow:var(--focus-ring)}
+.note .t{font-size:15px;line-height:20px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note .m{display:flex;gap:8px;min-width:0;font-size:15px;line-height:20px}
+.note .m .d{flex:none}
+.note .m .s{color:var(--label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{padding:40px 16px;text-align:center;color:var(--label-secondary);font-size:15px;line-height:20px}
+
+#main{flex:1;min-width:0;padding:8px 8px 8px 4px;display:flex}
+.pane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg);border-radius:26px;box-shadow:inset 0 0 0 1px var(--edge);overflow:hidden}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px 12px 24px;flex:none}
+.crumb{display:flex;align-items:center;gap:6px;min-width:0;font-size:15px;line-height:20px;color:var(--label-secondary)}
+.crumb span:last-child{color:var(--label);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.status{display:flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:var(--label-secondary)}
+.status .dot{width:8px;height:8px;border-radius:99px;background:var(--warning)}
+.status.saved .dot{background:var(--success)}
+.scroll{flex:1;min-height:0;overflow:auto}
+.placeholder{height:100%;display:grid;place-items:center;color:var(--label-secondary);text-align:center;padding:24px}
+
+/* rendered markdown */
+.md{max-width:692px;margin:0 auto;padding:24px 32px 96px;font-size:17px;line-height:27px;letter-spacing:-.2px;word-wrap:break-word}
+.md .meta{margin:-8px 0 20px;font-size:13px;line-height:18px;color:var(--label-secondary)}
+.md h1{font-size:34px;line-height:41px;font-weight:700;letter-spacing:.4px;margin:8px 0 16px;text-wrap:balance}
+.md h2{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.26px;margin:32px 0 12px}
+.md h3{font-size:20px;line-height:25px;font-weight:600;letter-spacing:-.45px;margin:28px 0 10px}
+.md h4,.md h5,.md h6{font-size:17px;line-height:22px;font-weight:600;margin:24px 0 8px}
+.md p{margin:0 0 14px}
+.md ul,.md ol{margin:0 0 14px;padding-left:24px}
+.md li{margin:4px 0}
+.md li>p{margin:0 0 6px}
+.md li.task{list-style:none;margin-left:-24px;display:flex;gap:10px;align-items:flex-start}
+.md li.task>input{margin-top:5px}
+.md li.task.done>.tbody{color:var(--label-secondary);text-decoration:line-through}
+.md input[type=checkbox]{appearance:none;flex:none;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--label-tertiary);background:var(--bg);display:grid;place-items:center;cursor:pointer;margin:0}
+.md input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+.md input[type=checkbox]:checked::after{content:"";width:10px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.md a{color:var(--link);text-decoration:none}
+.md a:hover{text-decoration:underline}
+.md a.wikilink{background:var(--accent-soft);border-radius:6px;padding:0 4px}
+.md a.wikilink.missing{background:none;color:var(--label-secondary);text-decoration:underline dashed;text-underline-offset:3px}
+.md blockquote{margin:0 0 14px;padding:2px 0 2px 16px;color:var(--label-secondary);box-shadow:inset 3px 0 0 var(--fill)}
+.md code{font-family:var(--font-mono);font-size:.88em;padding:1px 6px;border-radius:6px;background:var(--fill-tertiary)}
+.md pre{margin:0 0 16px;padding:14px 18px;border-radius:12px;background:var(--bg-secondary);overflow-x:auto;font-size:14px;line-height:22px}
+.md pre code{padding:0;background:none;font-size:inherit}
+.md hr{border:0;height:1px;background:var(--separator);margin:28px 0}
+.md img{max-width:100%;border-radius:12px;display:block;margin:4px 0}
+.md .img-missing{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;background:var(--bg-secondary);color:var(--label-secondary);font-size:13px;line-height:18px}
+.md .tw{overflow-x:auto;margin:0 0 16px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--separator)}
+.md table{border-collapse:collapse;width:100%;font-size:15px;line-height:20px}
+.md th,.md td{padding:9px 14px;text-align:left;vertical-align:top}
+.md thead tr{background:var(--bg-secondary)}
+.md th{font-weight:600}
+.md tbody tr{border-top:1px solid var(--separator)}
+.md mark,.hit{background:var(--accent-soft);color:var(--link);border-radius:4px;padding:0 2px}
+.md mark.flash{background:#ffcc00;color:#000;transition:background 1.5s var(--ease)}
+.backlinks{margin-top:48px;padding-top:20px;border-top:1px solid var(--separator)}
+.backlinks h3{margin:0 0 10px;font-size:13px;line-height:18px;font-weight:600;color:var(--label-secondary);letter-spacing:-.08px}
+.bl{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 14px;border-radius:18px;cursor:pointer;background:var(--bg-secondary);margin-bottom:6px}
+.bl:hover{background:var(--fill-tertiary)}
+.bl .t{font-size:15px;line-height:20px;font-weight:600;color:var(--link)}
+.bl .s{font-size:13px;line-height:18px;color:var(--label-secondary)}
+
+/* editor */
+.editor-wrap{flex:1;min-height:0;display:flex;justify-content:center;background:var(--bg)}
+#ed{flex:1;max-width:760px;width:100%;height:100%;border:0;outline:none;resize:none;padding:24px 32px 96px;background:transparent;color:var(--label);font-family:var(--font-mono);font-size:15px;line-height:26px;letter-spacing:0;tab-size:2}
+#ed:focus-visible{box-shadow:none}
+.statusbar{flex:none;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:8px 24px 12px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
+
+/* popovers */
+.menu{position:fixed;z-index:30;min-width:220px;padding:6px;border-radius:26px;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass),var(--shadow-float)}
+.menu button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:10px 14px;border-radius:20px;cursor:pointer;font-size:17px;line-height:22px}
+.menu button:hover,.menu button.on{background:var(--fill-tertiary)}
+.menu button .s{font-size:13px;color:var(--label-secondary)}
+.menu .sep{height:1px;margin:4px 14px;background:var(--separator)}
+
+#palette{position:fixed;inset:0;z-index:20;background:var(--overlay);display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px}
+.pal{width:100%;max-width:680px;max-height:72vh;display:flex;flex-direction:column;background:var(--bg-elevated);border-radius:36px;box-shadow:var(--shadow-float);padding:12px}
+.pal-top{display:flex;align-items:center;gap:10px;padding:4px}
+.searchbox{flex:1;display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:999px;background:var(--fill-tertiary);color:var(--label-secondary)}
+.searchbox input:focus-visible{box-shadow:none}
+.searchbox:focus-within{box-shadow:var(--focus-ring)}
+.searchbox input{flex:1;min-width:0;border:0;outline:none;background:none;color:var(--label);font:inherit;font-size:17px}
+.pal-body{flex:1;min-height:0;overflow:auto;padding-top:4px}
+.pal-g{padding:10px 16px 4px;font-size:13px;line-height:18px;font-weight:600;color:var(--label-secondary)}
+.res{all:unset;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;width:100%;padding:10px 16px;border-radius:24px;cursor:pointer}
+.res.on{background:var(--fill-tertiary)}
+.res .ic{margin-top:1px;color:var(--label-secondary)}
+.res .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.res .t{font-weight:600}
+.res .s{font-size:15px;line-height:20px;color:var(--label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res .r{flex:none;text-align:right;font-size:13px;line-height:18px;color:var(--label-secondary)}
+.pal-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:10px 16px 4px;margin-top:6px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
+
+#suggest{position:fixed;z-index:25;width:300px;max-height:320px;overflow:auto}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-glass),var(--shadow-float);font-size:15px;line-height:20px}
+
+@media (max-width: 1100px){#list{flex-basis:280px}}
+@media (max-width: 860px){#app{flex-direction:column;height:auto;overflow:visible}#side,#list{flex:none;max-height:none}#side .panel{max-height:50vh}.list-b{max-height:50vh}#main{min-height:80vh}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media (prefers-reduced-transparency: reduce){.panel,.menu,#toast{background:var(--bg-elevated);backdrop-filter:none;-webkit-backdrop-filter:none}}
+</style>
+</head>
+<body>
+
+<div id="welcome" hidden>
+  <div class="inner">
+    <div class="tile" id="w-tile"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:17px;line-height:22px;font-weight:600;color:var(--label-secondary)">Incognote</div>
+      <h1 class="large-title">打开你的笔记文件夹</h1>
+      <p>笔记仍然是这个文件夹里的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。</p>
+    </div>
+    <div id="w-unsupported" class="notice" hidden>这个浏览器不能写入本地文件夹。请用 Chrome 或 Edge 打开这个文件；也可以先以只读方式浏览。</div>
+    <button class="btn filled large" id="w-pick" style="min-width:240px"></button>
+    <input type="file" id="w-input" webkitdirectory multiple hidden>
+    <div class="group" id="w-recent" hidden>
+      <div class="group-h">上次打开</div>
+      <div class="group-b"><button class="row" id="w-resume"></button></div>
+      <div class="group-f">出于安全考虑，Chrome 每次重新打开时会请你再点一次“允许”。</div>
+    </div>
+    <div class="footnote secondary" id="w-foot"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <aside id="side">
+    <nav class="panel" aria-label="笔记文件夹">
+      <div class="side-title">Incognote</div>
+      <button class="fakesearch" id="open-search" aria-label="搜索所有笔记"></button>
+      <div id="side-fixed"></div>
+      <button class="sec-h" id="tree-toggle" aria-expanded="true"><span>文件夹</span></button>
+      <div id="tree"></div>
+    </nav>
+    <div class="side-foot">
+      <span class="secondary" id="foot-ic"></span>
+      <div class="txt"><div class="footnote" id="foot-name"></div><div class="caption secondary" id="foot-meta"></div></div>
+      <button class="btn plain small" id="change-folder">更换</button>
+    </div>
+  </aside>
+
+  <section id="list" aria-label="笔记列表">
+    <div class="list-h">
+      <div style="min-width:0"><h2 id="list-title"></h2><div class="sub secondary" id="list-meta"></div></div>
+      <button class="btn gray icon" id="new-note" aria-label="新建笔记" title="新建笔记（⌘N 在浏览器里被占用，请点这里）"></button>
+    </div>
+    <div class="list-b" id="notes"></div>
+  </section>
+
+  <main id="main">
+    <div class="pane" id="pane">
+      <div class="placeholder" id="empty-pane"><div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)">选择一篇笔记</div><div class="sub" style="margin-top:6px">或者按 ⌘K 搜索所有笔记</div></div></div>
+      <div class="toolbar" id="toolbar" hidden>
+        <nav class="crumb" id="crumb" aria-label="位置"></nav>
+        <div class="tools">
+          <span class="status" id="status" hidden><span class="dot"></span><span id="status-t"></span></span>
+          <div class="seg" role="group" aria-label="显示方式"><button id="m-read" aria-pressed="true">阅读</button><button id="m-edit" aria-pressed="false">编辑</button></div>
+          <button class="btn filled" id="save" hidden>保存</button>
+          <button class="btn gray icon" id="more" aria-label="更多"></button>
+        </div>
+      </div>
+      <div class="scroll" id="reader" hidden><article class="md" id="article"></article></div>
+      <div class="editor-wrap" id="editor" hidden><textarea id="ed" spellcheck="false" aria-label="Markdown 源码"></textarea></div>
+      <div class="statusbar" id="edbar" hidden><span id="edbar-l">输入 [[ 可以链接其他笔记 · 粘贴图片会存到 assets 文件夹</span><span id="edbar-r"></span></div>
+    </div>
+  </main>
+</div>
+
+<div id="palette" hidden>
+  <div class="pal" role="dialog" aria-label="搜索所有笔记">
+    <div class="pal-top">
+      <label class="searchbox"><span id="pal-ic"></span><input id="q" placeholder="搜索所有笔记" autocomplete="off" aria-label="搜索所有笔记"></label>
+      <button class="btn plain small" id="pal-cancel">取消</button>
+    </div>
+    <div class="pal-body" id="results"></div>
+    <div class="pal-foot"><span>↑ ↓ 选择　↩ 打开　esc 关闭　多个关键词用空格分隔</span><span id="pal-count"></span></div>
+  </div>
+</div>
+<div class="menu" id="menu" hidden></div>
+<div class="menu" id="suggest" hidden></div>
+<div id="toast" hidden></div>
+
+<script>/*@@MDIT@@*/</script>
+<script>/*@@PURIFY@@*/</script>
+<script>
+"use strict";
+const ICONS = /*@@ICONS@@*/;
+function icon(name, size = 18, cls = '') {
+  const g = ICONS[name]; if (!g) return '';
+  return `<svg class="ic ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g.d}</svg>`;
+}
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const IMG_RE = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
+const MD_RE = /\.(md|markdown)$/i;
+const NONCE = Math.random().toString(36).slice(2, 8);
+const A = { wiki: 'data-w' + NONCE, local: 'data-l' + NONCE, byname: 'data-b' + NONCE, task: 'data-t' + NONCE, open: 'data-o' + NONCE };
+const ds = (el, k) => el.getAttribute(A[k]);
+
+/* ---------- state ---------- */
+const S = {
+  root: null, rootName: '', readonly: false,
+  notes: new Map(),   // path -> note
+  files: new Map(),   // path -> FileSystemFileHandle | File (non-markdown)
+  dirs: new Map(),    // folder path ('' = root) -> FileSystemDirectoryHandle | null
+  view: { kind: 'all', folder: '' },
+  current: null, mode: 'read', dirty: false, gen: 0, scanning: null, conflict: false,
+  closed: new Set(), treeOpen: true,
+  imgUrls: new Map(), saving: null, timer: 0
+};
+
+/* ---------- persistence of the folder handle (IndexedDB, this computer only) ---------- */
+const idb = {
+  db() { return new Promise((res, rej) => { const r = indexedDB.open('incognote', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async get(k) { try { const db = await this.db(); return await new Promise((res) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (e) { return undefined; } },
+  async set(k, v) { try { const db = await this.db(); await new Promise((res) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = res; }); } catch (e) {} }
+};
+const prefs = {
+  get(k, d) { try { const v = localStorage.getItem('incognote.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('incognote.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- markdown ---------- */
+const md = window.markdownit({ html: true, linkify: true, breaks: false });
+function wikiRule(isEmbed) {
+  return (state, silent) => {
+    const s = state.src, p = state.pos, off = isEmbed ? 1 : 0;
+    if (isEmbed && s.charCodeAt(p) !== 0x21) return false;
+    if (s.charCodeAt(p + off) !== 0x5B || s.charCodeAt(p + off + 1) !== 0x5B) return false;
+    const end = s.indexOf(']]', p + off + 2);
+    if (end < 0) return false;
+    const inner = s.slice(p + off + 2, end);
+    if (!inner.trim() || inner.includes('\n') || inner.includes('[')) return false;
+    if (!silent) {
+      const bar = inner.indexOf('|');
+      const target = (bar >= 0 ? inner.slice(0, bar) : inner).trim();
+      const label = (bar >= 0 ? inner.slice(bar + 1) : inner).trim();
+      const tok = state.push(isEmbed ? 'wikiembed' : 'wikilink', '', 0);
+      tok.meta = { target, label };
+    }
+    state.pos = end + 2;
+    return true;
+  };
+}
+md.inline.ruler.before('image', 'wikiembed', wikiRule(true));
+md.inline.ruler.before('link', 'wikilink', wikiRule(false));
+md.renderer.rules.wikilink = (t, i) => {
+  const { target, label } = t[i].meta;
+  const name = target.split('#')[0];
+  const ok = !name || !!resolveNote(name);
+  return `<a href="#" class="wikilink${ok ? '' : ' missing'}" ${A.wiki}="${esc(target)}" title="${ok ? '' : '还没有这篇笔记，点一下新建'}">${esc(label)}</a>`;
+};
+md.renderer.rules.wikiembed = (t, i) => {
+  const { target, label } = t[i].meta;
+  if (IMG_RE.test(target.split('|')[0])) return `<img ${A.local}="${esc(target)}" ${A.byname}="1" alt="${esc(label)}">`;
+  return `<a href="#" class="wikilink" ${A.wiki}="${esc(target)}">${esc(label)}</a>`;
+};
+// wrap tables so they scroll on narrow screens
+md.renderer.rules.table_open = () => '<div class="tw"><table>';
+md.renderer.rules.table_close = () => '</table></div>';
+// Task list items: remember the source line so a click toggles exactly that line.
+md.core.ruler.push('task_lines', (state) => {
+  const t = state.tokens;
+  for (let i = 0; i < t.length; i++) {
+    if (t[i].type !== 'list_item_open' || !t[i].map) continue;
+    const inl = t[i + 2];
+    if (t[i + 1] && t[i + 1].type === 'paragraph_open' && inl && inl.type === 'inline' && /^\[( |x|X)\]\s/.test(inl.content)) t[i].attrSet(A.task, String(t[i].map[0]));
+  }
+});
+// Never let the browser fetch anything a note points to: move every media URL aside before the HTML reaches the page,
+// and drop link targets that could reach another machine without being a normal web link.
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.nodeName === 'IMG') {
+    if (node.hasAttribute('src') && !node.hasAttribute(A.local)) node.setAttribute(A.local, node.getAttribute('src'));
+    node.removeAttribute('src'); node.removeAttribute('srcset');
+  }
+  if (node.hasAttribute && node.hasAttribute('class')) {
+    const keep = node.getAttribute('class').split(/\s+/).filter((c) => c === 'wikilink' || c === 'missing' || /^language-[\w-]+$/.test(c));
+    keep.length ? node.setAttribute('class', keep.join(' ')) : node.removeAttribute('class');
+  }
+  if (node.nodeName === 'A' && node.hasAttribute('href')) {
+    const h = node.getAttribute('href').trim();
+    if (/^\/\//.test(h) || /^\\/.test(h) || (/^[a-z][a-z0-9+.-]*:/i.test(h) && !/^(https?|mailto):/i.test(h))) node.removeAttribute('href');
+  }
+});
+const PURIFY = { ADD_ATTR: Object.values(A).concat(['target']), ALLOW_DATA_ATTR: false, FORBID_ATTR: ['id', 'name', 'style', 'form', 'formaction'],
+  FORBID_TAGS: ['style', 'form', 'video', 'audio', 'source', 'picture', 'iframe', 'object', 'embed', 'link', 'meta', 'base', 'button', 'input', 'select', 'textarea'] };
+
+/* ---------- paths & links ---------- */
+const dirOf = (p) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '');
+const baseOf = (p) => p.slice(p.lastIndexOf('/') + 1);
+const stem = (p) => baseOf(p).replace(MD_RE, '');
+function joinPath(dir, rel) {
+  const parts = (dir ? dir.split('/') : []);
+  for (const seg of rel.split('/')) {
+    if (!seg || seg === '.') continue;
+    if (seg === '..') parts.pop(); else parts.push(seg);
+  }
+  return parts.join('/');
+}
+function resolveNote(target, fromDir) {
+  if (!target) return null;
+  const t = target.replace(MD_RE, '').trim().toLowerCase();
+  // exact path (relative to root or to the current folder)
+  for (const cand of [t, fromDir != null ? joinPath(fromDir, t).toLowerCase() : null]) {
+    if (!cand) continue;
+    for (const n of S.notes.values()) if (n.path.replace(MD_RE, '').toLowerCase() === cand) return n;
+  }
+  // by file name, nearest to the current folder first
+  let best = null;
+  for (const n of S.notes.values()) {
+    if (n.name.toLowerCase() === baseOf(t)) {
+      if (!best || (fromDir != null && n.folder === fromDir)) best = n;
+    }
+  }
+  return best;
+}
+function resolveFile(rel, fromDir, byName) {
+  let p = rel;
+  try { p = decodeURIComponent(rel); } catch (e) {}
+  p = p.split('#')[0].split('?')[0];
+  const cands = [joinPath(fromDir, p), joinPath('', p)];
+  for (const c of cands) if (S.files.has(c)) return c;
+  if (byName || !p.includes('/')) {
+    const want = baseOf(p).toLowerCase();
+    for (const k of S.files.keys()) if (baseOf(k).toLowerCase() === want) return k;
+  }
+  return null;
+}
+
+/* ---------- indexing ---------- */
+// Blank out fenced/indented code and inline code so indexing ignores what is inside them (line count is kept).
+function stripCode(text) {
+  const out = []; let fence = null;
+  for (const line of text.split('\n')) {
+    const f = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) { out.push(''); if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = null; continue; }
+    if (f) { fence = f[1]; out.push(''); continue; }
+    out.push(line.replace(/(`+)[^`\n]*?\1/g, (m) => ' '.repeat(m.length)));
+  }
+  return out.join('\n');
+}
+function analyse(n) {
+  const text = n.text;
+  const plain = stripCode(text);
+  const h1 = plain.match(/^#\s+(.+?)\s*#*\s*$/m);
+  n.title = h1 ? h1[1].trim() : n.name;
+  n.lower = text.toLowerCase();
+  let snip = '';
+  for (const line of text.split('\n')) {
+    const l = line.trim();
+    if (!l || /^#{1,6}\s/.test(l) || /^(```|---|\|)/.test(l)) continue;
+    snip = l.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[\[([^\]|]+)\|?([^\]]*)\]\]/g, (m, a, b) => b || a)
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`>#~]/g, '').replace(/^\s*[-+]\s+(\[[ xX]\]\s*)?/, '').trim();
+    if (snip) break;
+  }
+  n.snippet = snip.slice(0, 120);
+  const links = new Set();
+  const re = /\[\[([^\]\n|#]+)(?:#[^\]\n|]*)?(?:\|[^\]\n]*)?\]\]/g;
+  let m;
+  while ((m = re.exec(plain))) links.add(m[1].trim().toLowerCase().replace(MD_RE, ''));
+  n.links = links;
+}
+function backlinksOf(note) {
+  const keys = new Set([note.name.toLowerCase(), note.path.replace(MD_RE, '').toLowerCase()]);
+  const out = [];
+  for (const n of S.notes.values()) {
+    if (n === note) continue;
+    let hit = false;
+    for (const l of n.links) if (keys.has(l) && resolveNote(l, n.folder) === note) { hit = true; break; }
+    if (!hit) continue;
+    const idx = stripCode(n.text).toLowerCase().search(new RegExp('\\[\\[(' + [...keys].map(reEsc).join('|') + ')', 'i'));
+    const line = idx >= 0 ? n.text.slice(n.text.lastIndexOf('\n', idx) + 1, (n.text.indexOf('\n', idx) + 1 || n.text.length + 1) - 1) : '';
+    out.push({ n, ctx: line.replace(/^[\s>*+-]+/, '').trim().slice(0, 140) });
+  }
+  return out.sort((a, b) => b.n.mtime - a.n.mtime);
+}
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/* ---------- loading a folder ---------- */
+async function walk(dir, prefix, mdList) {
+  S.dirs.set(prefix, dir);
+  for await (const [name, h] of dir.entries()) {
+    if (name.startsWith('.') || name === 'node_modules') continue;
+    const p = prefix ? prefix + '/' + name : name;
+    if (h.kind === 'directory') await walk(h, p, mdList);
+    else if (MD_RE.test(name)) mdList.push([p, h]);
+    else S.files.set(p, h);
+  }
+}
+async function loadFromHandle(root) {
+  S.root = root; S.rootName = root.name; S.readonly = false;
+  await scan(true);
+}
+async function scan(first) {
+  if (S.scanning) return S.scanning;
+  S.scanning = (async () => {
+    const gen = S.gen;
+    const mdList = [], files = new Map(), dirs = new Map();
+    const saveFiles = S.files, saveDirs = S.dirs;
+    S.files = files; S.dirs = dirs;            // walk() fills these
+    try { await walk(S.root, '', mdList); } catch (e) { S.files = saveFiles; S.dirs = saveDirs; throw e; }
+    S.files = saveFiles; S.dirs = saveDirs;
+    const oldNotes = S.notes, next = new Map();
+    let changed = first || mdList.length !== oldNotes.size;
+    const queue = mdList.slice();
+    async function worker() {
+      while (queue.length) {
+        const [p, h] = queue.shift();
+        const f = await h.getFile();
+        const old = oldNotes.get(p);
+        if (old && old.mtime === f.lastModified) { next.set(p, old); continue; }
+        const text = await f.text();
+        if (old && old.text === text) { old.mtime = f.lastModified; next.set(p, old); continue; }
+        changed = true;
+        const n = old || { path: p, name: stem(p), folder: dirOf(p) };
+        n.handle = h; n.text = text; n.mtime = f.lastModified;
+        if (!(S.current === p && S.dirty)) n.base = text;   // unsaved edits keep their own base for the conflict check
+        analyse(n); next.set(p, n);
+      }
+    }
+    await Promise.all(Array.from({ length: 8 }, worker));
+    if (gen !== S.gen) return false;           // a note was created / renamed / deleted meanwhile: keep the live state
+    for (const p of oldNotes.keys()) if (!next.has(p)) changed = true;
+    // the open note vanished on disk but has unsaved edits: keep it so the edits can still be saved
+    if (S.current && S.dirty && !next.has(S.current) && oldNotes.has(S.current)) { const n = oldNotes.get(S.current); n.gone = true; next.set(S.current, n); }
+    S.notes = next; S.files = files; S.dirs = dirs;
+    return changed;
+  })();
+  try { return await S.scanning; } finally { S.scanning = null; }
+}
+async function loadFromFiles(list) {
+  S.root = null; S.readonly = true; S.notes = new Map(); S.files = new Map(); S.dirs = new Map([['', null]]);
+  const arr = Array.from(list);
+  S.rootName = arr.length ? arr[0].webkitRelativePath.split('/')[0] : '';
+  for (const f of arr) {
+    const rel = f.webkitRelativePath.split('/').slice(1).join('/');
+    if (!rel || rel.split('/').some((s) => s.startsWith('.'))) continue;
+    let d = dirOf(rel); while (d && !S.dirs.has(d)) { S.dirs.set(d, null); d = dirOf(d); }
+    if (MD_RE.test(rel)) {
+      const t = await f.text();
+      const n = { path: rel, name: stem(rel), folder: dirOf(rel), file: f, text: t, base: t, mtime: f.lastModified };
+      analyse(n); S.notes.set(rel, n);
+    } else S.files.set(rel, f);
+  }
+}
+
+/* ---------- welcome ---------- */
+const canWrite = 'showDirectoryPicker' in window;
+async function showWelcome() {
+  $('#app').hidden = true; $('#welcome').hidden = false;
+  $('#w-tile').innerHTML = icon('folder', 40);
+  $('#w-foot').innerHTML = icon('lock', 15) + ' 数据只在这台电脑上' + (canWrite ? '' : ' · 当前为只读模式');
+  $('#w-pick').innerHTML = icon('folder', 20) + (canWrite ? '选择文件夹' : '以只读方式打开');
+  $('#w-unsupported').hidden = canWrite;
+  const saved = canWrite ? await idb.get('root') : null;
+  if (saved) {
+    $('#w-recent').hidden = false;
+    $('#w-resume').innerHTML = `<span class="mini">${icon('folder', 18)}</span><span style="flex:1;min-width:0"><span style="display:block">${esc(saved.name)}</span><span class="sub secondary" style="display:block">继续使用上次的文件夹</span></span>${icon('chevron.right', 14, 'secondary')}`;
+    $('#w-resume').onclick = async () => {
+      try {
+        const ok = (await saved.requestPermission({ mode: 'readwrite' })) === 'granted';
+        if (ok) { await openRoot(saved); } else toast('没有获得访问权限');
+      } catch (e) { toast('无法打开这个文件夹，请重新选择'); }
+    };
+  }
+}
+$('#w-pick').onclick = pickFolder;
+$('#change-folder').onclick = async () => { if (await flushSave()) pickFolder(); };
+async function pickFolder() {
+  if (!canWrite) { $('#w-input').click(); return; }
+  try {
+    const h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'notes' });
+    await idb.set('root', h);
+    await openRoot(h);
+  } catch (e) { if (e && e.name !== 'AbortError') toast('无法打开这个文件夹'); }
+}
+$('#w-input').onchange = async (e) => { if (e.target.files.length) { await loadFromFiles(e.target.files); enterApp(); } };
+async function openRoot(h) {
+  toast('正在读取笔记…', 0);
+  try { await loadFromHandle(h); } catch (e) { toast('读取失败：' + (e.message || e)); return; }
+  hideToast();
+  enterApp();
+}
+function enterApp() {
+  $('#welcome').hidden = true; $('#app').hidden = false;
+  S.view = prefs.get('view:' + S.rootName, { kind: 'all', folder: '' });
+  if (S.view.kind === 'folder' && !S.dirs.has(S.view.folder)) S.view = { kind: 'all', folder: '' };
+  S.current = null; S.dirty = false;
+  renderSide(); renderList();
+  const last = prefs.get('last:' + S.rootName, null);
+  if (last && S.notes.has(last)) openNote(last); else showPane(false);
+}
+
+/* ---------- sidebar ---------- */
+function countIn(folder) { let c = 0; for (const n of S.notes.values()) if (n.folder === folder || n.folder.startsWith(folder + '/')) c++; return c; }
+function renderSide() {
+  $('#open-search').innerHTML = icon('magnifyingglass', 17) + '<span>搜索</span><kbd>⌘K</kbd>';
+  const fixed = [['all', 'tray', '全部笔记', S.notes.size], ['recent', 'clock', '最近', '']];
+  $('#side-fixed').innerHTML = fixed.map(([k, ic, l, c]) =>
+    `<button class="item${S.view.kind === k ? ' sel' : ''}" data-view="${k}">${icon(ic, 20, 'lead')}<span class="lbl">${l}</span><span class="cnt">${c}</span></button>`).join('');
+  $('#tree-toggle').innerHTML = `<span>${esc(S.rootName)}</span>` + icon('chevron.down', 14);
+  $('#tree-toggle').setAttribute('aria-expanded', S.treeOpen);
+  const kids = new Map();
+  for (const d of S.dirs.keys()) if (d) { const p = dirOf(d); if (!kids.has(p)) kids.set(p, []); kids.get(p).push(d); }
+  for (const v of kids.values()) v.sort((a, b) => baseOf(a).localeCompare(baseOf(b), 'zh'));
+  const rows = [];
+  const visit = (dir, depth) => {
+    for (const d of kids.get(dir) || []) {
+      if (/(^|\/)assets$/i.test(d) && !countIn(d)) continue;
+      const has = (kids.get(d) || []).some((x) => countIn(x) || (kids.get(x) || []).length);
+      const open = !S.closed.has(d);
+      const sel = S.view.kind === 'folder' && S.view.folder === d;
+      rows.push(`<button class="item${sel ? ' sel' : ''}" data-folder="${esc(d)}" style="padding-left:${12 + depth * 16}px">` +
+        `<span class="twisty${has ? (open ? '' : ' closed') : ' none'}" data-twisty="${esc(d)}">${icon('chevron.down', 12)}</span>` +
+        `${icon('folder', 20, 'lead')}<span class="lbl">${esc(baseOf(d))}</span><span class="cnt">${countIn(d) || ''}</span></button>`);
+      if (has && open) visit(d, depth + 1);
+    }
+  };
+  visit('', 0);
+  $('#tree').innerHTML = rows.join('') || '<div class="footnote secondary" style="padding:4px 12px">没有子文件夹</div>';
+  $('#tree').hidden = !S.treeOpen;
+  $('#foot-ic').innerHTML = icon('folder', 18);
+  $('#foot-name').textContent = S.rootName;
+  $('#foot-meta').textContent = `${S.notes.size} 篇` + (S.readonly ? ' · 只读' : ' · 只存在这台电脑上');
+}
+$('#side').addEventListener('click', async (e) => {
+  const tw = e.target.closest('[data-twisty]');
+  if (tw && !tw.classList.contains('none')) { const d = tw.dataset.twisty; S.closed.has(d) ? S.closed.delete(d) : S.closed.add(d); renderSide(); return; }
+  const b = e.target.closest('[data-view],[data-folder]');
+  if (!b) return;
+  S.view = b.dataset.view ? { kind: b.dataset.view, folder: '' } : { kind: 'folder', folder: b.dataset.folder };
+  prefs.set('view:' + S.rootName, S.view);
+  renderSide(); renderList();
+});
+$('#tree-toggle').onclick = () => { S.treeOpen = !S.treeOpen; renderSide(); };
+$('#open-search').onclick = openPalette;
+
+/* ---------- note list ---------- */
+function fmtDate(ms) {
+  const d = new Date(ms), now = new Date();
+  const p2 = (x) => String(x).padStart(2, '0');
+  if (d.toDateString() === now.toDateString()) return `${p2(d.getHours())}:${p2(d.getMinutes())}`;
+  if (d.getFullYear() === now.getFullYear()) return `${d.getMonth() + 1}月${d.getDate()}日`;
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+}
+function notesInView() {
+  let arr = [...S.notes.values()];
+  if (S.view.kind === 'folder') { const f = S.view.folder; arr = arr.filter((n) => n.folder === f || n.folder.startsWith(f + '/')); }
+  arr.sort((a, b) => b.mtime - a.mtime);
+  if (S.view.kind === 'recent') arr = arr.slice(0, 30);
+  return arr;
+}
+function renderList() {
+  const arr = notesInView();
+  $('#list-title').textContent = S.view.kind === 'all' ? '全部笔记' : S.view.kind === 'recent' ? '最近' : baseOf(S.view.folder);
+  $('#list-meta').textContent = `${arr.length} 篇笔记 · 按修改时间`;
+  $('#new-note').innerHTML = icon('plus', 18);
+  $('#new-note').disabled = S.readonly;
+  $('#notes').innerHTML = arr.length ? arr.map((n) =>
+    `<button class="note${n.path === S.current ? ' sel' : ''}" data-path="${esc(n.path)}"><span class="t">${esc(n.title)}</span>` +
+    `<span class="m"><span class="d">${fmtDate(n.mtime)}</span><span class="s">${esc(n.snippet || '没有更多内容')}</span></span></button>`).join('')
+    : `<div class="empty">这里还没有笔记${S.readonly ? '' : '<br>点右上角的 + 新建一篇'}</div>`;
+}
+$('#notes').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (b) openNote(b.dataset.path); });
+
+/* ---------- main pane ---------- */
+function showPane(on) {
+  $('#empty-pane').hidden = on;
+  for (const id of ['#toolbar']) $(id).hidden = !on;
+  if (!on) { $('#reader').hidden = true; $('#editor').hidden = true; $('#edbar').hidden = true; }
+}
+async function openNote(path, opts = {}) {
+  const n = S.notes.get(path); if (!n) return;
+  if (path === S.current) {
+    if (opts.mode && opts.mode !== S.mode) setMode(opts.mode, opts);
+    else if (S.mode === 'read') renderArticle(n, opts.highlight);
+    return;
+  }
+  if (!(await flushSave())) return;
+  const prev = S.notes.get(S.current); if (prev) prev.draft = null;
+  S.current = path; S.dirty = false; S.conflict = false;
+  prefs.set('last:' + S.rootName, path);
+  showPane(true);
+  renderCrumb(n);
+  setMode(opts.mode || 'read', opts);
+  for (const el of document.querySelectorAll('.note')) el.classList.toggle('sel', el.dataset.path === path);
+  const sel = document.querySelector('.note.sel'); if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+function renderCrumb(n) {
+  const parts = n.folder ? n.folder.split('/') : [];
+  $('#crumb').innerHTML = [esc(S.rootName), ...parts.map(esc)].map((p) => `<span>${p}</span>`).join(icon('chevron.right', 12)) + icon('chevron.right', 12) + `<span>${esc(baseOf(n.path))}</span>`;
+  $('#more').innerHTML = icon('ellipsis', 20);
+}
+function setMode(mode, opts = {}) {
+  const n = S.notes.get(S.current); if (!n) return;
+  if (mode === 'edit' && S.readonly) { toast('只读模式下不能编辑，请用 Chrome 或 Edge 打开'); mode = 'read'; }
+  S.mode = mode;
+  $('#m-read').setAttribute('aria-pressed', mode === 'read');
+  $('#m-edit').setAttribute('aria-pressed', mode === 'edit');
+  $('#reader').hidden = mode !== 'read';
+  $('#editor').hidden = mode !== 'edit';
+  $('#edbar').hidden = mode !== 'edit';
+  $('#save').hidden = mode !== 'edit';
+  updateStatus();
+  if (mode === 'read') { renderArticle(n, opts.highlight); }
+  else {
+    const ed = $('#ed');
+    if (n.draft == null) n.base = n.text;
+    ed.value = n.draft != null ? n.draft : n.text;
+    updateEdBar();
+    ed.focus();
+    if (opts.selectTitle) { const m = ed.value.match(/^#\s+(.*)$/m); if (m) { const s = ed.value.indexOf(m[1]); ed.setSelectionRange(s, s + m[1].length); } }
+  }
+}
+$('#m-read').onclick = () => setMode('read');
+$('#m-edit').onclick = () => setMode('edit');
+
+function renderArticle(n, highlight) {
+  const src = n.draft != null ? n.draft : n.text;
+  const html = DOMPurify.sanitize(md.render(src), PURIFY);
+  const art = $('#article');
+  art.innerHTML = html;
+  const meta = `<div class="meta">修改于 ${fmtDate(n.mtime)} · ${src.replace(/\s/g, '').length.toLocaleString()} 字</div>`;
+  const firstEl = art.firstElementChild;
+  if (firstEl && firstEl.tagName === 'H1') firstEl.insertAdjacentHTML('afterend', meta);
+  else art.insertAdjacentHTML('afterbegin', `<h1>${esc(n.name)}</h1>` + meta);
+  // task lists (only items the renderer marked, so a note cannot fake one)
+  for (const li of art.querySelectorAll(`li[${A.task}]`)) {
+    const host = li.firstElementChild && li.firstElementChild.tagName === 'P' ? li.firstElementChild : li;
+    const first = host.firstChild;
+    if (!first || first.nodeType !== 3) continue;
+    const m = first.nodeValue.match(/^\[( |x|X)\]\s?/);
+    if (!m) continue;
+    first.nodeValue = first.nodeValue.slice(m[0].length);
+    const done = m[1] !== ' ';
+    li.classList.add('task'); if (done) li.classList.add('done');
+    const body = document.createElement('div'); body.className = 'tbody';
+    while (li.firstChild) body.appendChild(li.firstChild);
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.setAttribute(A.task, li.getAttribute(A.task));
+    cb.setAttribute('aria-label', body.textContent.trim().slice(0, 40)); cb.disabled = S.readonly;
+    li.append(cb, body);
+  }
+  // images: local files only
+  for (const img of art.querySelectorAll('img')) {
+    const raw = img.getAttribute(A.local) || '';
+    if (/^data:image\//i.test(raw)) { img.src = raw; continue; }
+    if (/^[a-z]+:/i.test(raw)) { replaceImg(img, '外部图片未加载（这个页面不联网）'); continue; }
+    const key = resolveFile(raw, n.folder, img.hasAttribute(A.byname));
+    if (!key) { replaceImg(img, '找不到图片：' + raw); continue; }
+    img.removeAttribute('src'); img.loading = 'lazy';
+    imgUrl(key).then((u) => { img.src = u; }).catch(() => replaceImg(img, '无法读取图片：' + raw));
+  }
+  // links
+  for (const a of art.querySelectorAll('a[href]')) {
+    const h = a.getAttribute('href');
+    if (/^https?:/i.test(h)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = h; }
+  }
+  // backlinks
+  const bl = backlinksOf(n);
+  if (bl.length) {
+    art.insertAdjacentHTML('beforeend', `<section class="backlinks"><h3>反向链接 · ${bl.length}</h3>` +
+      bl.map(({ n: x, ctx }) => `<button class="bl" ${A.open}="${esc(x.path)}"><span class="t">${esc(x.title)}</span><span class="s">${esc(ctx)}</span></button>`).join('') + '</section>');
+  }
+  $('#reader').scrollTop = 0;
+  if (highlight) flashTerm(art, highlight);
+}
+function replaceImg(img, msg) {
+  const s = document.createElement('span'); s.className = 'img-missing'; s.innerHTML = icon('photo', 15) + esc(msg); img.replaceWith(s);
+}
+async function imgUrl(key) {
+  if (S.imgUrls.has(key)) return S.imgUrls.get(key);
+  const h = S.files.get(key);
+  const f = h instanceof File ? h : await h.getFile();
+  const u = URL.createObjectURL(f); S.imgUrls.set(key, u); return u;
+}
+function flashTerm(root, terms) {
+  const list = terms.filter(Boolean); if (!list.length) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    const i = node.nodeValue.toLowerCase().indexOf(list[0]);
+    if (i < 0) continue;
+    const r = document.createRange(); r.setStart(node, i); r.setEnd(node, i + list[0].length);
+    const mk = document.createElement('mark'); mk.className = 'flash'; r.surroundContents(mk);
+    mk.scrollIntoView({ block: 'center' });
+    setTimeout(() => { mk.classList.remove('flash'); }, 1600);
+    setTimeout(() => { mk.replaceWith(...mk.childNodes); }, 3200);
+    return;
+  }
+}
+$('#article').addEventListener('click', async (e) => {
+  const cb = e.target.closest(`input[${A.task}]`);
+  if (cb) { await toggleTask(+ds(cb, 'task')); return; }
+  const op = e.target.closest(`[${A.open}]`);
+  if (op) { openNote(ds(op, 'open')); return; }
+  const wl = e.target.closest(`a[${A.wiki}]`);
+  if (wl) { e.preventDefault(); followWiki(ds(wl, 'wiki')); return; }
+  const a = e.target.closest('a[href]');
+  if (a) {
+    const h = a.getAttribute('href');
+    if (/^https?:/i.test(h) || h.startsWith('#')) return;
+    e.preventDefault();
+    const n = S.notes.get(S.current);
+    let p = h; try { p = decodeURIComponent(h); } catch (x) {}
+    const target = resolveNote(joinPath(n.folder, p.split('#')[0]), '') || resolveNote(p.split('#')[0], n.folder);
+    if (target) openNote(target.path); else toast('找不到链接的笔记：' + p);
+  }
+});
+async function followWiki(target) {
+  const hi = target.indexOf('#');
+  const name = hi >= 0 ? target.slice(0, hi) : target, heading = hi >= 0 ? target.slice(hi + 1) : '';
+  const cur = S.notes.get(S.current);
+  if (!name) { if (heading) scrollToHeading(heading); return; }
+  const n = resolveNote(name, cur && cur.folder);
+  if (n) { await openNote(n.path); if (heading) scrollToHeading(heading); return; }
+  if (S.readonly) { toast('还没有「' + name + '」这篇笔记'); return; }
+  await createNote(cur ? cur.folder : '', name.trim(), `# ${name.trim()}\n\n`);
+}
+function scrollToHeading(h) {
+  const want = h.trim().toLowerCase();
+  for (const el of $('#article').querySelectorAll('h1,h2,h3,h4,h5,h6')) if (el.textContent.trim().toLowerCase() === want) { el.scrollIntoView({ block: 'start' }); return; }
+}
+async function toggleTask(line) {
+  const n = S.notes.get(S.current); if (!n || S.readonly) return;
+  const src = n.draft != null ? n.draft : n.text;
+  const lines = src.split('\n');
+  const m = (lines[line] || '').match(/^(\s*(?:>\s*)*(?:[-*+]|\d+[.)])\s+)\[( |x|X)\]/);
+  if (!m) { renderArticle(n); return; }
+  lines[line] = m[1] + '[' + (m[2] === ' ' ? 'x' : ' ') + ']' + lines[line].slice(m[0].length);
+  n.draft = lines.join('\n'); S.dirty = true;
+  await saveNow();
+  const y = $('#reader').scrollTop; renderArticle(n); $('#reader').scrollTop = y;
+}
+
+/* ---------- editing & saving ---------- */
+function updateStatus() {
+  const st = $('#status');
+  if (S.mode !== 'edit' && !S.dirty) { st.hidden = true; return; }
+  st.hidden = false;
+  st.classList.toggle('saved', !S.dirty);
+  $('#status-t').textContent = S.saving ? '正在保存' : S.conflict ? '有冲突，未保存' : S.dirty ? '未保存的更改' : '已保存';
+  $('#save').disabled = !S.dirty;
+}
+function updateEdBar() {
+  const ed = $('#ed');
+  const line = ed.value.slice(0, ed.selectionStart).split('\n').length;
+  $('#edbar-r').textContent = `Markdown · ${ed.value.replace(/\s/g, '').length.toLocaleString()} 字 · 第 ${line} 行　⌘S 保存`;
+}
+$('#ed').addEventListener('input', () => {
+  const n = S.notes.get(S.current); if (!n) return;
+  n.draft = $('#ed').value; S.dirty = true; updateStatus(); updateEdBar();
+  clearTimeout(S.timer); S.timer = setTimeout(saveNow, 1500);
+  suggestCheck();
+});
+$('#ed').addEventListener('click', () => { updateEdBar(); suggestCheck(); });
+$('#ed').addEventListener('keyup', (e) => { if (!['ArrowUp', 'ArrowDown', 'Enter', 'Tab', 'Escape'].includes(e.key)) { updateEdBar(); suggestCheck(); } });
+$('#save').onclick = () => saveNow(true);
+async function saveNow(explicit) {
+  clearTimeout(S.timer);
+  const n = S.notes.get(S.current);
+  if (!n || !S.dirty || S.readonly || n.draft == null) return true;
+  if (S.conflict && explicit !== true) return false;      // waiting for the person to decide; don't nag on every pause
+  if (S.saving) { await S.saving; return saveNow(explicit); }
+  const text = n.draft;
+  S.saving = (async () => {
+    updateStatus();
+    try {
+      let disk = null;
+      try { disk = await (await n.handle.getFile()).text(); } catch (e) { disk = null; }
+      if (disk === null) {
+        if (!confirm(`「${n.title}」已经在别处被删除或改名。\n\n确定：按原来的位置重新保存一份\n取消：先不保存`)) { S.conflict = true; return false; }
+        n.handle = await (await dirHandle(n.folder)).getFileHandle(baseOf(n.path), { create: true });
+      } else if (disk !== n.base && disk !== text) {
+        if (!confirm(`「${n.title}」在别处被改过。\n\n确定：用你现在的版本覆盖\n取消：保留文件，你的修改先留在编辑器里（按 ⌘S 可以再选一次）`)) { S.conflict = true; return false; }
+      }
+      const w = await n.handle.createWritable(); await w.write(text); await w.close();
+      const f2 = await n.handle.getFile();
+      n.text = text; n.base = text; n.mtime = f2.lastModified; n.gone = false; analyse(n);
+      S.conflict = false;
+      if (n.draft === text) { n.draft = null; S.dirty = false; }
+      S.gen++;
+      renderListKeepScroll();
+      return true;
+    } catch (e) { toast('保存失败：' + (e.message || e)); return false; }
+  })();
+  const ok = await S.saving; S.saving = null; updateStatus();
+  if (S.current === n.path) renderCrumb(n);
+  return ok;
+}
+async function flushSave() {
+  if (!S.dirty) return true;
+  if (await saveNow(S.conflict ? true : undefined)) return true;
+  return confirm('这篇笔记的修改还没有保存。\n\n确定：放弃这些修改\n取消：留在这里');
+}
+function renderListKeepScroll() { const y = $('#notes').scrollTop; renderList(); $('#notes').scrollTop = y; renderSide(); }
+window.addEventListener('beforeunload', (e) => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+$('#ed').addEventListener('keydown', (e) => {
+  if (handleSuggestKey(e)) return;
+  if (e.key === 'Tab' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); document.execCommand('insertText', false, '  '); }
+});
+$('#ed').addEventListener('paste', async (e) => {
+  const item = [...(e.clipboardData ? e.clipboardData.items : [])].find((i) => i.kind === 'file' && i.type.startsWith('image/'));
+  if (!item) return;
+  e.preventDefault();
+  const n = S.notes.get(S.current); if (!n || S.readonly) return;
+  try {
+    const blob = item.getAsFile();
+    const ext = (item.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/\+.*/, '');
+    const d = new Date(); const p2 = (x) => String(x).padStart(2, '0');
+    const stamp = `粘贴图片-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
+    const dir = await dirHandle(n.folder);
+    const assets = await dir.getDirectoryHandle('assets', { create: true });
+    let name = `${stamp}.${ext}`, k = 2;
+    while (await exists(assets, name)) name = `${stamp}-${k++}.${ext}`;
+    const fh = await assets.getFileHandle(name, { create: true });
+    const w = await fh.createWritable(); await w.write(blob); await w.close();
+    const key = joinPath(n.folder, 'assets/' + name);
+    S.files.set(key, fh); S.dirs.set(joinPath(n.folder, 'assets'), assets);
+    document.execCommand('insertText', false, `![](assets/${encodeURI(name)})`);
+    toast('图片已存到 assets/' + name);
+  } catch (err) { toast('图片保存失败：' + (err.message || err)); }
+});
+async function exists(dir, name) { try { await dir.getFileHandle(name); return true; } catch (e) { try { await dir.getDirectoryHandle(name); return true; } catch (x) { return false; } } }
+const cleanName = (s) => s.replace(/[\\/:*?"<>|#^\[\]]/g, '-').replace(/^\.+/, '').trim();
+async function dirHandle(folder) {
+  if (S.dirs.get(folder)) return S.dirs.get(folder);
+  let h = S.root, acc = '';
+  for (const seg of folder.split('/').filter(Boolean)) { h = await h.getDirectoryHandle(seg); acc = acc ? acc + '/' + seg : seg; S.dirs.set(acc, h); }
+  return h;
+}
+
+/* ---------- [[ autocomplete ---------- */
+const SG = { open: false, items: [], idx: 0, start: 0 };
+function suggestCheck() {
+  const ed = $('#ed'); const pos = ed.selectionStart;
+  const before = ed.value.slice(Math.max(0, pos - 80), pos);
+  const m = before.match(/\[\[([^\]\n|#]*)$/);
+  if (!m || ed.selectionStart !== ed.selectionEnd) return closeSuggest();
+  const q = m[1].trim().toLowerCase();
+  const cur = S.current;
+  const all = [...S.notes.values()].filter((n) => n.path !== cur);
+  const scored = all.map((n) => {
+    const a = n.name.toLowerCase(), t = n.title.toLowerCase();
+    const s = !q ? 1 : a.startsWith(q) ? 4 : a.includes(q) ? 3 : t.includes(q) ? 2 : 0;
+    return [s, n];
+  }).filter(([s]) => s > 0).sort((x, y) => y[0] - x[0] || y[1].mtime - x[1].mtime).slice(0, 8).map(([, n]) => n);
+  SG.items = scored; SG.start = pos - m[1].length; SG.query = m[1].trim(); SG.idx = 0;
+  const exact = scored.some((n) => n.name.toLowerCase() === q);
+  SG.create = q && !exact ? m[1].trim() : null;
+  if (!scored.length && !SG.create) return closeSuggest();
+  renderSuggest(); positionSuggest();
+}
+function renderSuggest() {
+  const box = $('#suggest');
+  const rows = SG.items.map((n, i) => `<button data-i="${i}" class="${i === SG.idx ? 'on' : ''}"><span>${esc(n.name)}</span><span class="s">${esc(n.folder || S.rootName)}</span></button>`);
+  if (SG.create) rows.push(`<button data-i="${SG.items.length}" class="${SG.idx === SG.items.length ? 'on' : ''}"><span>链接到新笔记「${esc(SG.create)}」</span>${icon('plus', 16)}</button>`);
+  box.innerHTML = rows.join(''); box.hidden = false; SG.open = true;
+}
+function positionSuggest() {
+  const ed = $('#ed'); const cs = getComputedStyle(ed);
+  const mirror = document.createElement('div');
+  for (const p of ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'paddingTop', 'paddingLeft', 'paddingRight', 'width', 'tabSize', 'boxSizing']) mirror.style[p] = cs[p];
+  Object.assign(mirror.style, { position: 'absolute', visibility: 'hidden', whiteSpace: 'pre-wrap', wordWrap: 'break-word', top: '0', left: '0' });
+  mirror.textContent = ed.value.slice(0, ed.selectionStart);
+  const mk = document.createElement('span'); mk.textContent = '​'; mirror.appendChild(mk);
+  document.body.appendChild(mirror);
+  const r = ed.getBoundingClientRect();
+  let x = r.left + mk.offsetLeft - ed.scrollLeft, y = r.top + mk.offsetTop - ed.scrollTop + parseFloat(cs.lineHeight);
+  mirror.remove();
+  const box = $('#suggest');
+  x = Math.min(x, window.innerWidth - box.offsetWidth - 12);
+  if (y + box.offsetHeight > window.innerHeight - 12) y = y - parseFloat(cs.lineHeight) - box.offsetHeight - 4;
+  box.style.left = Math.max(12, x) + 'px'; box.style.top = Math.max(12, y) + 'px';
+}
+function closeSuggest() { SG.open = false; $('#suggest').hidden = true; }
+function handleSuggestKey(e) {
+  if (!SG.open) return false;
+  const total = SG.items.length + (SG.create ? 1 : 0);
+  if (e.key === 'ArrowDown') { SG.idx = (SG.idx + 1) % total; renderSuggest(); }
+  else if (e.key === 'ArrowUp') { SG.idx = (SG.idx - 1 + total) % total; renderSuggest(); }
+  else if (e.key === 'Enter' || e.key === 'Tab') { acceptSuggest(SG.idx); }
+  else if (e.key === 'Escape') closeSuggest();
+  else return false;
+  e.preventDefault(); return true;
+}
+function acceptSuggest(i) {
+  const ed = $('#ed');
+  const name = i < SG.items.length ? SG.items[i].name : SG.create;
+  const after = ed.value.slice(ed.selectionStart, ed.selectionStart + 2);
+  ed.setSelectionRange(SG.start, ed.selectionStart);
+  document.execCommand('insertText', false, name + (after === ']]' ? '' : ']]'));
+  if (after === ']]') ed.setSelectionRange(ed.selectionStart + 2, ed.selectionStart + 2);
+  closeSuggest(); ed.focus();
+}
+$('#suggest').addEventListener('mousedown', (e) => { const b = e.target.closest('[data-i]'); if (b) { e.preventDefault(); acceptSuggest(+b.dataset.i); } });
+$('#ed').addEventListener('blur', () => setTimeout(closeSuggest, 100));
+$('#ed').addEventListener('scroll', () => { if (SG.open) positionSuggest(); });
+
+/* ---------- new / rename ---------- */
+async function createNote(folder, base, body) {
+  if (S.readonly) return;
+  if (!(await flushSave())) return;
+  try {
+    const dir = await dirHandle(folder);
+    const clean = cleanName(base) || '未命名';
+    let name = clean, i = 2;
+    while (S.notes.has(joinPath(folder, name + '.md')) || (await exists(dir, name + '.md'))) name = `${clean} ${i++}`;
+    const fh = await dir.getFileHandle(name + '.md', { create: true });
+    const w = await fh.createWritable(); await w.write(body); await w.close();
+    const f = await fh.getFile();
+    const path = joinPath(folder, name + '.md');
+    const n = { path, name, folder, handle: fh, text: body, base: body, mtime: f.lastModified }; analyse(n);
+    S.gen++; S.notes.set(path, n);
+    renderSide(); renderList();
+    await openNote(path, { mode: 'edit', selectTitle: true });
+  } catch (e) { toast('新建失败：' + (e.message || e)); }
+}
+$('#new-note').onclick = () => {
+  const cur = S.notes.get(S.current);
+  const folder = S.view.kind === 'folder' ? S.view.folder : cur ? cur.folder : '';
+  createNote(folder, '未命名', '# 未命名\n\n');
+};
+// Rewrite [[links]] in `text` (outside code) that point at `note`, giving them the new name.
+function relink(text, fromDir, note, newName) {
+  let fence = null, count = 0;
+  const out = text.split('\n').map((line) => {
+    const f = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) { if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = null; return line; }
+    if (f) { fence = f[1]; return line; }
+    // leave inline code alone
+    return line.split(/(`+[^`\n]*?`+)/).map((part, i) => i % 2 ? part : part.replace(/(!?)\[\[([^\]\n|#]+)((?:#[^\]\n|]*)?(?:\|[^\]\n]*)?)\]\]/g, (m, bang, target, rest) => {
+      if (resolveNote(target.trim(), fromDir) !== note) return m;
+      const t = target.trim();
+      const dir = t.includes('/') ? t.slice(0, t.lastIndexOf('/') + 1) : '';
+      const ext = MD_RE.test(t) ? t.match(MD_RE)[0] : '';
+      count++;
+      return `${bang}[[${dir}${newName}${ext}${rest}]]`;
+    })).join('');
+  });
+  return { text: out.join('\n'), count };
+}
+async function renameNote() {
+  const n = S.notes.get(S.current); if (!n || S.readonly) return;
+  if (!(await flushSave())) return;
+  const nv = prompt('新的文件名（不需要 .md）', n.name);
+  if (nv == null) return;
+  const name = cleanName(nv);
+  if (!name || name === n.name) return;
+  const path = joinPath(n.folder, name + '.md');
+  const caseOnly = name.toLowerCase() === n.name.toLowerCase();
+  try {
+    const dir = await dirHandle(n.folder);
+    if (!caseOnly && (S.notes.has(path) || (await exists(dir, name + '.md')))) { toast('这个文件夹里已经有同名文件'); return; }
+    // 1. work out link updates while the old name still resolves
+    const edits = [];
+    for (const o of S.notes.values()) {
+      if (o === n || !o.handle) continue;
+      const r = relink(o.text, o.folder, n, name);
+      if (r.count) edits.push([o, r.text]);
+    }
+    const selfLinks = relink(n.text, n.folder, n, name);
+    // 2. write the note under its new name, then remove the old file
+    const body = selfLinks.text;
+    let fh;
+    if (caseOnly) {
+      const tmp = `.${name}.renaming-${Date.now()}.md`;
+      const th = await dir.getFileHandle(tmp, { create: true });
+      let w = await th.createWritable(); await w.write(body); await w.close();
+      await dir.removeEntry(baseOf(n.path));
+      fh = await dir.getFileHandle(name + '.md', { create: true });
+      w = await fh.createWritable(); await w.write(body); await w.close();
+      await dir.removeEntry(tmp);
+    } else {
+      fh = await dir.getFileHandle(name + '.md', { create: true });
+      const w = await fh.createWritable(); await w.write(body); await w.close();
+      await dir.removeEntry(baseOf(n.path));
+    }
+    S.gen++;
+    S.notes.delete(n.path);
+    n.path = path; n.name = name; n.handle = fh; n.text = body; n.base = body; n.mtime = (await fh.getFile()).lastModified; analyse(n);
+    S.notes.set(path, n); S.current = path;
+    prefs.set('last:' + S.rootName, path);
+    // 3. update the other notes, skipping any that changed on disk since they were read
+    let touched = 0, skipped = 0;
+    for (const [o, t] of edits) {
+      try {
+        const disk = await (await o.handle.getFile()).text();
+        if (disk !== o.text) { skipped++; continue; }
+        const w = await o.handle.createWritable(); await w.write(t); await w.close();
+        o.text = t; o.base = t; o.mtime = (await o.handle.getFile()).lastModified; analyse(o); touched++;
+      } catch (e) { skipped++; }
+    }
+    renderSide(); renderList(); renderCrumb(n); if (S.mode === 'read') renderArticle(n);
+    toast(skipped ? `已重命名；更新了 ${touched} 篇的链接，${skipped} 篇因为在别处被改过而跳过` : touched ? `已重命名，并更新了 ${touched} 篇笔记里的链接` : '已重命名');
+  } catch (e) { toast('重命名失败：' + (e.message || e)); refresh(true); }
+}
+$('#more').onclick = (e) => {
+  const n = S.notes.get(S.current); if (!n) return;
+  const menu = $('#menu');
+  menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>重命名</span></button>` +
+    `<button data-act="copy"><span>复制链接写法</span><span class="s">[[${esc(n.name)}]]</span></button>` +
+    `<button data-act="refresh"><span>重新读取文件夹</span></button>` +
+    (S.readonly ? '' : `<div class="sep"></div><button data-act="delete" style="color:var(--danger)"><span>删除笔记</span></button>`);
+  menu.hidden = false;
+  const r = e.currentTarget.getBoundingClientRect();
+  menu.style.top = r.bottom + 8 + 'px'; menu.style.left = Math.max(12, r.right - menu.offsetWidth) + 'px';
+};
+$('#menu').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  $('#menu').hidden = true;
+  const n = S.notes.get(S.current);
+  if (b.dataset.act === 'rename') renameNote();
+  if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(`[[${n.name}]]`); toast('已复制'); } catch (x) { toast(`[[${n.name}]]`); } }
+  if (b.dataset.act === 'refresh') refresh(true);
+  if (b.dataset.act === 'delete') deleteNote();
+});
+async function deleteNote() {
+  const n = S.notes.get(S.current); if (!n || S.readonly) return;
+  const bl = backlinksOf(n).length;
+  if (!confirm(`删除「${n.title}」？\n\n文件会从文件夹里永久删除，不会进废纸篓。` + (bl ? `\n有 ${bl} 篇笔记链接到它，这些链接会变成“未创建”。` : ''))) return;
+  try {
+    clearTimeout(S.timer);
+    const dir = await dirHandle(n.folder);
+    await dir.removeEntry(baseOf(n.path));
+    S.gen++; n.draft = null;
+    S.notes.delete(n.path); S.current = null; S.dirty = false; S.conflict = false;
+    showPane(false); renderSide(); renderList();
+    toast('已删除');
+  } catch (e) { toast('删除失败：' + (e.message || e)); }
+}
+document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more')) $('#menu').hidden = true; });
+
+/* ---------- refresh when coming back to the page ---------- */
+async function refresh(force) {
+  if (!S.root || S.readonly) return;
+  try {
+    const changed = await scan(false);
+    if (!changed && !force) return;
+    if (S.current && !S.notes.has(S.current)) { S.current = null; showPane(false); }
+    renderSide(); renderListKeepScroll();
+    const n = S.current && S.notes.get(S.current);
+    if (n && !S.dirty) {
+      if (S.mode === 'read') { const y = $('#reader').scrollTop; renderArticle(n); $('#reader').scrollTop = y; }
+      else if ($('#ed').value !== n.text) {           // file changed elsewhere and nothing unsaved here: show the new text
+        const ed = $('#ed'), a = ed.selectionStart, b = ed.selectionEnd;
+        n.base = n.text; ed.value = n.text; ed.setSelectionRange(Math.min(a, ed.value.length), Math.min(b, ed.value.length));
+        toast('这篇笔记在别处被修改，已载入最新内容');
+      }
+    }
+    if (n && n.gone) toast('这篇笔记在别处被删除或改名了。你的修改还在，⌘S 可以重新保存');
+    if (force) toast('已重新读取');
+  } catch (e) { /* folder may be gone or permission revoked */ }
+}
+window.addEventListener('focus', () => refresh(false));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(false); });
+
+/* ---------- global search ---------- */
+const P = { items: [], idx: 0, terms: [] };
+function openPalette() {
+  if ($('#app').hidden) return;
+  $('#palette').hidden = false; $('#pal-ic').innerHTML = icon('magnifyingglass', 18);
+  const q = $('#q'); q.focus(); q.select(); runSearch();
+}
+function closePalette() { $('#palette').hidden = true; }
+$('#pal-cancel').onclick = closePalette;
+$('#palette').addEventListener('mousedown', (e) => { if (e.target.id === 'palette') closePalette(); });
+$('#q').addEventListener('input', runSearch);
+$('#q').addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault(); if (!P.items.length) return;
+    P.idx = (P.idx + (e.key === 'ArrowDown' ? 1 : -1) + P.items.length) % P.items.length; markResult();
+  } else if (e.key === 'Enter') { e.preventDefault(); pickResult(P.idx); }
+  else if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
+});
+function hl(text, terms) {
+  const list = terms.filter(Boolean);
+  if (!list.length) return esc(text);
+  const re = new RegExp(list.map(reEsc).sort((a, b) => b.length - a.length).join('|'), 'gi');
+  let out = '', last = 0, m;
+  while ((m = re.exec(text))) { out += esc(text.slice(last, m.index)) + '<mark class="hit">' + esc(m[0]) + '</mark>'; last = m.index + m[0].length; if (!m[0]) re.lastIndex++; }
+  return out + esc(text.slice(last));
+}
+function snippetFor(n, terms) {
+  const i = n.lower.indexOf(terms[0]);
+  if (i < 0) return n.snippet;
+  const s = Math.max(0, i - 24);
+  let t = n.text.slice(s, i + terms[0].length + 60).replace(/(^|\n)\s*#{1,6}\s+/g, '$1').replace(/\s+/g, ' ');
+  return (s > 0 ? '…' : '') + t;
+}
+function runSearch() {
+  const q = $('#q').value.trim().toLowerCase();
+  const terms = q ? q.split(/\s+/) : [];
+  P.terms = terms;
+  const res = $('#results');
+  if (!terms.length) {
+    const recent = [...S.notes.values()].sort((a, b) => b.mtime - a.mtime).slice(0, 8);
+    P.items = recent.map((n) => ({ n, group: '最近修改' }));
+  } else {
+    const byName = [], byBody = [];
+    for (const n of S.notes.values()) {
+      const nameStr = (n.name + ' ' + n.title).toLowerCase();
+      if (terms.every((t) => nameStr.includes(t))) byName.push({ n, group: '文件名' });
+      else if (terms.every((t) => n.lower.includes(t) || nameStr.includes(t))) byBody.push({ n, group: '正文' });
+    }
+    const sort = (a, b) => b.n.mtime - a.n.mtime;
+    P.items = [...byName.sort(sort), ...byBody.sort(sort)].slice(0, 60);
+  }
+  P.idx = 0;
+  let html = '', g = null;
+  const counts = {}; for (const it of P.items) counts[it.group] = (counts[it.group] || 0) + 1;
+  P.items.forEach((it, i) => {
+    if (it.group !== g) { g = it.group; html += `<div class="pal-g">${g} · ${counts[g]}</div>`; }
+    const n = it.n;
+    const snip = terms.length ? snippetFor(n, terms) : n.snippet;
+    html += `<button class="res" data-i="${i}">${icon('doc', 20)}<span class="mid"><span class="t">${hl(n.title, terms)}</span><span class="s">${hl(snip || '', terms)}</span></span>` +
+      `<span class="r">${esc(n.folder ? baseOf(n.folder) : S.rootName)}<br>${fmtDate(n.mtime)}</span></button>`;
+  });
+  res.innerHTML = html || `<div class="empty">没有找到包含“${esc(q)}”的笔记</div>`;
+  $('#pal-count').textContent = terms.length ? `在 ${S.notes.size} 篇笔记中找到 ${P.items.length} 篇` : `共 ${S.notes.size} 篇笔记`;
+  markResult();
+}
+function markResult() {
+  for (const b of document.querySelectorAll('.res')) b.classList.toggle('on', +b.dataset.i === P.idx);
+  const on = document.querySelector('.res.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+}
+$('#results').addEventListener('click', (e) => { const b = e.target.closest('.res'); if (b) pickResult(+b.dataset.i); });
+async function pickResult(i) {
+  const it = P.items[i]; if (!it) return;
+  closePalette();
+  await openNote(it.n.path, { highlight: P.terms });
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown', (e) => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (mod && (e.key === 'k' || e.key === 'K' || (e.shiftKey && (e.key === 'f' || e.key === 'F')))) { e.preventDefault(); $('#palette').hidden ? openPalette() : closePalette(); }
+  else if (mod && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveNow(true); }
+  else if (mod && e.key === 'e' && S.current) { e.preventDefault(); setMode(S.mode === 'read' ? 'edit' : 'read'); }
+  else if (e.key === 'Escape' && !$('#menu').hidden) $('#menu').hidden = true;
+});
+
+/* ---------- toast ---------- */
+let toastT = 0;
+function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); if (ms) toastT = setTimeout(hideToast, ms); }
+function hideToast() { $('#toast').hidden = true; }
+
+showWelcome();
+</script>
+</body>
+</html>
