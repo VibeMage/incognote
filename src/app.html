@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; media-src blob:; base-uri 'none'; form-action 'none'">
@@ -70,7 +70,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .seg button[aria-pressed="true"]{background:var(--fill-raised);box-shadow:var(--shadow-thumb);font-weight:600}
 
 /* ===== welcome ===== */
-#welcome{min-height:100%;display:flex;justify-content:center;padding:12vh 16px 64px}
+#welcome{position:relative;min-height:100%;display:flex;justify-content:center;padding:12vh 16px 64px}
 #welcome .inner{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center}
 .tile{width:72px;height:72px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center}
 .large-title{font-size:34px;line-height:41px;font-weight:700;letter-spacing:.4px;margin:0;text-wrap:balance}
@@ -89,7 +89,10 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 #app{height:100vh;display:flex;overflow:hidden}
 #side{flex:0 0 280px;width:280px;min-width:0;padding:8px;display:flex;flex-direction:column;gap:4px;min-height:0}
 .panel{flex:1;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;border-radius:26px;padding:12px 8px;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass)}
-.side-title{margin:6px 12px 10px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px}
+.side-title{margin:6px 4px 10px 12px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.side-title>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-btn{flex:none;letter-spacing:0}
+#welcome>.lang-btn{position:absolute;top:16px;right:16px}
 .fakesearch{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:calc(100% - 8px);margin:0 4px 10px;height:36px;padding:0 10px;border-radius:999px;background:var(--fill-tertiary);color:var(--label-secondary);cursor:text}
 .fakesearch kbd{margin-left:auto;font:inherit;font-size:12px;color:var(--label-secondary)}
 .fakesearch:focus-visible{box-shadow:var(--focus-ring)}
@@ -135,7 +138,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px 12px 24px;flex:none}
 .crumb{display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 200px;overflow:hidden;white-space:nowrap;font-size:15px;line-height:20px;color:var(--label-secondary)}
 .crumb .ic{flex:none}
-.crumb span{flex:0 1 auto;min-width:2.5em}
+.crumb span{flex:0 1 auto;min-width:2.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .crumb span:last-child{flex-shrink:1;min-width:0;color:var(--label);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .status{display:flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:var(--label-secondary)}
@@ -229,7 +232,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 #suggest{position:fixed;z-index:25;width:min(340px,calc(100vw - 24px));max-width:min(340px,calc(100vw - 24px));max-height:320px;overflow-x:hidden;overflow-y:auto}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-glass),var(--shadow-float);font-size:15px;line-height:20px}
 
-@media (max-width: 1100px){#list{flex-basis:280px;width:280px}#side{flex-basis:240px;width:240px}}
+@media (max-width: 1100px){#list{flex-basis:280px;width:280px}#side{flex-basis:240px;width:240px}.side-title{font-size:24px;letter-spacing:0}.wide-only{display:none}.lang-btn{padding-left:8px;padding-right:8px}}
 @media (max-width: 860px){#app{flex-direction:column;height:auto;overflow:visible}#side,#list{flex:none;width:auto;max-height:none}#side .panel{max-height:50vh}.list-b{max-height:50vh}#main{min-height:80vh}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 @media (prefers-reduced-transparency: reduce){.panel,.menu,#toast{background:var(--bg-elevated);backdrop-filter:none;-webkit-backdrop-filter:none}}
@@ -238,20 +241,21 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 <body>
 
 <div id="welcome" hidden>
+  <button class="btn plain small lang-btn" id="w-lang"></button>
   <div class="inner">
     <div class="tile" id="w-tile"></div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="font-size:17px;line-height:22px;font-weight:600;color:var(--label-secondary)">Incognote</div>
-      <h1 class="large-title">打开你的笔记文件夹</h1>
-      <p>笔记仍然是这个文件夹里的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。</p>
+      <h1 class="large-title" data-i18n="w.title"></h1>
+      <p data-i18n="w.desc"></p>
     </div>
-    <div id="w-unsupported" class="notice" hidden>这个浏览器不能写入本地文件夹。请用 Chrome 或 Edge 打开这个文件；也可以先以只读方式浏览。</div>
+    <div id="w-unsupported" class="notice" hidden data-i18n="w.unsupported"></div>
     <button class="btn filled large" id="w-pick" style="min-width:240px"></button>
     <input type="file" id="w-input" webkitdirectory multiple hidden>
     <div class="group" id="w-recent" hidden>
-      <div class="group-h">上次打开</div>
+      <div class="group-h" data-i18n="w.recent"></div>
       <div class="group-b"><button class="row" id="w-resume"></button></div>
-      <div class="group-f">出于安全考虑，Chrome 每次重新打开时会请你再点一次“允许”。</div>
+      <div class="group-f" data-i18n="w.recentFoot"></div>
     </div>
     <div class="footnote secondary" id="w-foot"></div>
   </div>
@@ -259,55 +263,55 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 
 <div id="app" hidden>
   <aside id="side">
-    <nav class="panel" aria-label="笔记文件夹">
-      <div class="side-title">Incognote</div>
-      <button class="fakesearch" id="open-search" aria-label="搜索所有笔记"></button>
+    <nav class="panel" data-i18n-aria="side.aria">
+      <div class="side-title"><span>Incognote</span><button class="btn plain small lang-btn" id="side-lang"></button></div>
+      <button class="fakesearch" id="open-search" data-i18n-aria="searchAll"></button>
       <div id="side-fixed"></div>
-      <button class="sec-h" id="tree-toggle" aria-expanded="true"><span>文件夹</span></button>
+      <button class="sec-h" id="tree-toggle" aria-expanded="true"></button>
       <div id="tree"></div>
     </nav>
     <div class="side-foot">
       <span class="secondary" id="foot-ic"></span>
       <div class="txt"><div class="footnote" id="foot-name"></div><div class="caption secondary" id="foot-meta"></div></div>
-      <button class="btn plain small" id="change-folder">更换</button>
+      <button class="btn plain small" id="change-folder" data-i18n="side.change"></button>
     </div>
   </aside>
 
-  <section id="list" aria-label="笔记列表">
+  <section id="list" data-i18n-aria="list.aria">
     <div class="list-h">
       <div style="min-width:0"><h2 id="list-title"></h2><div class="sub secondary" id="list-meta"></div></div>
-      <button class="btn gray icon" id="new-note" aria-label="新建笔记" title="新建笔记（⌘N 在浏览器里被占用，请点这里）"></button>
+      <button class="btn gray icon" id="new-note" data-i18n-aria="list.new" data-i18n-title="list.newTip"></button>
     </div>
     <div class="list-b" id="notes"></div>
   </section>
 
   <main id="main">
     <div class="pane" id="pane">
-      <div class="placeholder" id="empty-pane"><div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)">选择一篇笔记</div><div class="sub" style="margin-top:6px">或者按 ⌘K 搜索所有笔记</div></div></div>
+      <div class="placeholder" id="empty-pane"><div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)" data-i18n="pane.pick"></div><div class="sub" style="margin-top:6px" data-i18n="pane.orSearch"></div></div></div>
       <div class="toolbar" id="toolbar" hidden>
-        <nav class="crumb" id="crumb" aria-label="位置"></nav>
+        <nav class="crumb" id="crumb" data-i18n-aria="crumb"></nav>
         <div class="tools">
           <span class="status" id="status" hidden><span class="dot"></span><span id="status-t"></span></span>
-          <div class="seg" role="group" aria-label="显示方式"><button id="m-read" aria-pressed="true">阅读</button><button id="m-edit" aria-pressed="false">编辑</button></div>
-          <button class="btn filled" id="save" hidden>保存</button>
-          <button class="btn gray icon" id="more" aria-label="更多"></button>
+          <div class="seg" role="group" data-i18n-aria="mode"><button id="m-read" aria-pressed="true" data-i18n="read"></button><button id="m-edit" aria-pressed="false" data-i18n="edit"></button></div>
+          <button class="btn filled" id="save" hidden data-i18n="save"></button>
+          <button class="btn gray icon" id="more" data-i18n-aria="more"></button>
         </div>
       </div>
       <div class="scroll" id="reader" hidden><article class="md" id="article"></article></div>
-      <div class="editor-wrap" id="editor" hidden><textarea id="ed" spellcheck="false" aria-label="Markdown 源码"></textarea></div>
-      <div class="statusbar" id="edbar" hidden><span id="edbar-l">输入 [[ 可以链接其他笔记 · 粘贴图片会存到 assets 文件夹</span><span id="edbar-r"></span></div>
+      <div class="editor-wrap" id="editor" hidden><textarea id="ed" spellcheck="false" data-i18n-aria="ed.aria"></textarea></div>
+      <div class="statusbar" id="edbar" hidden><span id="edbar-l" data-i18n="ed.hint"></span><span id="edbar-r"></span></div>
     </div>
   </main>
 </div>
 
 <div id="palette" hidden>
-  <div class="pal" role="dialog" aria-label="搜索所有笔记">
+  <div class="pal" role="dialog" data-i18n-aria="searchAll">
     <div class="pal-top">
-      <label class="searchbox"><span id="pal-ic"></span><input id="q" placeholder="搜索所有笔记" autocomplete="off" aria-label="搜索所有笔记"></label>
-      <button class="btn plain small" id="pal-cancel">取消</button>
+      <label class="searchbox"><span id="pal-ic"></span><input id="q" autocomplete="off" data-i18n-ph="searchAll" data-i18n-aria="searchAll"></label>
+      <button class="btn plain small" id="pal-cancel" data-i18n="cancel"></button>
     </div>
     <div class="pal-body" id="results"></div>
-    <div class="pal-foot"><span>↑ ↓ 选择　↩ 打开　esc 关闭　多个关键词用空格分隔</span><span id="pal-count"></span></div>
+    <div class="pal-foot"><span data-i18n="pal.foot"></span><span id="pal-count"></span></div>
   </div>
 </div>
 <div class="menu" id="menu" hidden></div>
@@ -354,6 +358,120 @@ const prefs = {
   set(k, v) { try { localStorage.setItem('incognote.' + k, JSON.stringify(v)); } catch (e) {} }
 };
 
+/* ---------- language ---------- */
+// Interface text in Chinese and English. Default follows the browser; the choice is remembered.
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || '') || /Mac OS X/.test(navigator.userAgent);
+const MOD = IS_MAC ? '⌘' : 'Ctrl+';
+const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : many}`;
+const STR = {
+  zh: {
+    'lang.other': 'EN', 'lang.aria': 'Switch to English',
+    'w.title': '打开你的笔记文件夹',
+    'w.desc': '笔记仍然是这个文件夹里的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。',
+    'w.unsupported': '这个浏览器不能写入本地文件夹。请用 Chrome 或 Edge 打开这个文件；也可以先以只读方式浏览。',
+    'w.recent': '上次打开', 'w.recentFoot': '出于安全考虑，Chrome 每次重新打开时会请你再点一次“允许”。',
+    'w.local': '数据只在这台电脑上', 'w.roNow': ' · 当前为只读模式', 'w.pick': '选择文件夹', 'w.pickRO': '以只读方式打开',
+    'w.resume': '继续使用上次的文件夹', 'noPermission': '没有获得访问权限', 'cantOpenRetry': '无法打开这个文件夹，请重新选择',
+    'cantOpen': '无法打开这个文件夹', 'loading': '正在读取笔记…', 'loadFail': '读取失败：',
+    'side.aria': '笔记文件夹', 'searchAll': '搜索所有笔记', 'search': '搜索', 'side.change': '更换', 'all': '全部笔记', 'recent': '最近',
+    'side.noSub': '没有子文件夹', 'side.count': (n) => `${n} 篇`, 'side.ro': ' · 只读', 'side.local': ' · 仅存本机',
+    'list.aria': '笔记列表', 'list.new': '新建笔记', 'list.newTip': `新建笔记（${MOD}N 在浏览器里被占用，请点这里）`,
+    'list.meta': (n) => `${n} 篇笔记 · 按修改时间`, 'list.noMore': '没有更多内容', 'list.empty': '这里还没有笔记', 'list.emptyHint': '点右上角的 + 新建一篇',
+    'pane.pick': '选择一篇笔记', 'pane.orSearch': `或者按 ${MOD}K 搜索所有笔记`,
+    'crumb': '位置', 'mode': '显示方式', 'read': '阅读', 'edit': '编辑', 'save': '保存', 'more': '更多', 'cancel': '取消',
+    'ed.aria': 'Markdown 源码', 'ed.hint': '输入 [[ 可以链接其他笔记 · 粘贴图片会存到 assets 文件夹',
+    'pal.foot': '↑ ↓ 选择　↩ 打开　esc 关闭　多个关键词用空格分隔',
+    'wiki.missing': '还没有这篇笔记，点一下新建', 'ro.noEdit': '只读模式下不能编辑，请用 Chrome 或 Edge 打开',
+    'meta': (d, text) => `修改于 ${d} · ${text.replace(/\s/g, '').length.toLocaleString()} 字`,
+    'img.external': '外部图片未加载（这个页面不联网）', 'img.notFound': '找不到图片：', 'img.cantRead': '无法读取图片：',
+    'backlinks': '反向链接', 'link.notFound': '找不到链接的笔记：', 'link.noNote': (x) => `还没有「${x}」这篇笔记`,
+    'st.saving': '正在保存', 'st.conflict': '有冲突，未保存', 'st.dirty': '未保存的更改', 'st.saved': '已保存',
+    'edbar': (text, line) => `Markdown · ${text.replace(/\s/g, '').length.toLocaleString()} 字 · 第 ${line} 行　${MOD}S 保存`,
+    'cf.gone': (x) => `「${x}」已经在别处被删除或改名。\n\n确定：按原来的位置重新保存一份\n取消：先不保存`,
+    'cf.changed': (x) => `「${x}」在别处被改过。\n\n确定：用你现在的版本覆盖\n取消：保留文件，你的修改先留在编辑器里（按 ${MOD}S 可以再选一次）`,
+    'saveFail': '保存失败：', 'cf.discard': '这篇笔记的修改还没有保存。\n\n确定：放弃这些修改\n取消：留在这里',
+    'paste.name': '粘贴图片', 'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
+    'sg.create': (x) => `链接到新笔记「${x}」`, 'untitled': '未命名', 'createFail': '新建失败：',
+    'rn.prompt': '新的文件名（不需要 .md）', 'rn.exists': '这个文件夹里已经有同名文件',
+    'rn.skipped': (a, b) => `已重命名；更新了 ${a} 篇的链接，${b} 篇因为在别处被改过而跳过`,
+    'rn.touched': (a) => `已重命名，并更新了 ${a} 篇笔记里的链接`, 'rn.done': '已重命名', 'rn.fail': '重命名失败：',
+    'menu.rename': '重命名', 'menu.copy': '复制链接写法', 'menu.refresh': '重新读取文件夹', 'menu.delete': '删除笔记', 'copied': '已复制',
+    'del.confirm': (x, bl) => `删除「${x}」？\n\n文件会从文件夹里永久删除，不会进废纸篓。` + (bl ? `\n有 ${bl} 篇笔记链接到它，这些链接会变成“未创建”。` : ''),
+    'del.done': '已删除', 'del.fail': '删除失败：',
+    'ext.changed': '这篇笔记在别处被修改，已载入最新内容', 'ext.gone': `这篇笔记在别处被删除或改名了。你的修改还在，${MOD}S 可以重新保存`, 'reloaded': '已重新读取',
+    'g.recent': '最近修改', 'g.name': '文件名', 'g.body': '正文',
+    'pal.none': (q) => `没有找到包含“${q}”的笔记`, 'pal.found': (a, b) => `在 ${b} 篇笔记中找到 ${a} 篇`, 'pal.total': (a) => `共 ${a} 篇笔记`,
+    'date.md': (d) => `${d.getMonth() + 1}月${d.getDate()}日`, 'date.ymd': (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+  },
+  en: {
+    'lang.other': '中文', 'lang.aria': '切换到中文',
+    'w.title': 'Open your notes folder',
+    'w.desc': 'Your notes stay as .md files in this folder. This page reads and writes them only on your computer. It never goes online and never uploads anything.',
+    'w.unsupported': 'This browser can’t write to local folders. Open this file in Chrome or Edge, or browse read-only for now.',
+    'w.recent': 'Last opened', 'w.recentFoot': 'For security, Chrome asks you to click “Allow” again each time you reopen this page.',
+    'w.local': 'Your notes stay on this computer', 'w.roNow': ' · Read-only mode', 'w.pick': 'Choose folder', 'w.pickRO': 'Open read-only',
+    'w.resume': 'Continue with this folder', 'noPermission': 'Access was not granted', 'cantOpenRetry': 'Couldn’t open this folder. Please choose it again.',
+    'cantOpen': 'Couldn’t open this folder', 'loading': 'Reading notes…', 'loadFail': 'Couldn’t read the folder: ',
+    'side.aria': 'Note folders', 'searchAll': 'Search all notes', 'search': 'Search', 'side.change': 'Change', 'all': 'All notes', 'recent': 'Recent',
+    'side.noSub': 'No subfolders', 'side.count': (n) => plural(n, 'note', 'notes'), 'side.ro': ' · Read-only', 'side.local': ' · Local only',
+    'list.aria': 'Notes', 'list.new': 'New note', 'list.newTip': `New note (${MOD}N is taken by the browser, so use this button)`,
+    'list.meta': (n) => `${plural(n, 'note', 'notes')} · by last modified`, 'list.noMore': 'No text yet', 'list.empty': 'No notes here yet', 'list.emptyHint': 'Click + above to create one',
+    'pane.pick': 'Select a note', 'pane.orSearch': `or press ${MOD}K to search all notes`,
+    'crumb': 'Location', 'mode': 'View', 'read': 'Read', 'edit': 'Edit', 'save': 'Save', 'more': 'More', 'cancel': 'Cancel',
+    'ed.aria': 'Markdown source', 'ed.hint': 'Type [[ to link another note · Pasted images are saved to the assets folder',
+    'pal.foot': '↑ ↓ select · ↩ open · esc close · separate words with spaces',
+    'wiki.missing': 'This note doesn’t exist yet. Click to create it.', 'ro.noEdit': 'Editing isn’t available in read-only mode. Open this file in Chrome or Edge.',
+    'meta': (d, text) => `Modified ${/:/.test(d) ? 'at ' : ''}${d} · ${plural(countWords(text), 'word', 'words')}`,
+    'img.external': 'External image not loaded (this page never goes online)', 'img.notFound': 'Image not found: ', 'img.cantRead': 'Couldn’t read image: ',
+    'backlinks': 'Backlinks', 'link.notFound': 'Linked note not found: ', 'link.noNote': (x) => `There’s no note named “${x}” yet`,
+    'st.saving': 'Saving…', 'st.conflict': 'Conflict, not saved', 'st.dirty': 'Unsaved changes', 'st.saved': 'Saved',
+    'edbar': (text, line) => `Markdown · ${plural(countWords(text), 'word', 'words')} · Line ${line} · ${MOD}S to save`,
+    'cf.gone': (x) => `“${x}” was deleted or renamed somewhere else.\n\nOK: save a new copy at the original location\nCancel: don’t save for now`,
+    'cf.changed': (x) => `“${x}” was changed somewhere else.\n\nOK: overwrite it with your version\nCancel: keep the file; your edits stay in the editor (press ${MOD}S to choose again)`,
+    'saveFail': 'Couldn’t save: ', 'cf.discard': 'Your changes to this note haven’t been saved.\n\nOK: discard them\nCancel: stay here',
+    'paste.name': 'Pasted image', 'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
+    'sg.create': (x) => `Link to new note “${x}”`, 'untitled': 'Untitled', 'createFail': 'Couldn’t create the note: ',
+    'rn.prompt': 'New file name (without .md)', 'rn.exists': 'A file with this name already exists in this folder',
+    'rn.skipped': (a, b) => (a ? `Renamed. Updated links in ${plural(a, 'note', 'notes')}; ` : 'Renamed. ') + `skipped ${plural(b, 'note', 'notes')} that changed somewhere else`,
+    'rn.touched': (a) => `Renamed and updated links in ${plural(a, 'note', 'notes')}`, 'rn.done': 'Renamed', 'rn.fail': 'Couldn’t rename: ',
+    'menu.rename': 'Rename', 'menu.copy': 'Copy link', 'menu.refresh': 'Reload folder', 'menu.delete': 'Delete note', 'copied': 'Copied',
+    'del.confirm': (x, bl) => `Delete “${x}”?\n\nThe file will be permanently deleted from the folder. It won’t go to the Trash.` + (bl ? `\n${plural(bl, 'note links', 'notes link')} to it; those links will point to a missing note.` : ''),
+    'del.done': 'Deleted', 'del.fail': 'Couldn’t delete: ',
+    'ext.changed': 'This note was changed somewhere else. The latest version is loaded.', 'ext.gone': `This note was deleted or renamed somewhere else. Your edits are still here; press ${MOD}S to save it again.`, 'reloaded': 'Reloaded',
+    'g.recent': 'Recently modified', 'g.name': 'File name', 'g.body': 'Content',
+    'pal.none': (q) => `No notes contain “${q}”`, 'pal.found': (a, b) => `Found ${a} of ${plural(b, 'note', 'notes')}`, 'pal.total': (a) => plural(a, 'note', 'notes'),
+    'date.md': (d) => d.toLocaleDateString(enLocale(), { month: 'short', day: 'numeric' }), 'date.ymd': (d) => d.toLocaleDateString(enLocale(), { year: 'numeric', month: 'short', day: 'numeric' })
+  }
+};
+// Words for English, plus one per CJK character so mixed notes still count sensibly.
+const countWords = (text) => (text.match(/[぀-ヿ㐀-鿿豈-﫿가-힯]|[A-Za-z0-9À-ɏЀ-ӿ'’_-]+/g) || []).length;
+const enLocale = () => { const l = (navigator.languages && navigator.languages[0]) || navigator.language || ''; return /^en\b/i.test(l) ? l : 'en-US'; };
+const detectLang = () => { try { return /^zh\b/i.test((navigator.languages && navigator.languages[0]) || navigator.language || '') ? 'zh' : 'en'; } catch (e) { return 'en'; } };
+let LANG = 'en';
+function tx(k, ...a) { const v = STR[LANG][k] !== undefined ? STR[LANG][k] : STR.zh[k]; return typeof v === 'function' ? v(...a) : v; }
+function applyStatic() {
+  document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = tx(el.dataset.i18n);
+  for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', tx(el.dataset.i18nAria));
+  for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = tx(el.dataset.i18nTitle);
+  for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = tx(el.dataset.i18nPh);
+  for (const b of [$('#w-lang'), $('#side-lang')]) { b.textContent = tx('lang.other'); b.setAttribute('aria-label', tx('lang.aria')); b.lang = LANG === 'zh' ? 'en' : 'zh-CN'; }
+}
+function setLang(l) {
+  LANG = l === 'zh' ? 'zh' : 'en';
+  applyStatic(); hideToast(); $('#menu').hidden = true;
+  if (!$('#welcome').hidden) { showWelcome(); return; }
+  if ($('#app').hidden) return;
+  renderSide(); renderListKeepScroll();
+  const n = S.current && S.notes.get(S.current);
+  if (n) {
+    if (S.mode === 'read') { const y = $('#reader').scrollTop; renderArticle(n); $('#reader').scrollTop = y; }
+    else updateEdBar();
+    updateStatus();
+  }
+  if (!$('#palette').hidden) runSearch();
+}
+
 /* ---------- markdown ---------- */
 const md = window.markdownit({ html: true, linkify: true, breaks: false });
 function wikiRule(isEmbed) {
@@ -382,7 +500,7 @@ md.renderer.rules.wikilink = (t, i) => {
   const { target, label } = t[i].meta;
   const name = target.split('#')[0];
   const ok = !name || !!resolveNote(name);
-  return `<a href="#" class="wikilink${ok ? '' : ' missing'}" ${A.wiki}="${esc(target)}" title="${ok ? '' : '还没有这篇笔记，点一下新建'}">${esc(label)}</a>`;
+  return `<a href="#" class="wikilink${ok ? '' : ' missing'}" ${A.wiki}="${esc(target)}" title="${ok ? '' : esc(tx('wiki.missing'))}">${esc(label)}</a>`;
 };
 md.renderer.rules.wikiembed = (t, i) => {
   const { target, label } = t[i].meta;
@@ -606,18 +724,18 @@ const canWrite = 'showDirectoryPicker' in window;
 async function showWelcome() {
   $('#app').hidden = true; $('#welcome').hidden = false;
   $('#w-tile').innerHTML = icon('folder', 40);
-  $('#w-foot').innerHTML = icon('lock', 15) + ' 数据只在这台电脑上' + (canWrite ? '' : ' · 当前为只读模式');
-  $('#w-pick').innerHTML = icon('folder', 20) + (canWrite ? '选择文件夹' : '以只读方式打开');
+  $('#w-foot').innerHTML = icon('lock', 15) + ' ' + esc(tx('w.local') + (canWrite ? '' : tx('w.roNow')));
+  $('#w-pick').innerHTML = icon('folder', 20) + esc(canWrite ? tx('w.pick') : tx('w.pickRO'));
   $('#w-unsupported').hidden = canWrite;
   const saved = canWrite ? await idb.get('root') : null;
   if (saved) {
     $('#w-recent').hidden = false;
-    $('#w-resume').innerHTML = `<span class="mini">${icon('folder', 18)}</span><span style="flex:1;min-width:0"><span style="display:block">${esc(saved.name)}</span><span class="sub secondary" style="display:block">继续使用上次的文件夹</span></span>${icon('chevron.right', 14, 'secondary')}`;
+    $('#w-resume').innerHTML = `<span class="mini">${icon('folder', 18)}</span><span style="flex:1;min-width:0"><span style="display:block">${esc(saved.name)}</span><span class="sub secondary" style="display:block">${esc(tx('w.resume'))}</span></span>${icon('chevron.right', 14, 'secondary')}`;
     $('#w-resume').onclick = async () => {
       try {
         const ok = (await saved.requestPermission({ mode: 'readwrite' })) === 'granted';
-        if (ok) { await openRoot(saved); } else toast('没有获得访问权限');
-      } catch (e) { toast('无法打开这个文件夹，请重新选择'); }
+        if (ok) { await openRoot(saved); } else toast(tx('noPermission'));
+      } catch (e) { toast(tx('cantOpenRetry')); }
     };
   }
 }
@@ -629,12 +747,12 @@ async function pickFolder() {
     const h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'notes' });
     await idb.set('root', h);
     await openRoot(h);
-  } catch (e) { if (e && e.name !== 'AbortError') toast('无法打开这个文件夹'); }
+  } catch (e) { if (e && e.name !== 'AbortError') toast(tx('cantOpen')); }
 }
 $('#w-input').onchange = async (e) => { if (e.target.files.length) { await loadFromFiles(e.target.files); enterApp(); } };
 async function openRoot(h) {
-  toast('正在读取笔记…', 0);
-  try { await loadFromHandle(h); } catch (e) { toast('读取失败：' + (e.message || e)); return; }
+  toast(tx('loading'), 0);
+  try { await loadFromHandle(h); } catch (e) { toast(tx('loadFail') + (e.message || e)); return; }
   hideToast();
   enterApp();
 }
@@ -651,8 +769,8 @@ function enterApp() {
 /* ---------- sidebar ---------- */
 function countIn(folder) { let c = 0; for (const n of S.notes.values()) if (n.folder === folder || n.folder.startsWith(folder + '/')) c++; return c; }
 function renderSide() {
-  $('#open-search').innerHTML = icon('magnifyingglass', 17) + '<span>搜索</span><kbd>⌘K</kbd>';
-  const fixed = [['all', 'tray', '全部笔记', S.notes.size], ['recent', 'clock', '最近', '']];
+  $('#open-search').innerHTML = icon('magnifyingglass', 17) + `<span>${esc(tx('search'))}</span><kbd>${MOD}K</kbd>`;
+  const fixed = [['all', 'tray', tx('all'), S.notes.size], ['recent', 'clock', tx('recent'), '']];
   $('#side-fixed').innerHTML = fixed.map(([k, ic, l, c]) =>
     `<button class="item${S.view.kind === k ? ' sel' : ''}" data-view="${k}">${icon(ic, 20, 'lead')}<span class="lbl">${l}</span><span class="cnt">${c}</span></button>`).join('');
   $('#tree-toggle').innerHTML = `<span>${esc(S.rootName)}</span>` + icon('chevron.down', 14);
@@ -674,11 +792,11 @@ function renderSide() {
     }
   };
   visit('', 0);
-  $('#tree').innerHTML = rows.join('') || '<div class="footnote secondary" style="padding:4px 12px">没有子文件夹</div>';
+  $('#tree').innerHTML = rows.join('') || `<div class="footnote secondary" style="padding:4px 12px">${esc(tx('side.noSub'))}</div>`;
   $('#tree').hidden = !S.treeOpen;
   $('#foot-ic').innerHTML = icon('folder', 18);
   $('#foot-name').textContent = S.rootName;
-  $('#foot-meta').textContent = `${S.notes.size} 篇` + (S.readonly ? ' · 只读' : ' · 只存在这台电脑上');
+  $('#foot-meta').innerHTML = esc(tx('side.count', S.notes.size)) + `<span class="wide-only">${esc(S.readonly ? tx('side.ro') : tx('side.local'))}</span>`;
 }
 $('#side').addEventListener('click', async (e) => {
   const tw = e.target.closest('[data-twisty]');
@@ -697,8 +815,8 @@ function fmtDate(ms) {
   const d = new Date(ms), now = new Date();
   const p2 = (x) => String(x).padStart(2, '0');
   if (d.toDateString() === now.toDateString()) return `${p2(d.getHours())}:${p2(d.getMinutes())}`;
-  if (d.getFullYear() === now.getFullYear()) return `${d.getMonth() + 1}月${d.getDate()}日`;
-  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+  if (d.getFullYear() === now.getFullYear()) return tx('date.md', d);
+  return tx('date.ymd', d);
 }
 function notesInView() {
   let arr = [...S.notes.values()];
@@ -709,14 +827,14 @@ function notesInView() {
 }
 function renderList() {
   const arr = notesInView();
-  $('#list-title').textContent = S.view.kind === 'all' ? '全部笔记' : S.view.kind === 'recent' ? '最近' : baseOf(S.view.folder);
-  $('#list-meta').textContent = `${arr.length} 篇笔记 · 按修改时间`;
+  $('#list-title').textContent = S.view.kind === 'all' ? tx('all') : S.view.kind === 'recent' ? tx('recent') : baseOf(S.view.folder);
+  $('#list-meta').textContent = tx('list.meta', arr.length);
   $('#new-note').innerHTML = icon('plus', 18);
   $('#new-note').disabled = S.readonly;
   $('#notes').innerHTML = arr.length ? arr.map((n) =>
     `<button class="note${n.path === S.current ? ' sel' : ''}" data-path="${esc(n.path)}"><span class="t">${esc(n.title)}</span>` +
-    `<span class="m"><span class="d">${fmtDate(n.mtime)}</span><span class="s">${esc(n.snippet || '没有更多内容')}</span></span></button>`).join('')
-    : `<div class="empty">这里还没有笔记${S.readonly ? '' : '<br>点右上角的 + 新建一篇'}</div>`;
+    `<span class="m"><span class="d">${fmtDate(n.mtime)}</span><span class="s">${esc(n.snippet || tx('list.noMore'))}</span></span></button>`).join('')
+    : `<div class="empty">${esc(tx('list.empty'))}${S.readonly ? '' : '<br>' + esc(tx('list.emptyHint'))}</div>`;
 }
 $('#notes').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (b) openNote(b.dataset.path); });
 
@@ -752,7 +870,7 @@ function renderCrumb(n) {
 }
 function setMode(mode, opts = {}) {
   const n = S.notes.get(S.current); if (!n) return;
-  if (mode === 'edit' && S.readonly) { toast('只读模式下不能编辑，请用 Chrome 或 Edge 打开'); mode = 'read'; }
+  if (mode === 'edit' && S.readonly) { toast(tx('ro.noEdit')); mode = 'read'; }
   S.mode = mode;
   $('#m-read').setAttribute('aria-pressed', mode === 'read');
   $('#m-edit').setAttribute('aria-pressed', mode === 'edit');
@@ -780,7 +898,7 @@ function renderArticle(n, highlight) {
   const html = DOMPurify.sanitize(md.render(body), PURIFY);
   const art = $('#article');
   art.innerHTML = html;
-  const meta = `<div class="meta">修改于 ${fmtDate(n.mtime)} · ${body.replace(/\s/g, '').length.toLocaleString()} 字</div>`;
+  const meta = `<div class="meta">${esc(tx('meta', fmtDate(n.mtime), body))}</div>`;
   const firstEl = art.firstElementChild;
   const props = fm && fm.length ? `<dl class="props">${fm.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : '';
   if (firstEl && firstEl.tagName === 'H1') firstEl.insertAdjacentHTML('afterend', meta + props);
@@ -805,11 +923,11 @@ function renderArticle(n, highlight) {
   for (const img of art.querySelectorAll('img')) {
     const raw = img.getAttribute(A.local) || '';
     if (/^data:image\//i.test(raw)) { img.src = raw; continue; }
-    if (/^[a-z]+:/i.test(raw)) { replaceImg(img, '外部图片未加载（这个页面不联网）'); continue; }
+    if (/^[a-z]+:/i.test(raw)) { replaceImg(img, tx('img.external')); continue; }
     const key = resolveFile(raw, n.folder, img.hasAttribute(A.byname));
-    if (!key) { replaceImg(img, '找不到图片：' + raw); continue; }
+    if (!key) { replaceImg(img, tx('img.notFound') + raw); continue; }
     img.removeAttribute('src'); img.loading = 'lazy';
-    imgUrl(key).then((u) => { img.src = u; }).catch(() => replaceImg(img, '无法读取图片：' + raw));
+    imgUrl(key).then((u) => { img.src = u; }).catch(() => replaceImg(img, tx('img.cantRead') + raw));
   }
   // links
   for (const a of art.querySelectorAll('a[href]')) {
@@ -819,7 +937,7 @@ function renderArticle(n, highlight) {
   // backlinks
   const bl = backlinksOf(n);
   if (bl.length) {
-    art.insertAdjacentHTML('beforeend', `<section class="backlinks"><h3>反向链接 · ${bl.length}</h3>` +
+    art.insertAdjacentHTML('beforeend', `<section class="backlinks"><h3>${esc(tx('backlinks'))} · ${bl.length}</h3>` +
       bl.map(({ n: x, ctx }) => `<button class="bl" ${A.open}="${esc(x.path)}"><span class="t">${esc(x.title)}</span><span class="s">${esc(ctx)}</span></button>`).join('') + '</section>');
   }
   $('#reader').scrollTop = 0;
@@ -864,7 +982,7 @@ $('#article').addEventListener('click', async (e) => {
     const n = S.notes.get(S.current);
     let p = h; try { p = decodeURIComponent(h); } catch (x) {}
     const target = resolveNote(joinPath(n.folder, p.split('#')[0]), '') || resolveNote(p.split('#')[0], n.folder);
-    if (target) openNote(target.path); else toast('找不到链接的笔记：' + p);
+    if (target) openNote(target.path); else toast(tx('link.notFound') + p);
   }
 });
 async function followWiki(target) {
@@ -874,7 +992,7 @@ async function followWiki(target) {
   if (!name) { if (heading) scrollToHeading(heading); return; }
   const n = resolveNote(name, cur && cur.folder);
   if (n) { await openNote(n.path); if (heading) scrollToHeading(heading); return; }
-  if (S.readonly) { toast('还没有「' + name + '」这篇笔记'); return; }
+  if (S.readonly) { toast(tx('link.noNote', name)); return; }
   await createNote(cur ? cur.folder : '', name.trim(), `# ${name.trim()}\n\n`);
 }
 function scrollToHeading(h) {
@@ -899,13 +1017,13 @@ function updateStatus() {
   if (S.mode !== 'edit' && !S.dirty) { st.hidden = true; return; }
   st.hidden = false;
   st.classList.toggle('saved', !S.dirty);
-  $('#status-t').textContent = S.saving ? '正在保存' : S.conflict ? '有冲突，未保存' : S.dirty ? '未保存的更改' : '已保存';
+  $('#status-t').textContent = tx(S.saving ? 'st.saving' : S.conflict ? 'st.conflict' : S.dirty ? 'st.dirty' : 'st.saved');
   $('#save').disabled = !S.dirty;
 }
 function updateEdBar() {
   const ed = $('#ed');
   const line = ed.value.slice(0, ed.selectionStart).split('\n').length;
-  $('#edbar-r').textContent = `Markdown · ${ed.value.replace(/\s/g, '').length.toLocaleString()} 字 · 第 ${line} 行　⌘S 保存`;
+  $('#edbar-r').textContent = tx('edbar', ed.value, line);
 }
 $('#ed').addEventListener('input', () => {
   const n = S.notes.get(S.current); if (!n) return;
@@ -929,10 +1047,10 @@ async function saveNow(explicit) {
       let disk = null;
       try { disk = await (await n.handle.getFile()).text(); } catch (e) { disk = null; }
       if (disk === null) {
-        if (!confirm(`「${n.title}」已经在别处被删除或改名。\n\n确定：按原来的位置重新保存一份\n取消：先不保存`)) { S.conflict = true; return false; }
+        if (!confirm(tx('cf.gone', n.title))) { S.conflict = true; return false; }
         n.handle = await (await dirHandle(n.folder)).getFileHandle(baseOf(n.path), { create: true });
       } else if (disk !== n.base && disk !== text) {
-        if (!confirm(`「${n.title}」在别处被改过。\n\n确定：用你现在的版本覆盖\n取消：保留文件，你的修改先留在编辑器里（按 ⌘S 可以再选一次）`)) { S.conflict = true; return false; }
+        if (!confirm(tx('cf.changed', n.title))) { S.conflict = true; return false; }
       }
       const w = await n.handle.createWritable(); await w.write(text); await w.close();
       const f2 = await n.handle.getFile();
@@ -942,7 +1060,7 @@ async function saveNow(explicit) {
       S.gen++;
       renderListKeepScroll();
       return true;
-    } catch (e) { toast('保存失败：' + (e.message || e)); return false; }
+    } catch (e) { toast(tx('saveFail') + (e.message || e)); return false; }
   })();
   const ok = await S.saving; S.saving = null; updateStatus();
   if (S.current === n.path) renderCrumb(n);
@@ -951,7 +1069,7 @@ async function saveNow(explicit) {
 async function flushSave() {
   if (!S.dirty) return true;
   if (await saveNow(S.conflict ? true : undefined)) return true;
-  return confirm('这篇笔记的修改还没有保存。\n\n确定：放弃这些修改\n取消：留在这里');
+  return confirm(tx('cf.discard'));
 }
 function renderListKeepScroll() { const y = $('#notes').scrollTop; renderList(); $('#notes').scrollTop = y; renderSide(); }
 window.addEventListener('beforeunload', (e) => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
@@ -969,7 +1087,7 @@ $('#ed').addEventListener('paste', async (e) => {
     const blob = item.getAsFile();
     const ext = (item.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/\+.*/, '');
     const d = new Date(); const p2 = (x) => String(x).padStart(2, '0');
-    const stamp = `粘贴图片-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
+    const stamp = `${tx('paste.name')}-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
     const dir = await dirHandle(n.folder);
     const assets = await dir.getDirectoryHandle('assets', { create: true });
     let name = `${stamp}.${ext}`, k = 2;
@@ -979,8 +1097,8 @@ $('#ed').addEventListener('paste', async (e) => {
     const key = joinPath(n.folder, 'assets/' + name);
     S.files.set(key, fh); S.dirs.set(joinPath(n.folder, 'assets'), assets);
     document.execCommand('insertText', false, `![](assets/${encodeURI(name)})`);
-    toast('图片已存到 assets/' + name);
-  } catch (err) { toast('图片保存失败：' + (err.message || err)); }
+    toast(tx('paste.saved') + name);
+  } catch (err) { toast(tx('paste.fail') + (err.message || err)); }
 });
 async function exists(dir, name) { try { await dir.getFileHandle(name); return true; } catch (e) { try { await dir.getDirectoryHandle(name); return true; } catch (x) { return false; } } }
 const cleanName = (s) => s.replace(/[\\/:*?"<>|#^\[\]]/g, '-').replace(/^\.+/, '').trim();
@@ -1015,7 +1133,7 @@ function suggestCheck() {
 function renderSuggest() {
   const box = $('#suggest');
   const rows = SG.items.map((n, i) => `<button data-i="${i}" class="${i === SG.idx ? 'on' : ''}"><span>${esc(n.name)}</span><span class="s">${esc(n.folder || S.rootName)}</span></button>`);
-  if (SG.create) rows.push(`<button data-i="${SG.items.length}" class="${SG.idx === SG.items.length ? 'on' : ''}"><span>链接到新笔记「${esc(SG.create)}」</span>${icon('plus', 16)}</button>`);
+  if (SG.create) rows.push(`<button data-i="${SG.items.length}" class="${SG.idx === SG.items.length ? 'on' : ''}"><span>${esc(tx('sg.create', SG.create))}</span>${icon('plus', 16)}</button>`);
   box.innerHTML = rows.join(''); box.hidden = false; SG.open = true;
 }
 function positionSuggest() {
@@ -1064,7 +1182,7 @@ async function createNote(folder, base, body) {
   if (!(await flushSave())) return;
   try {
     const dir = await dirHandle(folder);
-    const clean = cleanName(base) || '未命名';
+    const clean = cleanName(base) || tx('untitled');
     let name = clean, i = 2;
     while (S.notes.has(joinPath(folder, name + '.md')) || (await exists(dir, name + '.md'))) name = `${clean} ${i++}`;
     const fh = await dir.getFileHandle(name + '.md', { create: true });
@@ -1075,12 +1193,12 @@ async function createNote(folder, base, body) {
     S.gen++; S.notes.set(path, n);
     renderSide(); renderList();
     await openNote(path, { mode: 'edit', selectTitle: true });
-  } catch (e) { toast('新建失败：' + (e.message || e)); }
+  } catch (e) { toast(tx('createFail') + (e.message || e)); }
 }
 $('#new-note').onclick = () => {
   const cur = S.notes.get(S.current);
   const folder = S.view.kind === 'folder' ? S.view.folder : cur ? cur.folder : '';
-  createNote(folder, '未命名', '# 未命名\n\n');
+  createNote(folder, tx('untitled'), `# ${tx('untitled')}\n\n`);
 };
 // Rewrite [[links]] in `text` (outside code) that point at `note`, giving them the new name.
 function relink(text, fromDir, note, newName) {
@@ -1104,7 +1222,7 @@ function relink(text, fromDir, note, newName) {
 async function renameNote() {
   const n = S.notes.get(S.current); if (!n || S.readonly) return;
   if (!(await flushSave())) return;
-  const nv = prompt('新的文件名（不需要 .md）', n.name);
+  const nv = prompt(tx('rn.prompt'), n.name);
   if (nv == null) return;
   const name = cleanName(nv);
   if (!name || name === n.name) return;
@@ -1112,7 +1230,7 @@ async function renameNote() {
   const caseOnly = name.toLowerCase() === n.name.toLowerCase();
   try {
     const dir = await dirHandle(n.folder);
-    if (!caseOnly && (S.notes.has(path) || (await exists(dir, name + '.md')))) { toast('这个文件夹里已经有同名文件'); return; }
+    if (!caseOnly && (S.notes.has(path) || (await exists(dir, name + '.md')))) { toast(tx('rn.exists')); return; }
     // 1. work out link updates while the old name still resolves
     const edits = [];
     for (const o of S.notes.values()) {
@@ -1153,16 +1271,16 @@ async function renameNote() {
       } catch (e) { skipped++; }
     }
     renderSide(); renderList(); renderCrumb(n); if (S.mode === 'read') renderArticle(n);
-    toast(skipped ? `已重命名；更新了 ${touched} 篇的链接，${skipped} 篇因为在别处被改过而跳过` : touched ? `已重命名，并更新了 ${touched} 篇笔记里的链接` : '已重命名');
-  } catch (e) { toast('重命名失败：' + (e.message || e)); refresh(true); }
+    toast(skipped ? tx('rn.skipped', touched, skipped) : touched ? tx('rn.touched', touched) : tx('rn.done'));
+  } catch (e) { toast(tx('rn.fail') + (e.message || e)); refresh(true); }
 }
 $('#more').onclick = (e) => {
   const n = S.notes.get(S.current); if (!n) return;
   const menu = $('#menu');
-  menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>重命名</span></button>` +
-    `<button data-act="copy"><span>复制链接写法</span><span class="s">[[${esc(n.name)}]]</span></button>` +
-    `<button data-act="refresh"><span>重新读取文件夹</span></button>` +
-    (S.readonly ? '' : `<div class="sep"></div><button data-act="delete" style="color:var(--danger)"><span>删除笔记</span></button>`);
+  menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>${esc(tx('menu.rename'))}</span></button>` +
+    `<button data-act="copy"><span>${esc(tx('menu.copy'))}</span><span class="s">[[${esc(n.name)}]]</span></button>` +
+    `<button data-act="refresh"><span>${esc(tx('menu.refresh'))}</span></button>` +
+    (S.readonly ? '' : `<div class="sep"></div><button data-act="delete" style="color:var(--danger)"><span>${esc(tx('menu.delete'))}</span></button>`);
   menu.hidden = false;
   const r = e.currentTarget.getBoundingClientRect();
   menu.style.top = r.bottom + 8 + 'px'; menu.style.left = Math.max(12, r.right - menu.offsetWidth) + 'px';
@@ -1172,14 +1290,14 @@ $('#menu').addEventListener('click', async (e) => {
   $('#menu').hidden = true;
   const n = S.notes.get(S.current);
   if (b.dataset.act === 'rename') renameNote();
-  if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(`[[${n.name}]]`); toast('已复制'); } catch (x) { toast(`[[${n.name}]]`); } }
+  if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(`[[${n.name}]]`); toast(tx('copied')); } catch (x) { toast(`[[${n.name}]]`); } }
   if (b.dataset.act === 'refresh') refresh(true);
   if (b.dataset.act === 'delete') deleteNote();
 });
 async function deleteNote() {
   const n = S.notes.get(S.current); if (!n || S.readonly) return;
   const bl = backlinksOf(n).length;
-  if (!confirm(`删除「${n.title}」？\n\n文件会从文件夹里永久删除，不会进废纸篓。` + (bl ? `\n有 ${bl} 篇笔记链接到它，这些链接会变成“未创建”。` : ''))) return;
+  if (!confirm(tx('del.confirm', n.title, bl))) return;
   try {
     clearTimeout(S.timer);
     const dir = await dirHandle(n.folder);
@@ -1187,8 +1305,8 @@ async function deleteNote() {
     S.gen++; n.draft = null;
     S.notes.delete(n.path); S.current = null; S.dirty = false; S.conflict = false;
     showPane(false); renderSide(); renderList();
-    toast('已删除');
-  } catch (e) { toast('删除失败：' + (e.message || e)); }
+    toast(tx('del.done'));
+  } catch (e) { toast(tx('del.fail') + (e.message || e)); }
 }
 document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more')) $('#menu').hidden = true; });
 
@@ -1206,11 +1324,11 @@ async function refresh(force) {
       else if ($('#ed').value !== n.text) {           // file changed elsewhere and nothing unsaved here: show the new text
         const ed = $('#ed'), a = ed.selectionStart, b = ed.selectionEnd;
         n.base = n.text; ed.value = n.text; ed.setSelectionRange(Math.min(a, ed.value.length), Math.min(b, ed.value.length));
-        toast('这篇笔记在别处被修改，已载入最新内容');
+        toast(tx('ext.changed'));
       }
     }
-    if (n && n.gone) toast('这篇笔记在别处被删除或改名了。你的修改还在，⌘S 可以重新保存');
-    if (force) toast('已重新读取');
+    if (n && n.gone) toast(tx('ext.gone'));
+    if (force) toast(tx('reloaded'));
   } catch (e) { /* folder may be gone or permission revoked */ }
 }
 window.addEventListener('focus', () => refresh(false));
@@ -1275,13 +1393,13 @@ function runSearch() {
   const res = $('#results');
   if (!terms.length) {
     const recent = [...S.notes.values()].sort((a, b) => b.mtime - a.mtime).slice(0, 8);
-    P.items = recent.map((n) => ({ n, group: '最近修改' }));
+    P.items = recent.map((n) => ({ n, group: 'recent' }));
   } else {
     const byName = [], byBody = [];
     for (const n of S.notes.values()) {
       const nameStr = (n.name + ' ' + n.title).toLowerCase();
-      if (terms.every((t) => nameStr.includes(t))) byName.push({ n, group: '文件名' });
-      else if (terms.every((t) => n.lower.includes(t) || nameStr.includes(t))) byBody.push({ n, group: '正文' });
+      if (terms.every((t) => nameStr.includes(t))) byName.push({ n, group: 'name' });
+      else if (terms.every((t) => n.lower.includes(t) || nameStr.includes(t))) byBody.push({ n, group: 'body' });
     }
     const sort = (a, b) => b.n.mtime - a.n.mtime;
     P.items = [...byName.sort(sort), ...byBody.sort(sort)].slice(0, 60);
@@ -1290,14 +1408,14 @@ function runSearch() {
   let html = '', g = null;
   const counts = {}; for (const it of P.items) counts[it.group] = (counts[it.group] || 0) + 1;
   P.items.forEach((it, i) => {
-    if (it.group !== g) { g = it.group; html += `<div class="pal-g">${g} · ${counts[g]}</div>`; }
+    if (it.group !== g) { g = it.group; html += `<div class="pal-g">${esc(tx('g.' + g))} · ${counts[g]}</div>`; }
     const n = it.n;
-    const snip = terms.length ? snippetFor(n, terms, it.group === '文件名') : n.snippet;
+    const snip = terms.length ? snippetFor(n, terms, it.group === 'name') : n.snippet;
     html += `<button class="res" data-i="${i}">${icon('doc', 20)}<span class="mid"><span class="t">${hl(n.title, terms)}</span><span class="s">${hl(snip || '', terms)}</span></span>` +
       `<span class="r">${esc(n.folder ? baseOf(n.folder) : S.rootName)}<br>${fmtDate(n.mtime)}</span></button>`;
   });
-  res.innerHTML = html || `<div class="empty">没有找到包含“${esc(q)}”的笔记</div>`;
-  $('#pal-count').textContent = terms.length ? `在 ${S.notes.size} 篇笔记中找到 ${P.items.length} 篇` : `共 ${S.notes.size} 篇笔记`;
+  res.innerHTML = html || `<div class="empty">${esc(tx('pal.none', q))}</div>`;
+  $('#pal-count').textContent = terms.length ? tx('pal.found', P.items.length, S.notes.size) : tx('pal.total', S.notes.size);
   markResult();
 }
 function markResult() {
@@ -1325,6 +1443,9 @@ let toastT = 0;
 function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); if (ms) toastT = setTimeout(hideToast, ms); }
 function hideToast() { $('#toast').hidden = true; }
 
+LANG = ['zh', 'en'].includes(prefs.get('lang', null)) ? prefs.get('lang', null) : detectLang();
+for (const b of [$('#w-lang'), $('#side-lang')]) b.onclick = () => { setLang(LANG === 'zh' ? 'en' : 'zh'); prefs.set('lang', LANG); };
+applyStatic();
 showWelcome();
 </script>
 </body>

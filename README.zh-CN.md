@@ -6,7 +6,7 @@
 
 用 Chrome 或 Edge 打开 `incognote.html`，选一个放 `.md` 笔记的文件夹，就能浏览、搜索和编辑。笔记始终是你自己文件夹里的普通 Markdown 文件，不会上传到任何地方，页面也从不自己联网加载任何东西。
 
-![阅读笔记](docs/screenshots/reading.png)
+![阅读笔记](docs/screenshots/zh/reading.png)
 
 ## 为什么用它
 
@@ -24,7 +24,9 @@
 3. 点 **选择文件夹**，选你的笔记文件夹，在弹窗里允许 **查看和编辑** 文件。
 4. 下次打开时点欢迎页上的 **继续使用上次的文件夹**，浏览器会请你再确认一次。
 
-![选择文件夹](docs/screenshots/welcome.png)
+> 界面支持中文和英文，默认跟随浏览器语言，也可以点侧边栏顶部的 **EN / 中文** 按钮随时切换，选择会被记住。笔记内容用什么语言都可以。
+
+![选择文件夹](docs/screenshots/zh/welcome.png)
 
 Safari 和 Firefox 不支持写入本地文件夹，在这两个浏览器里会以**只读**方式打开，可以浏览和搜索，不能编辑。
 
@@ -41,14 +43,15 @@ Safari 和 Firefox 不支持写入本地文件夹，在这两个浏览器里会�
 | **管理** | 新建、重命名（会同步更新其他笔记里指向它的双链）、删除（先确认，永久删除） |
 | **搜索** | ⌘K 搜索所有笔记，多个关键词用空格分隔；结果按“文件名”和“正文”分组并高亮 |
 | **外观** | 跟随系统浅色 / 深色 |
+| **语言** | 中文和英文界面；默认跟随浏览器，可随时切换并记住选择 |
 
-Windows 上用 Ctrl 代替 ⌘。
+Windows 和 Linux 上用 Ctrl 代替 ⌘，界面会自动显示对应的按键。
 
-![全局搜索](docs/screenshots/search.png)
+![全局搜索](docs/screenshots/zh/search.png)
 
-![编辑和双链补全](docs/screenshots/editing.png)
+![编辑和双链补全](docs/screenshots/zh/editing.png)
 
-![深色模式、属性和反向链接](docs/screenshots/dark.png)
+![深色模式、属性和反向链接](docs/screenshots/zh/dark.png)
 
 截图用的是一个虚构的示例笔记文件夹。
 

@@ -6,7 +6,7 @@ A private, local-only Markdown notebook that lives in a single HTML file.
 
 Open `incognote.html` in Chrome or Edge, pick a folder of `.md` notes, and you can browse, search and edit them. Your notes stay plain Markdown files in your own folder. Nothing is uploaded, and the page never loads anything from the network on its own.
 
-![Reading a note](docs/screenshots/reading.png)
+![Reading a note](docs/screenshots/en/reading.png)
 
 ## Why
 
@@ -21,14 +21,14 @@ You only need one file.
 1. Download **[incognote.html](https://github.com/VibeMage/incognote/releases/latest/download/incognote.html)** from the [latest release](https://github.com/VibeMage/incognote/releases/latest) and put it anywhere, for example next to your notes.
    You can also open [incognote.html](incognote.html) in this repository and click **Download raw file**. It is the same file.
 2. Open it in **Chrome or Edge** (double-clicking the file is fine, no server needed).
-3. Click **选择文件夹** (Choose folder), pick your notes folder and allow **View and edit** files.
-4. Next time, click **继续使用上次的文件夹** (Continue with last folder) on the welcome screen. The browser asks you to confirm access once per session.
+3. Click **Choose folder**, pick your notes folder and allow **View and edit** files.
+4. Next time, click **Continue with this folder** on the welcome screen. The browser asks you to confirm access once per session.
 
-![Choosing a folder](docs/screenshots/welcome.png)
+![Choosing a folder](docs/screenshots/en/welcome.png)
 
 Safari and Firefox do not support writing to local folders. In those browsers Incognote opens the folder **read-only**, so you can browse and search but not edit.
 
-> The interface is currently in Chinese. Notes can be in any language.
+> The interface is in English or Chinese. It follows your browser language, and you can switch with the **中文 / EN** button at the top of the sidebar. Notes can be in any language.
 
 ## Features
 
@@ -43,14 +43,15 @@ Safari and Firefox do not support writing to local folders. In those browsers In
 | **Managing** | Create, rename (links in other notes are updated), and delete (asks first, permanent) |
 | **Search** | ⌘K searches every note; multiple words separated by spaces; results grouped by file name and content, with highlights |
 | **Appearance** | Follows the system light / dark setting |
+| **Language** | English and Chinese interface; follows the browser, switch any time, and the choice is remembered |
 
-On Windows use Ctrl instead of ⌘.
+On Windows and Linux use Ctrl instead of ⌘. The app shows the right key for your system.
 
-![Global search](docs/screenshots/search.png)
+![Global search](docs/screenshots/en/search.png)
 
-![Editing with wikilink suggestions](docs/screenshots/editing.png)
+![Editing with wikilink suggestions](docs/screenshots/en/editing.png)
 
-![Dark mode with front matter and backlinks](docs/screenshots/dark.png)
+![Dark mode with front matter and backlinks](docs/screenshots/en/dark.png)
 
 The screenshots use a small made-up demo folder.
 
