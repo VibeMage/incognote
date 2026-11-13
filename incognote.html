@@ -504,6 +504,7 @@ function analyse(n) {
   n.fmTitle = fmTitle || '';
   n.title = h1 ? h1[1].trim() : fmTitle || n.name;
   n.lower = n.text.toLowerCase();
+  n.body = body; n.bodyLower = body.toLowerCase();
   let snip = '';
   for (const line of plain.split('\n')) {
     const l = line.trim();
@@ -531,7 +532,7 @@ function backlinksOf(note) {
     if (!hit) continue;
     const idx = stripCode(n.text).toLowerCase().search(new RegExp('\\[\\[(' + [...keys].map(reEsc).join('|') + ')', 'i'));
     const line = idx >= 0 ? n.text.slice(n.text.lastIndexOf('\n', idx) + 1, (n.text.indexOf('\n', idx) + 1 || n.text.length + 1) - 1) : '';
-    out.push({ n, ctx: line.replace(/^[\s>*+-]+/, '').trim().slice(0, 140) });
+    out.push({ n, ctx: shortUrls(tidySnip(line.slice(0, 400))).trim().slice(0, 140) });
   }
   return out.sort((a, b) => b.n.mtime - a.n.mtime);
 }
@@ -595,7 +596,7 @@ async function loadFromFiles(list) {
   S.rootName = arr.length ? arr[0].webkitRelativePath.split('/')[0] : '';
   for (const f of arr) {
     const rel = f.webkitRelativePath.split('/').slice(1).join('/');
-    if (!rel || rel.split('/').some((s) => s.startsWith('.'))) continue;
+    if (!rel || rel.split('/').some((s) => s.startsWith('.') || s === 'node_modules')) continue;
     let d = dirOf(rel); while (d && !S.dirs.has(d)) { S.dirs.set(d, null); d = dirOf(d); }
     if (MD_RE.test(rel)) {
       const t = await f.text();
@@ -1246,12 +1247,31 @@ function hl(text, terms) {
   while ((m = re.exec(text))) { out += esc(text.slice(last, m.index)) + '<mark class="hit">' + esc(m[0]) + '</mark>'; last = m.index + m[0].length; if (!m[0]) re.lastIndex++; }
   return out + esc(text.slice(last));
 }
-function snippetFor(n, terms) {
-  const i = n.lower.indexOf(terms[0]);
-  if (i < 0) return n.snippet;
-  const s = Math.max(0, i - 24);
-  let t = n.text.slice(s, i + terms[0].length + 60).replace(/(^|\n)\s*#{1,6}\s+/g, '$1').replace(/\s+/g, ' ');
-  return (s > 0 ? '…' : '') + shortUrls(t);
+// Search snippet: around the first hit that is still visible after Markdown markup is tidied
+// (body first, front matter only if the body has none).
+const tidySnip = (t) => t.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/!?\[\[([^\]|]*)\|?([^\]]*)\]\]/g, (m, a, b) => b || a)
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/(^|\n)[ \t]*(#{1,6}\s+|[-+*]\s+(\[[ xX]\]\s+)?|>\s*|```\w*|~~~\w*|---+[ \t]*(?=\n|$))/g, '$1')
+  .replace(/\*\*|`/g, '').replace(/\s+/g, ' ');
+function snipIn(src, terms) {
+  const low = src.toLowerCase();
+  if (low.length !== src.length) return null; // case folding changed lengths: indexes would not line up
+  for (const t of terms) {
+    for (let i = low.indexOf(t), k = 0; i >= 0 && k < 30; i = low.indexOf(t, i + t.length), k++) {
+      const ls = src.lastIndexOf('\n', i) + 1, le = src.indexOf('\n', i);
+      const from = Math.max(ls, i - 600), to = Math.min(le < 0 ? src.length : le, i + 600);
+      const line = shortUrls(tidySnip(src.slice(from, to))).trim();
+      const j = line.toLowerCase().indexOf(t);
+      if (j < 0) continue;
+      const s = Math.max(0, j - 30);
+      const cut = line.slice(s, s + 150), body = s > 0 ? cut.replace(/^[\s.,;:!?，。；：、！？]+/, '') : cut;
+      return (s > 0 || from > ls ? '…' : '') + body;
+    }
+  }
+  return null;
+}
+function snippetFor(n, terms, byName) {
+  if (byName) return n.snippet; // the hit is already highlighted in the title; show the note's preview
+  return snipIn(n.body, terms) || snipIn(n.text, terms) || n.snippet;
 }
 function runSearch() {
   const q = $('#q').value.trim().toLowerCase();
@@ -1277,7 +1297,7 @@ function runSearch() {
   P.items.forEach((it, i) => {
     if (it.group !== g) { g = it.group; html += `<div class="pal-g">${g} · ${counts[g]}</div>`; }
     const n = it.n;
-    const snip = terms.length ? snippetFor(n, terms) : n.snippet;
+    const snip = terms.length ? snippetFor(n, terms, it.group === '文件名') : n.snippet;
     html += `<button class="res" data-i="${i}">${icon('doc', 20)}<span class="mid"><span class="t">${hl(n.title, terms)}</span><span class="s">${hl(snip || '', terms)}</span></span>` +
       `<span class="r">${esc(n.folder ? baseOf(n.folder) : S.rootName)}<br>${fmtDate(n.mtime)}</span></button>`;
   });

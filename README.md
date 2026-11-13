@@ -1,46 +1,97 @@
 # Incognote
 
-纯本地、零上传的 Markdown 笔记本。
+**English** · [简体中文](README.zh-CN.md)
 
-一个网页文件就是一个笔记本：用 Chrome 或 Edge 打开 `incognote.html`，选一个放 Markdown 笔记的文件夹，就能浏览、搜索、编辑。
+A private, local-only Markdown notebook that lives in a single HTML file.
 
-- **纯本地、零上传**：笔记始终是你文件夹里的 `.md` 文件。页面带有内容安全策略（CSP `default-src 'none'`），浏览器会拦截一切网络请求，包括笔记里引用的外部图片。断网也能用。
-- **不用安装**：只有一个 HTML 文件，所有代码都在里面，没有 CDN、字体服务或统计脚本。
+Open `incognote.html` in Chrome or Edge, pick a folder of `.md` notes, and you can browse, search and edit them. Your notes stay plain Markdown files in your own folder. Nothing is uploaded, and the page never loads anything from the network on its own.
 
-## 怎么用
+![Reading a note](docs/screenshots/reading.png)
 
-1. 下载 [`incognote.html`](incognote.html)，放在哪里都行。
-2. 用 Chrome 或 Edge 打开它，点“选择文件夹”，选你的笔记文件夹，在弹窗里允许“查看和编辑”。
-3. 下次打开时点“继续使用上次的文件夹”，Chrome 会请你再点一次“允许”。
+## Why
 
-Safari 和 Firefox 不支持写入本地文件夹，只能以只读方式浏览和搜索。
+- **Nothing leaves your computer.** The page ships with a Content Security Policy of `default-src 'none'`, so the browser blocks every request the page tries to make, including remote images inside your notes. It works fully offline. (A web link in a note opens in a new tab only when you click it.)
+- **Nothing to install.** One HTML file with all code inlined: no CDN, no web fonts, no analytics, no server, no account.
+- **Your files stay yours.** Incognote reads and writes ordinary `.md` files. You can keep using any other editor, sync tool or Git on the same folder.
 
-## 功能
+## Getting started
 
-| 功能 | 说明 |
+You only need one file.
+
+1. Download **[incognote.html](https://github.com/VibeMage/incognote/releases/latest/download/incognote.html)** from the [latest release](https://github.com/VibeMage/incognote/releases/latest) and put it anywhere, for example next to your notes.
+2. Open it in **Chrome or Edge** (double-clicking the file is fine, no server needed).
+3. Click **选择文件夹** (Choose folder), pick your notes folder and allow **View and edit** files.
+4. Next time, click **继续使用上次的文件夹** (Continue with last folder) on the welcome screen. The browser asks you to confirm access once per session.
+
+![Choosing a folder](docs/screenshots/welcome.png)
+
+Safari and Firefox do not support writing to local folders. In those browsers Incognote opens the folder **read-only**, so you can browse and search but not edit.
+
+> The interface is currently in Chinese. Notes can be in any language.
+
+## Features
+
+| | |
 | --- | --- |
-| 文件夹 | 左侧是文件夹树，支持多层子文件夹；中间是按修改时间排列的笔记 |
-| 阅读 | Markdown 渲染：标题、表格、任务列表（可直接勾选）、代码块、引用、本地图片 |
-| 双链 | `[[笔记名]]`、`[[笔记名\|显示文字]]`、`[[笔记名#标题]]`、`![[图片.png]]`；点不存在的链接会新建笔记；笔记底部显示反向链接 |
-| 编辑 | ⌘E 切换阅读 / 编辑；输入 `[[` 弹出笔记补全；粘贴截图会存到笔记旁边的 `assets/` 文件夹 |
-| 保存 | 停止输入 1.5 秒自动保存，⌘S 立即保存；关闭页面前有未保存内容会提醒 |
-| 冲突 | 保存前检查文件是否在别处（比如另一个编辑器）被改过，被改过会先问你 |
-| 管理 | 新建、重命名（会同步更新其他笔记里指向它的双链）、删除（永久删除，会先确认） |
-| 搜索 | ⌘K 搜索所有笔记，多个关键词用空格分隔；结果分“文件名”和“正文”两组并高亮 |
-| 外观 | 跟随系统浅色 / 深色 |
+| **Folders** | Folder tree in the sidebar with nested subfolders; notes listed by last modified |
+| **Reading** | Markdown with headings, tables, task lists you can tick, code blocks, quotes, YAML front matter, and local images |
+| **Wikilinks** | `[[Note]]`, `[[Note\|label]]`, `[[Note#Heading]]`, `![[image.png]]`; clicking a missing link creates the note; backlinks at the bottom of each note |
+| **Editing** | ⌘E toggles read / edit; typing `[[` suggests notes; pasted screenshots are saved to an `assets/` folder next to the note |
+| **Saving** | Autosaves 1.5 s after you stop typing, ⌘S saves immediately, and you are warned before closing with unsaved changes |
+| **Conflicts** | Before saving, Incognote checks whether the file was changed elsewhere (another editor, a sync tool) and asks before overwriting |
+| **Managing** | Create, rename (links in other notes are updated), and delete (asks first, permanent) |
+| **Search** | ⌘K searches every note; multiple words separated by spaces; results grouped by file name and content, with highlights |
+| **Appearance** | Follows the system light / dark setting |
 
-## 开发
+On Windows use Ctrl instead of ⌘.
 
-源码在 `src/app.html`，第三方库在 `src/vendor/`。修改后运行：
+![Global search](docs/screenshots/search.png)
+
+![Editing with wikilink suggestions](docs/screenshots/editing.png)
+
+![Dark mode with front matter and backlinks](docs/screenshots/dark.png)
+
+The screenshots use a small made-up demo folder.
+
+## How it works
+
+Incognote is a plain web page with no backend. Everything happens inside the browser tab.
+
+**Folder access.** It uses the browser's [File System Access API](https://developer.mozilla.org/docs/Web/API/File_System_API). `showDirectoryPicker({ mode: 'readwrite' })` gives the page a handle to the folder you choose, and only that folder. The handle is kept in the page's IndexedDB so the folder can be reopened next time, but the browser still asks you to confirm access. Browsers without this API fall back to `<input webkitdirectory>`, which is read-only.
+
+**Indexing.** On open, Incognote walks the folder, reads every `.md` file into memory, and extracts the title (first `# heading`, front matter `title`, or file name), a preview line and outgoing wikilinks. Hidden folders such as `.git` and `.obsidian`, and `node_modules`, are skipped. When the tab regains focus it rescans, re-reading only files whose modification time changed.
+
+**Rendering.** Markdown is parsed by markdown-it, extended with small custom rules for wikilinks, image embeds and clickable task lists. The resulting HTML is cleaned by DOMPurify before it is shown, so a note cannot run scripts or inject styles. Local images are read from the folder and displayed through `blob:` URLs.
+
+**Search.** Search runs in memory over the full text of every note, so it is instant for a few thousand notes. All words must match; file name matches are listed first.
+
+**Saving.** Each open note remembers the text it started from. Before writing, Incognote re-reads the file from disk. If the file changed in the meantime, it asks you before overwriting. Renames rewrite `[[links]]` in other notes, skipping fenced code blocks and inline code.
+
+**Zero network.** The Content Security Policy at the top of the file is `default-src 'none'`, which allows only the page's own inline scripts and styles, `blob:` and `data:` images, and `blob:` media. It also sets `base-uri 'none'` and `form-action 'none'`. Even if a note contains `<img src="https://…">`, the browser refuses to load it. You can check this yourself in DevTools → Network.
+
+### Libraries
+
+Both libraries are bundled into the HTML file. Nothing is loaded at runtime.
+
+| Library | Version | Used for | License |
+| --- | --- | --- | --- |
+| [markdown-it](https://github.com/markdown-it/markdown-it) | 14.1.0 | Parsing Markdown to HTML | MIT |
+| [DOMPurify](https://github.com/cure53/DOMPurify) | 3.2.6 | Sanitizing rendered HTML | Apache-2.0 or MPL-2.0 |
+
+Everything else (file handling, wikilinks, search, editor, UI) is plain JavaScript and CSS with no framework. Icons are hand-drawn SVGs in an SF Symbols-like style. The library license texts are in `src/vendor/`.
+
+## Development
+
+```
+src/app.html          app source (HTML, CSS, JS)
+src/icons.json        SVG icons
+src/vendor/           markdown-it and DOMPurify, with their licenses
+build.py              inlines everything into incognote.html
+incognote.html        the built single file
+```
+
+After changing anything in `src/`, rebuild:
 
 ```sh
 python3 build.py
 ```
-
-会重新生成单文件 `incognote.html`。
-
-## 第三方组件
-
-- [markdown-it](https://github.com/markdown-it/markdown-it) 14.1.0，MIT 许可，见 `src/vendor/LICENSE-markdown-it`
-- [DOMPurify](https://github.com/cure53/DOMPurify) 3.2.6，Apache-2.0 或 MPL-2.0 许可，见 `src/vendor/LICENSE-dompurify`
-- 图标按 Cupertino 设计系统的 SF Symbols 风格替代图标绘制
