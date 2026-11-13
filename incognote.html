@@ -84,6 +84,14 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .row:hover{background:var(--fill-quaternary)}
 .row:focus-visible{box-shadow:var(--focus-ring)}
 .row .mini{width:29px;height:29px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center;flex:none}
+.row .nm{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.w-actions{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+#w-pick{min-width:240px;max-width:100%}
+#w-pick .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.w-hint{max-width:440px;margin-top:-8px;color:var(--label-secondary);text-wrap:pretty}
+.rrow{display:flex;align-items:center;gap:2px}
+.rrow .row{flex:1;min-width:0}
+.rrow .rm{flex:none;color:var(--label-secondary)}
 
 /* ===== app layout ===== */
 #app{height:100vh;display:flex;overflow:hidden}
@@ -112,9 +120,19 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .twisty{all:unset;display:grid;place-items:center;width:16px;height:16px;margin-left:-6px;color:var(--label-secondary);border-radius:4px;transition:transform .25s var(--ease)}
 .twisty.closed{transform:rotate(-90deg)}
 .twisty.none{visibility:hidden}
-.side-foot{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;min-width:0}
+.side-foot{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-width:0;padding:8px 12px 8px 16px;border-radius:20px;cursor:pointer}
+.side-foot:hover{background:var(--fill-quaternary)}
+.side-foot:focus-visible{box-shadow:var(--focus-ring)}
 .side-foot .txt{flex:1;min-width:0}
-.side-foot .txt div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-foot .txt>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-foot .chg{flex:none;display:flex;align-items:center;gap:2px;font-size:13px;line-height:18px;font-weight:600;color:var(--link)}
+.menu .cur{flex:none;color:var(--link)}
+.menu .mrow{display:flex;align-items:center;gap:2px}
+.menu .mrow>button:first-child{flex:1;min-width:0}
+.menu button.rm{flex:none;width:32px;height:32px;padding:0;justify-content:center;border-radius:50%;color:var(--label-secondary)}
+.menu button.rm:hover{color:var(--label)}
+.menu button:focus-visible{box-shadow:var(--focus-ring)}
+.menu .fm-h{padding:6px 14px 2px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 
 #list{flex:0 0 320px;width:320px;min-width:0;padding:20px 8px;display:flex;flex-direction:column;gap:12px;min-height:0}
 .list-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 4px 0 12px;min-width:0}
@@ -246,16 +264,19 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
     <div class="tile" id="w-tile"></div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="font-size:17px;line-height:22px;font-weight:600;color:var(--label-secondary)">Incognote</div>
-      <h1 class="large-title" data-i18n="w.title"></h1>
-      <p data-i18n="w.desc"></p>
+      <h1 class="large-title" id="w-title"></h1>
+      <p id="w-desc"></p>
     </div>
     <div id="w-unsupported" class="notice" hidden data-i18n="w.unsupported"></div>
-    <button class="btn filled large" id="w-pick" style="min-width:240px"></button>
+    <div class="w-actions">
+      <button class="btn filled large" id="w-pick"></button>
+      <button class="btn plain" id="w-other" hidden data-i18n="w.other"></button>
+    </div>
+    <div class="footnote w-hint" id="w-hint" hidden data-i18n="w.hint"></div>
     <input type="file" id="w-input" webkitdirectory multiple hidden>
     <div class="group" id="w-recent" hidden>
       <div class="group-h" data-i18n="w.recent"></div>
-      <div class="group-b"><button class="row" id="w-resume"></button></div>
-      <div class="group-f" data-i18n="w.recentFoot"></div>
+      <div class="group-b" id="w-recents"></div>
     </div>
     <div class="footnote secondary" id="w-foot"></div>
   </div>
@@ -270,11 +291,11 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
       <button class="sec-h" id="tree-toggle" aria-expanded="true"></button>
       <div id="tree"></div>
     </nav>
-    <div class="side-foot">
+    <button class="side-foot" id="change-folder" aria-haspopup="menu" data-i18n-title="side.switch">
       <span class="secondary" id="foot-ic"></span>
-      <div class="txt"><div class="footnote" id="foot-name"></div><div class="caption secondary" id="foot-meta"></div></div>
-      <button class="btn plain small" id="change-folder" data-i18n="side.change"></button>
-    </div>
+      <span class="txt"><span class="footnote" id="foot-name"></span><span class="caption secondary" id="foot-meta"></span></span>
+      <span class="chg" id="foot-chg"></span>
+    </button>
   </aside>
 
   <section id="list" data-i18n-aria="list.aria">
@@ -327,7 +348,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 </script>
 <script>
 "use strict";
-const ICONS = {"chevron.right": {"d": "<path d=\"M9.5 5.5 16 12l-6.5 6.5\"/>"}, "chevron.down": {"d": "<path d=\"M5.5 9.5 12 16l6.5-6.5\"/>"}, "plus": {"d": "<path d=\"M12 4.5v15M4.5 12h15\"/>"}, "magnifyingglass": {"d": "<circle cx=\"10.4\" cy=\"10.4\" r=\"6.4\"/><path d=\"m15.2 15.2 4.8 4.8\"/>"}, "folder": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.5 10h17\"/>", "fill": "<path fill=\"currentColor\" d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/>"}, "tray": {"d": "<path d=\"M3.5 13.6 5.9 6.4c.2-.6.8-.9 1.4-.9h9.4c.6 0 1.2.3 1.4.9l2.4 7.2v4.2c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.6 13.6h4.5l1.2 2.2h5.4l1.2-2.2h4.5\"/>"}, "clock": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6.8V12l3.4 2.2\"/>"}, "doc": {"d": "<path d=\"M6.8 3.5h6.7l4.7 4.7v10.6c0 1-.8 1.7-1.7 1.7H6.8c-1 0-1.7-.8-1.7-1.7V5.2c0-1 .8-1.7 1.7-1.7z\"/><path d=\"M13.3 3.6v3.9c0 .5.4.9.9.9h3.9\"/>"}, "photo": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><circle cx=\"8.6\" cy=\"9.6\" r=\"1.7\"/><path d=\"m3.6 17.4 5-4.5 3.7 3.2 3.3-2.8 4.8 4.1\"/>"}, "ellipsis": {"d": "<g fill=\"currentColor\" stroke=\"none\"><circle cx=\"5.5\" cy=\"12\" r=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.7\"/></g>"}, "lock": {"d": "<rect x=\"5\" y=\"10.5\" width=\"14\" height=\"10\" rx=\"2.6\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>", "fill": "<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"11\" rx=\"2.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>"}, "xmark": {"d": "<path d=\"m6.2 6.2 11.6 11.6M17.8 6.2 6.2 17.8\"/>"}, "checkmark": {"d": "<path d=\"M4.5 12.8 9.4 17.6 19.5 6.6\"/>"}};
+const ICONS = {"chevron.right": {"d": "<path d=\"M9.5 5.5 16 12l-6.5 6.5\"/>"}, "chevron.down": {"d": "<path d=\"M5.5 9.5 12 16l6.5-6.5\"/>"}, "chevron.up.chevron.down": {"d": "<path d=\"m7.8 9.6 4.2-4.2 4.2 4.2M7.8 14.4l4.2 4.2 4.2-4.2\"/>"}, "plus": {"d": "<path d=\"M12 4.5v15M4.5 12h15\"/>"}, "magnifyingglass": {"d": "<circle cx=\"10.4\" cy=\"10.4\" r=\"6.4\"/><path d=\"m15.2 15.2 4.8 4.8\"/>"}, "folder": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.5 10h17\"/>", "fill": "<path fill=\"currentColor\" d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/>"}, "tray": {"d": "<path d=\"M3.5 13.6 5.9 6.4c.2-.6.8-.9 1.4-.9h9.4c.6 0 1.2.3 1.4.9l2.4 7.2v4.2c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.6 13.6h4.5l1.2 2.2h5.4l1.2-2.2h4.5\"/>"}, "clock": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6.8V12l3.4 2.2\"/>"}, "doc": {"d": "<path d=\"M6.8 3.5h6.7l4.7 4.7v10.6c0 1-.8 1.7-1.7 1.7H6.8c-1 0-1.7-.8-1.7-1.7V5.2c0-1 .8-1.7 1.7-1.7z\"/><path d=\"M13.3 3.6v3.9c0 .5.4.9.9.9h3.9\"/>"}, "photo": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><circle cx=\"8.6\" cy=\"9.6\" r=\"1.7\"/><path d=\"m3.6 17.4 5-4.5 3.7 3.2 3.3-2.8 4.8 4.1\"/>"}, "ellipsis": {"d": "<g fill=\"currentColor\" stroke=\"none\"><circle cx=\"5.5\" cy=\"12\" r=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.7\"/></g>"}, "lock": {"d": "<rect x=\"5\" y=\"10.5\" width=\"14\" height=\"10\" rx=\"2.6\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>", "fill": "<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"11\" rx=\"2.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>"}, "xmark": {"d": "<path d=\"m6.2 6.2 11.6 11.6M17.8 6.2 6.2 17.8\"/>"}, "checkmark": {"d": "<path d=\"M4.5 12.8 9.4 17.6 19.5 6.6\"/>"}};
 function icon(name, size = 18, cls = '') {
   const g = ICONS[name]; if (!g) return '';
   return `<svg class="ic ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g.d}</svg>`;
@@ -349,7 +370,7 @@ const S = {
   view: { kind: 'all', folder: '' },
   current: null, mode: 'read', dirty: false, gen: 0, scanning: null, conflict: false,
   closed: new Set(), treeOpen: true,
-  imgUrls: new Map(), saving: null, timer: 0
+  imgUrls: new Map(), saving: null, timer: 0, opening: false
 };
 
 /* ---------- persistence of the folder handle (IndexedDB, this computer only) ---------- */
@@ -357,6 +378,26 @@ const idb = {
   db() { return new Promise((res, rej) => { const r = indexedDB.open('incognote', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
   async get(k) { try { const db = await this.db(); return await new Promise((res) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (e) { return undefined; } },
   async set(k, v) { try { const db = await this.db(); await new Promise((res) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = res; }); } catch (e) {} }
+};
+// Recently opened folders, newest first. Each entry keeps the folder handle so it can be reopened without the picker.
+const folders = {
+  MAX: 6,
+  async list() {
+    let r = await idb.get('recents');
+    if (!Array.isArray(r)) { const old = await idb.get('root'); r = old ? [{ h: old, name: old.name, t: 0 }] : []; }  // data from v1.0
+    return r.filter((x) => x && x.h && x.h.kind === 'directory');
+  },
+  async same(a, b) { try { return a === b || await a.isSameEntry(b); } catch (e) { return false; } },
+  async remember(h) {
+    const out = [{ h, name: h.name, t: Date.now() }];
+    for (const x of await this.list()) if (!(await this.same(x.h, h))) out.push(x);
+    await idb.set('recents', out.slice(0, this.MAX));
+  },
+  async forget(h) {
+    const out = [];
+    for (const x of await this.list()) if (!(await this.same(x.h, h))) out.push(x);
+    await idb.set('recents', out);
+  }
 };
 const prefs = {
   get(k, d) { try { const v = localStorage.getItem('incognote.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -374,9 +415,14 @@ const STR = {
     'w.title': '打开你的笔记文件夹',
     'w.desc': '笔记仍然是这个文件夹里的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。',
     'w.unsupported': '这个浏览器不能写入本地文件夹。请用 Chrome 或 Edge 打开这个文件；也可以先以只读方式浏览。',
-    'w.recent': '上次打开', 'w.recentFoot': '出于安全考虑，Chrome 每次重新打开时会请你再点一次“允许”。',
+    'w.titleBack': '欢迎回来', 'w.descBack': '点一下，回到上次的笔记文件夹。笔记只在你的电脑上读写，不联网，也不上传任何内容。',
+    'w.openX': (x) => `打开“${x}”`, 'w.other': '选择其他文件夹',
+    'w.hint': 'Chrome 会问你是否允许访问这个文件夹。如果提示里有“每次访问时都允许”，选它，以后打开这个页面就会直接进入笔记。',
+    'w.recent': '其他最近的文件夹', 'w.forget': '从列表中移除', 'w.when': (d) => `上次打开：${d}`,
+    'gone': (x) => `找不到文件夹“${x}”，它可能被移动、改名或删除了`,
+    'tryAgain': '请再点一次，Chrome 需要你直接点击才能询问权限', 'side.switch': '更换笔记文件夹', 'fm.recent': '最近的文件夹', 'fm.other': '打开其他文件夹…',
     'w.local': '数据只在这台电脑上', 'w.roNow': ' · 当前为只读模式', 'w.pick': '选择文件夹', 'w.pickRO': '以只读方式打开',
-    'w.resume': '继续使用上次的文件夹', 'noPermission': '没有获得访问权限', 'cantOpenRetry': '无法打开这个文件夹，请重新选择',
+    'noPermission': '没有获得访问权限', 'cantOpenRetry': '无法打开这个文件夹，请重新选择',
     'cantOpen': '无法打开这个文件夹', 'loading': '正在读取笔记…', 'loadFail': '读取失败：',
     'side.aria': '笔记文件夹', 'searchAll': '搜索所有笔记', 'search': '搜索', 'side.change': '更换', 'all': '全部笔记', 'recent': '最近',
     'side.noSub': '没有子文件夹', 'side.count': (n) => `${n} 篇`, 'side.ro': ' · 只读', 'side.local': ' · 仅存本机',
@@ -413,9 +459,14 @@ const STR = {
     'w.title': 'Open your notes folder',
     'w.desc': 'Your notes stay as .md files in this folder. This page reads and writes them only on your computer. It never goes online and never uploads anything.',
     'w.unsupported': 'This browser can’t write to local folders. Open this file in Chrome or Edge, or browse read-only for now.',
-    'w.recent': 'Last opened', 'w.recentFoot': 'For security, Chrome asks you to click “Allow” again each time you reopen this page.',
+    'w.titleBack': 'Welcome back', 'w.descBack': 'One click takes you back to your notes folder. Your notes are read and written only on this computer, never online.',
+    'w.openX': (x) => `Open “${x}”`, 'w.other': 'Choose another folder',
+    'w.hint': 'Chrome will ask whether to allow access to this folder. If the prompt offers “Allow on every visit”, choose it, and this page will open straight into your notes from then on.',
+    'w.recent': 'Other recent folders', 'w.forget': 'Remove from list', 'w.when': (d) => `Last opened ${d}`,
+    'gone': (x) => `Couldn’t find the folder “${x}”. It may have been moved, renamed, or deleted.`,
+    'tryAgain': 'Please click again. Chrome only asks for access right after a click.', 'side.switch': 'Switch notes folder', 'fm.recent': 'Recent folders', 'fm.other': 'Open another folder…',
     'w.local': 'Your notes stay on this computer', 'w.roNow': ' · Read-only mode', 'w.pick': 'Choose folder', 'w.pickRO': 'Open read-only',
-    'w.resume': 'Continue with this folder', 'noPermission': 'Access was not granted', 'cantOpenRetry': 'Couldn’t open this folder. Please choose it again.',
+    'noPermission': 'Access was not granted', 'cantOpenRetry': 'Couldn’t open this folder. Please choose it again.',
     'cantOpen': 'Couldn’t open this folder', 'loading': 'Reading notes…', 'loadFail': 'Couldn’t read the folder: ',
     'side.aria': 'Note folders', 'searchAll': 'Search all notes', 'search': 'Search', 'side.change': 'Change', 'all': 'All notes', 'recent': 'Recent',
     'side.noSub': 'No subfolders', 'side.count': (n) => plural(n, 'note', 'notes'), 'side.ro': ' · Read-only', 'side.local': ' · Local only',
@@ -668,8 +719,13 @@ async function walk(dir, prefix, mdList) {
   }
 }
 async function loadFromHandle(root) {
+  if (S.scanning) { try { await S.scanning; } catch (e) {} }   // let a background refresh of the old folder finish first
+  S.gen++;
   S.root = root; S.rootName = root.name; S.readonly = false;
-  await scan(true);
+  S.notes = new Map(); S.files = new Map(); S.dirs = new Map();
+  if ((await scan(true)) === false) throw new Error('interrupted');
+  for (const u of S.imgUrls.values()) URL.revokeObjectURL(u);  // image URLs are keyed by path, so they belong to the old folder
+  S.imgUrls.clear();
 }
 async function scan(first) {
   if (S.scanning) return S.scanning;
@@ -709,6 +765,8 @@ async function scan(first) {
   try { return await S.scanning; } finally { S.scanning = null; }
 }
 async function loadFromFiles(list) {
+  for (const u of S.imgUrls.values()) URL.revokeObjectURL(u);
+  S.imgUrls.clear(); S.gen++;
   S.root = null; S.readonly = true; S.notes = new Map(); S.files = new Map(); S.dirs = new Map([['', null]]);
   const arr = Array.from(list);
   S.rootName = arr.length ? arr[0].webkitRelativePath.split('/')[0] : '';
@@ -726,41 +784,96 @@ async function loadFromFiles(list) {
 
 /* ---------- welcome ---------- */
 const canWrite = 'showDirectoryPicker' in window;
+let welcomeList = [];
 async function showWelcome() {
-  $('#app').hidden = true; $('#welcome').hidden = false;
+  $('#app').hidden = true; $('#welcome').hidden = false; $('#menu').hidden = true;
   $('#w-tile').innerHTML = icon('folder', 40);
   $('#w-foot').innerHTML = icon('lock', 15) + ' ' + esc(tx('w.local') + (canWrite ? '' : tx('w.roNow')));
-  $('#w-pick').innerHTML = icon('folder', 20) + esc(canWrite ? tx('w.pick') : tx('w.pickRO'));
   $('#w-unsupported').hidden = canWrite;
-  const saved = canWrite ? await idb.get('root') : null;
-  if (saved) {
-    $('#w-recent').hidden = false;
-    $('#w-resume').innerHTML = `<span class="mini">${icon('folder', 18)}</span><span style="flex:1;min-width:0"><span style="display:block">${esc(saved.name)}</span><span class="sub secondary" style="display:block">${esc(tx('w.resume'))}</span></span>${icon('chevron.right', 14, 'secondary')}`;
-    $('#w-resume').onclick = async () => {
-      try {
-        const ok = (await saved.requestPermission({ mode: 'readwrite' })) === 'granted';
-        if (ok) { await openRoot(saved); } else toast(tx('noPermission'));
-      } catch (e) { toast(tx('cantOpenRetry')); }
-    };
-  }
+  const list = welcomeList = canWrite ? await folders.list() : [];
+  const last = list[0], back = !!last;
+  $('#w-title').textContent = tx(back ? 'w.titleBack' : 'w.title');
+  $('#w-desc').textContent = tx(back ? 'w.descBack' : 'w.desc');
+  $('#w-pick').innerHTML = icon('folder', 20) + `<span class="t">${esc(back ? tx('w.openX', last.name) : canWrite ? tx('w.pick') : tx('w.pickRO'))}</span>`;
+  $('#w-pick').title = back ? last.name : '';
+  $('#w-other').hidden = !back; $('#w-hint').hidden = !back;
+  const rest = list.slice(1);
+  $('#w-recent').hidden = !rest.length;
+  $('#w-recents').innerHTML = rest.map((x, i) =>
+    `<div class="rrow"><button class="row" data-i="${i + 1}" title="${esc(x.name)}"><span class="mini">${icon('folder', 18)}</span>` +
+    `<span style="flex:1;min-width:0"><span class="nm">${esc(x.name)}</span>` +
+    (x.t ? `<span class="sub secondary nm">${esc(tx('w.when', fmtDay(x.t)))}</span>` : '') + `</span>${icon('chevron.right', 14, 'secondary')}</button>` +
+    `<button class="btn plain icon rm" data-rm="${i + 1}" aria-label="${esc(tx('w.forget') + ': ' + x.name)}" title="${esc(tx('w.forget'))}">${icon('xmark', 16)}</button></div>`).join('');
+  if (back && document.activeElement === document.body) $('#w-pick').focus();   // Return opens the last folder
 }
-$('#w-pick').onclick = pickFolder;
-$('#change-folder').onclick = async () => { if (await flushSave()) pickFolder(); };
+const fmtDay = (t) => { const d = new Date(t); return d.toDateString() === new Date().toDateString() ? d.toLocaleTimeString(LANG === 'zh' ? 'zh-CN' : enLocale(), { hour: '2-digit', minute: '2-digit' }) : tx(d.getFullYear() === new Date().getFullYear() ? 'date.md' : 'date.ymd', d); };
+$('#w-pick').onclick = () => (welcomeList[0] ? openSaved(welcomeList[0].h) : pickFolder());
+$('#w-other').onclick = () => pickFolder();
+$('#w-recents').onclick = async (e) => {
+  const rm = e.target.closest('[data-rm]'), row = e.target.closest('[data-i]');
+  if (rm) { const x = welcomeList[+rm.dataset.rm]; if (x) { await folders.forget(x.h); showWelcome(); } return; }
+  if (row) { const x = welcomeList[+row.dataset.i]; if (x) openSaved(x.h); }
+};
 async function pickFolder() {
   if (!canWrite) { $('#w-input').click(); return; }
+  if (S.opening) return;
+  let h;
+  try { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'notes' }); }
+  catch (e) { if (e && e.name !== 'AbortError') toast(e && e.name === 'SecurityError' ? tx('tryAgain') : tx('cantOpen')); return; }
+  if (!(await flushSave())) return;
+  await openRoot(h);
+}
+// Reopen a remembered folder. Must run from a click: Chrome only shows its permission prompt after a user gesture.
+async function openSaved(h) {
+  if (S.opening) return false;
+  let st = 'prompt';
   try {
-    const h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'notes' });
-    await idb.set('root', h);
-    await openRoot(h);
-  } catch (e) { if (e && e.name !== 'AbortError') toast(tx('cantOpen')); }
+    st = await h.queryPermission({ mode: 'readwrite' });
+    if (st !== 'granted') st = await h.requestPermission({ mode: 'readwrite' });
+  } catch (e) { toast(e && e.name === 'SecurityError' ? tx('tryAgain') : tx('cantOpenRetry')); return false; }
+  if (st !== 'granted') { toast(tx('noPermission')); return false; }
+  if (!(await flushSave())) return false;      // only after the permission prompt, which must follow the click directly
+  return openRoot(h);
 }
 $('#w-input').onchange = async (e) => { if (e.target.files.length) { await loadFromFiles(e.target.files); enterApp(); } };
 async function openRoot(h) {
+  if (S.opening) return false;
+  S.opening = true; $('#app').inert = true; $('#welcome').inert = true; $('#menu').hidden = true;
   toast(tx('loading'), 0);
-  try { await loadFromHandle(h); } catch (e) { toast(tx('loadFail') + (e.message || e)); return; }
+  const prev = { root: S.root, rootName: S.rootName, readonly: S.readonly, notes: S.notes, files: S.files, dirs: S.dirs };
+  try {
+    try { await loadFromHandle(h); } catch (e) {
+      Object.assign(S, prev);
+      toast(e && e.name === 'NotFoundError' ? tx('gone', h.name) : tx('loadFail') + ((e && e.message) || e), 5000);
+      return false;
+    }
+  } finally { S.opening = false; $('#app').inert = false; $('#welcome').inert = false; }
   hideToast();
+  await folders.remember(h);
   enterApp();
+  return true;
 }
+$('#change-folder').onclick = async (e) => {
+  const btn = e.currentTarget, menu = $('#menu');
+  if (!menu.hidden && menu.dataset.kind === 'folders') { menu.hidden = true; return; }
+  if (!canWrite) { if (await flushSave()) pickFolder(); return; }
+  const list = welcomeList = await folders.list();
+  let cur = -1;
+  if (S.root) for (let i = 0; i < list.length && cur < 0; i++) if (await folders.same(list[i].h, S.root)) cur = i;
+  menu.dataset.kind = 'folders';
+  menu.innerHTML = (list.length ? `<div class="fm-h">${esc(tx('fm.recent'))}</div>` : '') +
+    list.map((x, i) => i === cur
+      ? `<button data-act="noop" aria-current="true" title="${esc(x.name)}"><span>${esc(x.name)}</span>${icon('checkmark', 16, 'cur')}</button>`
+      : `<div class="mrow"><button data-act="folder" data-i="${i}" title="${esc(x.name)}"><span>${esc(x.name)}</span></button>` +
+        `<button class="rm" data-rm="${i}" aria-label="${esc(tx('w.forget') + ': ' + x.name)}" title="${esc(tx('w.forget'))}">${icon('xmark', 14)}</button></div>`).join('') +
+    (list.length ? '<div class="sep"></div>' : '') +
+    `<button data-act="other"><span>${esc(tx('fm.other'))}</span>${icon('folder', 18, 'cur')}</button>`;
+  menu.hidden = false;
+  const r = btn.getBoundingClientRect();
+  menu.style.left = Math.max(12, Math.min(r.left, innerWidth - menu.offsetWidth - 12)) + 'px';
+  menu.style.top = Math.max(12, r.top - 8 - menu.offsetHeight) + 'px';
+  (menu.querySelector('[data-act=folder]') || menu.querySelector('button')).focus();
+};
 function enterApp() {
   $('#welcome').hidden = true; $('#app').hidden = false;
   S.view = prefs.get('view:' + S.rootName, { kind: 'all', folder: '' });
@@ -802,6 +915,8 @@ function renderSide() {
   $('#foot-ic').innerHTML = icon('folder', 18);
   $('#foot-name').textContent = S.rootName;
   $('#foot-meta').innerHTML = esc(tx('side.count', S.notes.size)) + `<span class="wide-only">${esc(S.readonly ? tx('side.ro') : tx('side.local'))}</span>`;
+  $('#change-folder').title = S.rootName + ' · ' + tx('side.switch');
+  $('#foot-chg').innerHTML = esc(tx('side.change')) + icon('chevron.up.chevron.down', 13);
 }
 $('#side').addEventListener('click', async (e) => {
   const tw = e.target.closest('[data-twisty]');
@@ -1281,7 +1396,7 @@ async function renameNote() {
 }
 $('#more').onclick = (e) => {
   const n = S.notes.get(S.current); if (!n) return;
-  const menu = $('#menu');
+  const menu = $('#menu'); menu.dataset.kind = 'note';
   menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>${esc(tx('menu.rename'))}</span></button>` +
     `<button data-act="copy"><span>${esc(tx('menu.copy'))}</span><span class="s">[[${esc(n.name)}]]</span></button>` +
     `<button data-act="refresh"><span>${esc(tx('menu.refresh'))}</span></button>` +
@@ -1291,8 +1406,17 @@ $('#more').onclick = (e) => {
   menu.style.top = r.bottom + 8 + 'px'; menu.style.left = Math.max(12, r.right - menu.offsetWidth) + 'px';
 };
 $('#menu').addEventListener('click', async (e) => {
+  const rm = e.target.closest('[data-rm]');
+  if (rm) {                                   // remove a folder from the recent list, keep the menu open
+    e.stopPropagation();
+    const x = welcomeList[+rm.dataset.rm]; if (!x) return;
+    await folders.forget(x.h); $('#menu').hidden = true; $('#change-folder').click(); return;
+  }
   const b = e.target.closest('[data-act]'); if (!b) return;
   $('#menu').hidden = true;
+  if (b.dataset.act === 'noop') return;
+  if (b.dataset.act === 'other') { pickFolder(); return; }
+  if (b.dataset.act === 'folder') { const x = welcomeList[+b.dataset.i]; if (x) openSaved(x.h); return; }
   const n = S.notes.get(S.current);
   if (b.dataset.act === 'rename') renameNote();
   if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(`[[${n.name}]]`); toast(tx('copied')); } catch (x) { toast(`[[${n.name}]]`); } }
@@ -1313,13 +1437,15 @@ async function deleteNote() {
     toast(tx('del.done'));
   } catch (e) { toast(tx('del.fail') + (e.message || e)); }
 }
-document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more')) $('#menu').hidden = true; });
+document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more,#change-folder')) $('#menu').hidden = true; });
 
 /* ---------- refresh when coming back to the page ---------- */
 async function refresh(force) {
-  if (!S.root || S.readonly) return;
+  if (!S.root || S.readonly || S.opening) return;
+  const root = S.root;
   try {
     const changed = await scan(false);
+    if (S.opening || S.root !== root) return;   // the folder was switched meanwhile
     if (!changed && !force) return;
     if (S.current && !S.notes.has(S.current)) { S.current = null; showPane(false); }
     renderSide(); renderListKeepScroll();
@@ -1436,11 +1562,12 @@ async function pickResult(i) {
 
 /* ---------- keyboard ---------- */
 document.addEventListener('keydown', (e) => {
+  if (S.opening) return;
   const mod = e.metaKey || e.ctrlKey;
   if (mod && (e.key === 'k' || e.key === 'K' || (e.shiftKey && (e.key === 'f' || e.key === 'F')))) { e.preventDefault(); $('#palette').hidden ? openPalette() : closePalette(); }
   else if (mod && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveNow(true); }
   else if (mod && e.key === 'e' && S.current) { e.preventDefault(); setMode(S.mode === 'read' ? 'edit' : 'read'); }
-  else if (e.key === 'Escape' && !$('#menu').hidden) $('#menu').hidden = true;
+  else if (e.key === 'Escape' && !$('#menu').hidden) { $('#menu').hidden = true; if ($('#menu').dataset.kind === 'folders') $('#change-folder').focus(); }
 });
 
 /* ---------- toast ---------- */
@@ -1451,7 +1578,16 @@ function hideToast() { $('#toast').hidden = true; }
 LANG = ['zh', 'en'].includes(prefs.get('lang', null)) ? prefs.get('lang', null) : detectLang();
 for (const b of [$('#w-lang'), $('#side-lang')]) b.onclick = () => { setLang(LANG === 'zh' ? 'en' : 'zh'); prefs.set('lang', LANG); };
 applyStatic();
-showWelcome();
+// Go straight into the last folder when Chrome still allows access (for example after “Allow on every visit”).
+(async () => {
+  if (canWrite) {
+    const last = (await folders.list())[0];
+    let st = 'prompt';
+    if (last) try { st = await last.h.queryPermission({ mode: 'readwrite' }); } catch (e) {}
+    if (st === 'granted' && await openRoot(last.h)) return;
+  }
+  showWelcome();
+})();
 </script>
 </body>
 </html>

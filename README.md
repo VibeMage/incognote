@@ -22,7 +22,8 @@ You only need one file.
    You can also open [incognote.html](incognote.html) in this repository and click **Download raw file**. It is the same file.
 2. Open it in **Chrome or Edge** (double-clicking the file is fine, no server needed).
 3. Click **Choose folder**, pick your notes folder and allow **View and edit** files.
-4. Next time, click **Continue with this folder** on the welcome screen. The browser asks you to confirm access once per session.
+4. Next time, Incognote reopens the same folder. If Chrome asks again, click **Open “your folder”** and choose **Allow on every visit** in the prompt; from then on the page goes straight to your notes.
+5. To switch folders, click the folder name at the bottom of the sidebar. It lists recently opened folders and lets you open another one.
 
 ![Choosing a folder](docs/screenshots/en/welcome.png)
 
@@ -59,7 +60,7 @@ The screenshots use a small made-up demo folder.
 
 Incognote is a plain web page with no backend. Everything happens inside the browser tab.
 
-**Folder access.** It uses the browser's [File System Access API](https://developer.mozilla.org/docs/Web/API/File_System_API). `showDirectoryPicker({ mode: 'readwrite' })` gives the page a handle to the folder you choose, and only that folder. The handle is kept in the page's IndexedDB so the folder can be reopened next time, but the browser still asks you to confirm access. Browsers without this API fall back to `<input webkitdirectory>`, which is read-only.
+**Folder access.** It uses the browser's [File System Access API](https://developer.mozilla.org/docs/Web/API/File_System_API). `showDirectoryPicker({ mode: 'readwrite' })` gives the page a handle to the folder you choose, and only that folder. The handles of recently opened folders are kept in the page's IndexedDB. On load the page calls `queryPermission()` on the last one: if Chrome still allows access (for example after **Allow on every visit**), it opens directly; otherwise one click calls `requestPermission()`, which needs a user gesture. Browsers without this API fall back to `<input webkitdirectory>`, which is read-only.
 
 **Indexing.** On open, Incognote walks the folder, reads every `.md` file into memory, and extracts the title (first `# heading`, front matter `title`, or file name), a preview line and outgoing wikilinks. Hidden folders such as `.git` and `.obsidian`, and `node_modules`, are skipped. When the tab regains focus it rescans, re-reading only files whose modification time changed.
 
