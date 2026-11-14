@@ -464,7 +464,7 @@ const S = {
   current: null, mode: 'read', dirty: false, gen: 0, scanning: null, conflict: false,
   closed: new Set(), treeOpen: true,
   imgUrls: new Map(), saving: null, timer: 0, opening: false,
-  walked: 0, stopScan: false, showEmpty: false
+  showEmpty: false
 };
 
 /* ---------- persistence of the folder handle (IndexedDB, this computer only) ---------- */
@@ -862,44 +862,47 @@ function backlinksOf(note) {
 const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /* ---------- loading a folder ---------- */
-async function walk(dir, prefix, mdList) {
+// `ctl` belongs to one pass: ctl.n counts the entries seen so far, and setting ctl.stop makes that pass give up.
+const stopped = () => new DOMException('Stopped', 'AbortError');
+async function walk(dir, prefix, mdList, ctl) {
   S.dirs.set(prefix, dir);
   for await (const [name, h] of dir.entries()) {
-    if (S.stopScan) throw new DOMException('Stopped', 'AbortError');
+    if (ctl.stop) throw stopped();
     if (name.startsWith('.') || name === 'node_modules') continue;
-    S.walked++;
+    ctl.n++;
     const p = prefix ? prefix + '/' + name : name;
-    if (h.kind === 'directory') await walk(h, p, mdList);
+    if (h.kind === 'directory') await walk(h, p, mdList, ctl);
     else if (MD_RE.test(name)) mdList.push([p, h]);
     else S.files.set(p, h);
   }
 }
-async function loadFromHandle(root) {
+async function loadFromHandle(root, ctl) {
   if (S.scanning) { try { await S.scanning; } catch (e) {} }   // let a background refresh of the old folder finish first
   S.gen++;
   S.root = root; S.rootName = root.name; S.readonly = false;
   S.notes = new Map(); S.files = new Map(); S.dirs = new Map();
-  if ((await scan(true)) === null) throw new Error('interrupted');
+  if ((await scan(true, ctl)) === null) throw new Error('interrupted');
   for (const u of S.imgUrls.values()) URL.revokeObjectURL(u);  // image URLs are keyed by path, so they belong to the old folder
   S.imgUrls.clear();
 }
-async function scan(first) {
+async function scan(first, ctl = { n: 0, stop: false }) {
   if (S.scanning) return S.scanning;
   S.scanning = (async () => {
     const gen = S.gen;
     const mdList = [], files = new Map(), dirs = new Map();
     const saveFiles = S.files, saveDirs = S.dirs;
     S.files = files; S.dirs = dirs;            // walk() fills these
-    try { await walk(S.root, '', mdList); } catch (e) { S.files = saveFiles; S.dirs = saveDirs; throw e; }
+    try { await walk(S.root, '', mdList, ctl); } catch (e) { S.files = saveFiles; S.dirs = saveDirs; throw e; }
     S.files = saveFiles; S.dirs = saveDirs;
     const oldNotes = S.notes, next = new Map();
     let changed = first || mdList.length !== oldNotes.size;
     const queue = mdList.slice(), touched = new Set(), updates = [];
     async function worker() {
       while (queue.length) {
-        if (S.stopScan) throw new DOMException('Stopped', 'AbortError');
+        if (ctl.stop) throw stopped();
         const [p, h] = queue.shift();
         const f = await h.getFile();
+        if (ctl.stop) throw stopped();
         const old = oldNotes.get(p);
         if (old && old.mtime === f.lastModified) { next.set(p, old); continue; }
         const text = await f.text();
@@ -1016,21 +1019,20 @@ async function openRoot(h) {
   S.opening = true; $('#app').inert = true; $('#welcome').inert = true; $('#menu').hidden = true;
   toast(tx('loading'), 0);
   // Big folders take a while: after a moment show how far reading has got, with a way to stop.
-  S.walked = 0; S.stopScan = false;
-  const t0 = Date.now();
+  const ctl = { n: 0, stop: false }, t0 = Date.now();
   const tick = setInterval(() => {
-    if (Date.now() - t0 < 800) return;
-    toast(tx('loadingN', S.walked) + (S.walked > 20000 ? tx('loadingBig') : ''), 0, { label: tx('cancel'), fn: () => { S.stopScan = true; } });
+    if (ctl.stop || Date.now() - t0 < 800) return;
+    toast(tx('loadingN', ctl.n) + (ctl.n > 20000 ? tx('loadingBig') : ''), 0, { label: tx('cancel'), fn: () => { ctl.stop = true; } });
   }, 250);
   const prev = { root: S.root, rootName: S.rootName, readonly: S.readonly, notes: S.notes, files: S.files, dirs: S.dirs };
   try {
-    try { await loadFromHandle(h); } catch (e) {
+    try { await loadFromHandle(h, ctl); } catch (e) {
       Object.assign(S, prev);
       clearInterval(tick);
-      toast(S.stopScan ? tx('loadCancelled') : e && e.name === 'NotFoundError' ? tx('gone', h.name) : tx('loadFail') + ((e && e.message) || e), 5000);
+      toast(ctl.stop ? tx('loadCancelled') : e && e.name === 'NotFoundError' ? tx('gone', h.name) : tx('loadFail') + ((e && e.message) || e), 5000);
       return false;
     }
-  } finally { clearInterval(tick); S.stopScan = false; S.opening = false; $('#app').inert = false; $('#welcome').inert = false; }
+  } finally { clearInterval(tick); S.opening = false; $('#app').inert = false; $('#welcome').inert = false; }
   hideToast();
   await folders.remember(h);
   enterApp();
@@ -1097,14 +1099,16 @@ function openNewSheet() {
   $('#sh-steps').innerHTML = ['nl.s1', 'nl.s2', 'nl.s3'].map((k) => `<li><span>${esc(tx(k))}</span></li>`).join('');
   S.sheetFrom = document.activeElement;
   $('#sheet').hidden = false;
+  $('#app').inert = true; $('#welcome').inert = true;   // a modal: nothing behind it can take focus
   $('#sh-go').focus();
 }
-function closeSheet() {
-  if ($('#sheet').hidden) return;
+const refocus = (f) => { if (f && f.isConnected && !f.closest('[hidden],[inert]')) f.focus(); };
+function hideSheet() {
   $('#sheet').hidden = true;
-  const f = S.sheetFrom; S.sheetFrom = null;
-  if (f && f.isConnected && !f.closest('[hidden]')) f.focus();
+  $('#app').inert = false; $('#welcome').inert = false;
+  const f = S.sheetFrom; S.sheetFrom = null; return f;
 }
+function closeSheet() { if (!$('#sheet').hidden) refocus(hideSheet()); }
 $('#sh-cancel').onclick = closeSheet;
 $('#sheet').addEventListener('mousedown', (e) => { if (e.target.id === 'sheet') closeSheet(); });
 $('#sheet').addEventListener('keydown', (e) => {
@@ -1117,11 +1121,11 @@ $('#sheet').addEventListener('keydown', (e) => {
 });
 // The picker must open straight from this click, so nothing is awaited before it.
 $('#sh-go').onclick = async () => {
-  $('#sheet').hidden = true; S.sheetFrom = null;
+  const from = hideSheet();
   if (S.opening) return;
   let h;
   try { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'newlib', startIn: 'documents' }); }
-  catch (e) { if (e && e.name !== 'AbortError') toast(e && e.name === 'SecurityError' ? tx('tryAgain') : tx('cantOpen')); return; }
+  catch (e) { refocus(from); if (e && e.name !== 'AbortError') toast(e && e.name === 'SecurityError' ? tx('tryAgain') : tx('cantOpen')); return; }
   if (!(await flushSave())) return;
   let lib = h, inside = false, start;
   try {
@@ -1145,8 +1149,10 @@ async function addStarter() {
   if (S.readonly || !S.root || S.opening) return;
   try {
     const start = await writeStarter(S.root);
-    if (S.scanning) { try { await S.scanning; } catch (e) {} }
-    await scan(true);
+    for (let i = 0; i < 3; i++) {             // a pass is dropped when a save or another change overlaps it
+      if (S.scanning) { try { await S.scanning; } catch (e) {} }
+      if ((await scan(true)) !== null) break;
+    }
     S.showEmpty = false;
     renderSide(); renderListKeepScroll();
     if (S.notes.has(start)) openNote(start);
@@ -1156,7 +1162,7 @@ async function addStarter() {
 // The note pane before a note is open: a plain hint when there are notes, a guide when there are none.
 function renderEmptyPane() {
   const el = $('#empty-pane');
-  if (S.notes.size) {
+  if (noteCount()) {                          // notes kept for Claude Code (CLAUDE.md, AGENTS.md) don't count
     el.innerHTML = `<div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)">${esc(tx('pane.pick'))}</div>` +
       `<div class="sub" style="margin-top:6px">${esc(tx('pane.orSearch'))}</div></div>`;
     return;
@@ -1199,9 +1205,9 @@ const HELP = {
     ['[[Note name]]', 'Link to another note; typing [[ suggests names'], ['[[Note name|label]]', 'Show different text'],
     ['![](assets/pic.png)', 'Image; you can also just paste one'], ['---', 'Divider'], ['| col | col |\n| - | - |', 'Table']]
 };
-function openHelp(anchor) {
+function openHelp(anchor, toggle = true) {
   const el = $('#help');
-  if (!el.hidden) { el.hidden = true; return; }
+  if (!el.hidden && toggle) { el.hidden = true; return; }
   $('#menu').hidden = true;
   const keys = LANG === 'zh'
     ? `${MOD}E 切换阅读和编辑 · ${MOD}S 保存 · ${MOD}K 搜索`
@@ -2005,7 +2011,7 @@ $('#menu').addEventListener('click', async (e) => {
   if (b.dataset.act === 'other') { pickFolder(); return; }
   if (b.dataset.act === 'claude') { openCC(); return; }
   if (b.dataset.act === 'newlib') { openNewSheet(); return; }
-  if (b.dataset.act === 'help') { openHelp($('#more')); return; }
+  if (b.dataset.act === 'help') { openHelp($('#more'), false); return; }
   if (b.dataset.act === 'folder') { const x = welcomeList[+b.dataset.i]; if (x) openSaved(x.h); return; }
   const n = S.notes.get(S.current);
   if (b.dataset.act === 'rename') renameNote();
