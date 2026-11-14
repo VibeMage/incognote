@@ -158,6 +158,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .menu button.rm{flex:none;width:32px;height:32px;padding:0;justify-content:center;border-radius:50%;color:var(--label-secondary)}
 .menu button.rm:hover{color:var(--label)}
 .menu button:focus-visible{box-shadow:var(--focus-ring)}
+.menu .ver{padding-bottom:6px;user-select:text}
 .menu .fm-h{padding:6px 14px 2px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 
 #list{flex:0 0 320px;width:320px;min-width:0;padding:20px 8px;display:flex;flex-direction:column;gap:12px;min-height:0}
@@ -1157,7 +1158,7 @@ let welcomeList = [];
 async function showWelcome() {
   $('#app').hidden = true; $('#welcome').hidden = false; $('#menu').hidden = true; stopWatch();
   $('#w-tile').innerHTML = icon('folder', 40);
-  $('#w-foot').innerHTML = icon('lock', 15) + ' ' + esc(tx('w.local') + (canWrite ? '' : tx('w.roNow')));
+  $('#w-foot').innerHTML = icon('lock', 15) + ' ' + esc(tx('w.local') + (canWrite ? '' : tx('w.roNow')) + ' · Incognote ' + VERSION);
   $('#w-unsupported').hidden = canWrite;
   $('#w-unsupported').textContent = tx(IS_MOBILE ? 'w.mobile' : 'w.unsupported');
   const list = welcomeList = canWrite ? await folders.list() : [];
@@ -2725,11 +2726,14 @@ function outlineMenu() {
   showMenu('outline', outline().map((h, i) => `<button data-act="goto" data-arg="${i}" style="padding-left:${14 + (+h.tagName[1] - 2) * 16}px"><span>${esc(h.textContent)}</span></button>`).join(''), { el: $('#more'), right: true });
 }
 // The menu next to the name: things that concern the whole notes folder and the page itself.
+// Filled in by build.py, so the page can say which release it is.
+const VERSION = '@@VERSION@@';
 function libMenu() {
   const rw = S.root && !S.readonly, th = ['light', 'dark'].includes(prefs.get('theme', 'auto')) ? prefs.get('theme', 'auto') : 'auto';
   showMenu('lib', (rw ? mi('claude', tx('fm.claude')) + mi('trash', tx('tr.menu')) + mi('refresh', tx('lib.reload')) + SEP : '') +
     mi('theme', tx('th.label'), { hint: tx('th.' + th) }) + mi('lang', tx('lang.label'), { hint: tx('lang.name') }) +
-    mi('focus', tx(NAV.focus ? 'nav.unfocus' : 'nav.focus'), { hint: MOD_SHIFT + '\\' }), { el: $('#lib-more'), first: S.libFirst });
+    mi('focus', tx(NAV.focus ? 'nav.unfocus' : 'nav.focus'), { hint: MOD_SHIFT + '\\' }) +
+    SEP + `<div class="fm-h ver">Incognote ${VERSION}</div>`, { el: $('#lib-more'), first: S.libFirst });
   S.libFirst = null;
 }
 function listMenu() {
