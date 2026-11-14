@@ -25,7 +25,7 @@ You only need one file.
    - **No notes yet?** Click **New notes folder**. In the folder picker, click **New Folder**, name it (for example “Notes”), select it and confirm, then allow Chrome to **edit** files. Incognote adds three short getting-started notes (welcome, a Markdown cheat sheet, links and images) in their own folder, so you can delete them later in one go. Chrome doesn't allow Documents, Desktop or Downloads themselves, so pick or make a folder inside them. If you pick a folder that already has other files, Incognote makes an “Incognote Notes” folder inside it and leaves everything else alone.
    - **Already have Markdown notes?** Click **Open an existing notes folder**, pick that folder and allow **View and edit** files.
 4. Next time, Incognote reopens the same folder. If Chrome asks again, click **Open “your folder”** and choose **Allow on every visit** in the prompt; from then on the page goes straight to your notes.
-5. To switch folders or start another one, click the folder name at the bottom of the sidebar. It lists recently opened folders and lets you open or create another one.
+5. To switch folders or start another one, click **Change** at the bottom of the sidebar. It lists recently opened folders and lets you open or create another one.
 
 If the folder you open has no `.md` files, Incognote says so and offers to choose another folder, add the getting-started notes, or start writing. While editing, **Markdown help** in the bottom bar shows a short cheat sheet.
 
@@ -33,22 +33,26 @@ If the folder you open has no `.md` files, Incognote says so and offers to choos
 
 Safari and Firefox do not support writing to local folders. In those browsers Incognote opens the folder **read-only**, so you can browse and search but not edit. They may call choosing a folder an “upload”; the files are only read by the page and never leave your computer. Phone and tablet browsers can't open local folders.
 
-> The interface is in English or Chinese. It follows your browser language, and you can switch with the **中文 / EN** button at the top of the sidebar. Notes can be in any language.
+> The interface is in English or Chinese. It follows your browser language, and you can switch from the **⋯** menu next to the Incognote name; the choice is remembered. Appearance (automatic, light, dark), the Trash and Claude Code are in the same menu. Notes can be in any language.
 
 ## Features
 
 | | |
 | --- | --- |
-| **Folders** | Folder tree in the sidebar with nested subfolders; notes listed by last modified |
-| **Reading** | Markdown with headings, tables, task lists you can tick, code blocks, quotes, YAML front matter, and local images |
-| **Wikilinks** | `[[Note]]`, `[[Note\|label]]`, `[[Note#Heading]]`, `![[image.png]]`; clicking a missing link creates the note; backlinks at the bottom of each note |
-| **Editing** | ⌘E toggles read / edit; typing `[[` suggests notes; pasted screenshots are saved to an `assets/` folder next to the note |
+| **Folders** | Folder tree in the sidebar, collapsed by default, and it remembers what you expanded; many folders that hold a single note fold into one row. Create, rename and delete folders, and move notes between them |
+| **List** | Notes in the middle, sorted by last modified or by title; Recent shows the notes you opened lately |
+| **Reading** | Markdown with headings, tables, task lists you can tick, code blocks (with a Copy button), quotes, footnotes, YAML front matter, and local images (click to enlarge); an outline in the note menu |
+| **Wikilinks** | `[[Note]]`, `[[Note\|label]]`, `[[Note#Heading]]`, `![[image.png]]`; clicking a missing link asks before creating the note; backlinks at the bottom of each note |
+| **Editing** | ⌘E toggles read / edit; Return continues lists, to-dos and quotes; typing `[[` suggests notes; pasted screenshots are saved to an `assets/` folder next to the note |
+| **Naming** | Once a new note has its first `# Heading`, the file takes that name; click the note name in the path at the top to rename it, and links in other notes follow |
 | **Saving** | Autosaves 1.5 s after you stop typing, ⌘S saves immediately, and you are warned before closing with unsaved changes |
+| **Back and forward** | The browser's Back and Forward (⌘[ and ⌘]) move between the notes you viewed; folders in the path at the top are clickable |
 | **Live updates** | Changes made outside Incognote (Claude Code, another editor, a sync tool) show up within seconds while the page is open; changed notes get a blue dot until you open them |
 | **Conflicts** | If a note you are editing changes on disk, autosave pauses and a bar lets you compare the two versions line by line, then keep yours or take the file's |
-| **Managing** | Create, rename (links in other notes are updated), and delete (asks first, permanent) |
-| **Search** | ⌘K searches every note; multiple words separated by spaces; results grouped by file name and content, with highlights |
-| **Appearance** | Follows the system light / dark setting |
+| **Deleting** | Deleted notes and folders move to a `.trash` folder inside your notes folder; undo within a few seconds, or put them back (or empty it) from the Trash later |
+| **Search** | ⌘K searches every note; multiple words separated by spaces; results grouped by file name and content, with highlights, sorted by relevance |
+| **Layout** | In narrow windows the sidebar and list move into a drawer; ⌘\ hides or shows the sidebar, ⌘⇧\ leaves only the note |
+| **Appearance** | Follows the system, or pick light or dark yourself |
 | **Claude Code** | One click writes a `CLAUDE.md` guide and a note-management skill into your folder (see below) |
 | **Language** | English and Chinese interface; follows the browser, switch any time, and the choice is remembered |
 
@@ -66,7 +70,7 @@ The screenshots use a small made-up demo folder.
 
 Your notes are ordinary `.md` files, so [Claude Code](https://claude.com/claude-code) can search, read, create and edit them directly. Incognote doesn't connect to it in any way. It only makes the two work well side by side:
 
-1. In Incognote, click **Change** at the bottom of the sidebar, then **Use with Claude Code…**, then **Create**. This adds two files to your notes folder, and never overwrites existing ones:
+1. In Incognote, click **⋯** next to the Incognote name, then **Use with Claude Code…**, then **Create both**. This adds two files to your notes folder, and never overwrites existing ones:
    - `CLAUDE.md` describes how the notebook works: file names, titles, front matter, `[[links]]`, where images go, and to ask before deleting or bulk-changing notes. Claude Code reads it automatically.
    - `.claude/skills/incognote-notes/SKILL.md` gives Claude step-by-step instructions for creating notes, renaming or moving a note while updating every link to it, and a tidy-up check (broken links, duplicate names, orphan notes, unused images).
 
@@ -90,7 +94,9 @@ Incognote is a plain web page with no backend. Everything happens inside the bro
 
 **Search.** Search runs in memory over the full text of every note, so it is instant for a few thousand notes. All words must match; file name matches are listed first.
 
-**Saving.** Each open note remembers the text it started from. Before writing, Incognote re-reads the file from disk. If the file changed in the meantime, it stops and shows a bar where you choose which version to keep, with a line-by-line diff. Renames rewrite `[[links]]` in other notes, skipping fenced code blocks and inline code.
+**Saving.** Each open note remembers the text it started from. Before writing, Incognote re-reads the file from disk. If the file changed in the meantime, it stops and shows a bar where you choose which version to keep, with a line-by-line diff. Renaming or moving a note, or renaming a folder, rewrites the `[[links]]` and `[text](path.md)` links that point to it in other notes, skipping fenced code blocks and inline code. Chrome can't rename a folder in place, so the folder is copied under the new name, the file count is checked, and then the old one is removed.
+
+**Deleting.** Nothing is deleted right away. The file moves to `.trash/` inside your notes folder, keeping its folder structure. Folders that start with a dot never show up in the lists. Only emptying the Trash removes files for good.
 
 **Zero network.** The Content Security Policy at the top of the file is `default-src 'none'`, which allows only the page's own inline scripts and styles, `blob:` and `data:` images, and `blob:` media. It also sets `base-uri 'none'` and `form-action 'none'`. Even if a note contains `<img src="https://…">`, the browser refuses to load it. You can check this yourself in DevTools → Network.
 
