@@ -71,6 +71,8 @@ Your notes are ordinary `.md` files, so [Claude Code](https://claude.com/claude-
    - `.claude/skills/incognote-notes/SKILL.md` gives Claude step-by-step instructions for creating notes, renaming or moving a note while updating every link to it, and a tidy-up check (broken links, duplicate names, orphan notes, unused images).
 
    Neither file appears in the note list or search. Edit them however you like.
+
+   If your folder already has a `CLAUDE.md` or the skill (for example from another notes app) and it doesn't fit, click **Regenerate** next to it. The old file is copied to `.claude/backup/` first.
 2. Open a terminal in your notes folder and run `claude`. Ask things like “summarize what I wrote about X”, “file this into a new note”, or “rename note A to B”.
 3. Keep Incognote open next to it. Notes Claude changes appear within seconds, marked with a blue dot. If Claude changes the note you are editing, nothing is overwritten: you choose which version to keep.
 
