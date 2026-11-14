@@ -310,22 +310,38 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .act{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:88px}
 .act .btn{white-space:nowrap}
 .act .chip{pointer-events:none}
-.act.has .regen{height:24px;padding:0 4px}
-/* Mouse and trackpad: the row shows a quiet "Exists"; pointing at the row (or tabbing to the button) swaps in Regenerate.
-   Touch screens, including touch laptops, keep both visible so nothing hidden can be tapped. */
+/* An existing file gets a button that reads "✓ Exists"; pointing at the button itself (or tabbing to it) turns its label
+   into Regenerate, like a Following / Unfollow button. Both labels share one grid cell, so the width never jumps.
+   Touch screens (and any device with a touchscreen) show a quiet "✓ Exists" beside a plain Regenerate button. */
+.swap{display:inline-grid;justify-items:center;align-items:center}
+.swap>span{grid-area:1/1;display:inline-flex;align-items:center;gap:4px}
+.swap .a{display:none}
+.swap .a .ic{color:var(--success)}
+.act .touch{margin-right:2px}
 @media (hover:hover) and (pointer:fine){
-  .act{display:grid;justify-items:end;align-items:center}
-  .act>*{grid-area:1/1}
-  .act.has .regen{height:28px}
-  .act.has .chip,.act.has .regen{transition:opacity .15s var(--ease)}
-  .act.has .regen{opacity:0;pointer-events:none}
-  .frow:hover{background:var(--fill-tertiary)}
-  .frow:hover::before,.frow:hover+.frow::before{opacity:0}
-  .frow:hover .act.has .chip,.act.has:focus-within .chip{opacity:0}
-  .frow:hover .act.has .regen,.act.has:focus-within .regen{opacity:1;pointer-events:auto}
-  .frow:hover .act.has .regen:active{opacity:.5}
+  .act{flex-direction:row}
+  .act .touch{display:none}
+  .swap .a{display:inline-flex}
+  .swap .b{visibility:hidden}
+  .swap:not(:disabled):hover .a,.swap:focus-visible .a{visibility:hidden}
+  .swap:not(:disabled):hover .b,.swap:focus-visible .b{visibility:visible}
+  .swap:not(:disabled):hover,.swap:focus-visible{color:var(--accent)}
+}
+/* A touch laptop's primary pointer is the trackpad, but a finger tap has no hover first: keep the touch layout there. */
+@media (any-pointer:coarse){
+  .act{flex-direction:column}
+  .act .touch{display:inline-flex}
+  .swap .a{display:none}
+  .swap .b{visibility:visible}
 }
 .sheet-a{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:4px}
+.ccsheet .group-h{padding:0 12px 6px}
+.frow .mini.g{background:#5856d6}
+.gsteps{margin:0 12px 0 53px;padding:2px 0 14px;border-top:1px solid var(--separator)}
+.gsteps ol{margin:10px 0 10px;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:20px}
+.gsteps li{padding-left:2px}
+.cmd{display:flex;align-items:center;gap:8px;margin-top:6px;padding:4px 4px 4px 12px;border-radius:12px;background:var(--bg-elevated);min-width:0}
+.cmd code{flex:1;min-width:0;font-family:var(--font-mono);font-size:13px;line-height:20px;overflow-wrap:anywhere;user-select:all}
 
 /* popovers */
 .menu{position:fixed;z-index:30;min-width:220px;max-width:min(360px,calc(100vw - 24px));padding:6px;border-radius:26px;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass),var(--shadow-float)}
@@ -537,6 +553,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
     <div class="group-b" id="cc-files"></div>
     <p class="footnote secondary" data-i18n="cc.note"></p>
     <p class="footnote secondary" data-i18n="cc.how"></p>
+    <div><div class="group-h" data-i18n="cc.gHead"></div><div class="group-b" id="cc-global"></div></div>
     <div class="sheet-a"><button class="btn gray" id="cc-open" data-i18n="cc.open"></button><button class="btn filled" id="cc-gen"></button></div>
   </div>
 </div>
@@ -574,7 +591,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 </script>
 <script>
 "use strict";
-const ICONS = {"chevron.right": {"d": "<path d=\"M9.5 5.5 16 12l-6.5 6.5\"/>"}, "chevron.down": {"d": "<path d=\"M5.5 9.5 12 16l6.5-6.5\"/>"}, "chevron.up.chevron.down": {"d": "<path d=\"m7.8 9.6 4.2-4.2 4.2 4.2M7.8 14.4l4.2 4.2 4.2-4.2\"/>"}, "plus": {"d": "<path d=\"M12 4.5v15M4.5 12h15\"/>"}, "magnifyingglass": {"d": "<circle cx=\"10.4\" cy=\"10.4\" r=\"6.4\"/><path d=\"m15.2 15.2 4.8 4.8\"/>"}, "folder": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.5 10h17\"/>", "fill": "<path fill=\"currentColor\" d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/>"}, "tray": {"d": "<path d=\"M3.5 13.6 5.9 6.4c.2-.6.8-.9 1.4-.9h9.4c.6 0 1.2.3 1.4.9l2.4 7.2v4.2c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.6 13.6h4.5l1.2 2.2h5.4l1.2-2.2h4.5\"/>"}, "clock": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6.8V12l3.4 2.2\"/>"}, "doc": {"d": "<path d=\"M6.8 3.5h6.7l4.7 4.7v10.6c0 1-.8 1.7-1.7 1.7H6.8c-1 0-1.7-.8-1.7-1.7V5.2c0-1 .8-1.7 1.7-1.7z\"/><path d=\"M13.3 3.6v3.9c0 .5.4.9.9.9h3.9\"/>"}, "photo": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><circle cx=\"8.6\" cy=\"9.6\" r=\"1.7\"/><path d=\"m3.6 17.4 5-4.5 3.7 3.2 3.3-2.8 4.8 4.1\"/>"}, "ellipsis": {"d": "<g fill=\"currentColor\" stroke=\"none\"><circle cx=\"5.5\" cy=\"12\" r=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.7\"/></g>"}, "lock": {"d": "<rect x=\"5\" y=\"10.5\" width=\"14\" height=\"10\" rx=\"2.6\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>", "fill": "<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"11\" rx=\"2.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>"}, "xmark": {"d": "<path d=\"m6.2 6.2 11.6 11.6M17.8 6.2 6.2 17.8\"/>"}, "checkmark": {"d": "<path d=\"M4.5 12.8 9.4 17.6 19.5 6.6\"/>"}, "folder.badge.plus": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M12 11v5.4M9.3 13.7h5.4\"/>"}, "questionmark.circle": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.7\"/><circle cx=\"12\" cy=\"16.9\" r=\"1.15\" fill=\"currentColor\" stroke=\"none\"/>"}, "square.and.pencil": {"d": "<path d=\"M11 4.5H6.2c-1 0-1.7.8-1.7 1.7v11.6c0 1 .8 1.7 1.7 1.7h11.6c1 0 1.7-.8 1.7-1.7V13\"/><path d=\"M17.6 3.9a1.6 1.6 0 0 1 2.3 2.3l-7.3 7.3-3.1.8.8-3.1z\"/>"}, "exclamationmark.triangle": {"d": "<path d=\"M10.3 4.4 2.9 17.1c-.8 1.3.2 2.9 1.7 2.9h14.8c1.5 0 2.5-1.6 1.7-2.9L13.7 4.4c-.8-1.3-2.6-1.3-3.4 0z\"/><path d=\"M12 9.2v4.5\"/><circle cx=\"12\" cy=\"16.7\" r=\"1.15\" fill=\"currentColor\" stroke=\"none\"/>"}, "sidebar.left": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><path d=\"M9.5 4.5v15M5.6 8.2h1.5M5.6 11h1.5M5.6 13.8h1.5\"/>"}};
+const ICONS = {"chevron.right": {"d": "<path d=\"M9.5 5.5 16 12l-6.5 6.5\"/>"}, "chevron.down": {"d": "<path d=\"M5.5 9.5 12 16l6.5-6.5\"/>"}, "chevron.up.chevron.down": {"d": "<path d=\"m7.8 9.6 4.2-4.2 4.2 4.2M7.8 14.4l4.2 4.2 4.2-4.2\"/>"}, "plus": {"d": "<path d=\"M12 4.5v15M4.5 12h15\"/>"}, "magnifyingglass": {"d": "<circle cx=\"10.4\" cy=\"10.4\" r=\"6.4\"/><path d=\"m15.2 15.2 4.8 4.8\"/>"}, "folder": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.5 10h17\"/>", "fill": "<path fill=\"currentColor\" d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/>"}, "tray": {"d": "<path d=\"M3.5 13.6 5.9 6.4c.2-.6.8-.9 1.4-.9h9.4c.6 0 1.2.3 1.4.9l2.4 7.2v4.2c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M3.6 13.6h4.5l1.2 2.2h5.4l1.2-2.2h4.5\"/>"}, "clock": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 6.8V12l3.4 2.2\"/>"}, "doc": {"d": "<path d=\"M6.8 3.5h6.7l4.7 4.7v10.6c0 1-.8 1.7-1.7 1.7H6.8c-1 0-1.7-.8-1.7-1.7V5.2c0-1 .8-1.7 1.7-1.7z\"/><path d=\"M13.3 3.6v3.9c0 .5.4.9.9.9h3.9\"/>"}, "photo": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><circle cx=\"8.6\" cy=\"9.6\" r=\"1.7\"/><path d=\"m3.6 17.4 5-4.5 3.7 3.2 3.3-2.8 4.8 4.1\"/>"}, "ellipsis": {"d": "<g fill=\"currentColor\" stroke=\"none\"><circle cx=\"5.5\" cy=\"12\" r=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\"/><circle cx=\"18.5\" cy=\"12\" r=\"1.7\"/></g>"}, "lock": {"d": "<rect x=\"5\" y=\"10.5\" width=\"14\" height=\"10\" rx=\"2.6\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>", "fill": "<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"11\" rx=\"2.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7\"/>"}, "xmark": {"d": "<path d=\"m6.2 6.2 11.6 11.6M17.8 6.2 6.2 17.8\"/>"}, "checkmark": {"d": "<path d=\"M4.5 12.8 9.4 17.6 19.5 6.6\"/>"}, "folder.badge.plus": {"d": "<path d=\"M3.5 17.3V6.7c0-.9.8-1.7 1.7-1.7h4c.5 0 .9.2 1.2.5l1.5 1.6c.3.3.7.5 1.2.5h5.7c.9 0 1.7.8 1.7 1.7v8c0 .9-.8 1.7-1.7 1.7H5.2c-.9 0-1.7-.8-1.7-1.7z\"/><path d=\"M12 11v5.4M9.3 13.7h5.4\"/>"}, "questionmark.circle": {"d": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.7\"/><circle cx=\"12\" cy=\"16.9\" r=\"1.15\" fill=\"currentColor\" stroke=\"none\"/>"}, "square.and.pencil": {"d": "<path d=\"M11 4.5H6.2c-1 0-1.7.8-1.7 1.7v11.6c0 1 .8 1.7 1.7 1.7h11.6c1 0 1.7-.8 1.7-1.7V13\"/><path d=\"M17.6 3.9a1.6 1.6 0 0 1 2.3 2.3l-7.3 7.3-3.1.8.8-3.1z\"/>"}, "exclamationmark.triangle": {"d": "<path d=\"M10.3 4.4 2.9 17.1c-.8 1.3.2 2.9 1.7 2.9h14.8c1.5 0 2.5-1.6 1.7-2.9L13.7 4.4c-.8-1.3-2.6-1.3-3.4 0z\"/><path d=\"M12 9.2v4.5\"/><circle cx=\"12\" cy=\"16.7\" r=\"1.15\" fill=\"currentColor\" stroke=\"none\"/>"}, "sidebar.left": {"d": "<rect x=\"3\" y=\"4.5\" width=\"18\" height=\"15\" rx=\"2.8\"/><path d=\"M9.5 4.5v15M5.6 8.2h1.5M5.6 11h1.5M5.6 13.8h1.5\"/>"}, "square.grid.2x2": {"d": "<rect x=\"4\" y=\"4\" width=\"6.6\" height=\"6.6\" rx=\"1.8\"/><rect x=\"13.4\" y=\"4\" width=\"6.6\" height=\"6.6\" rx=\"1.8\"/><rect x=\"4\" y=\"13.4\" width=\"6.6\" height=\"6.6\" rx=\"1.8\"/><rect x=\"13.4\" y=\"13.4\" width=\"6.6\" height=\"6.6\" rx=\"1.8\"/>", "fill": "<g fill=\"currentColor\" stroke=\"none\"><rect x=\"3.4\" y=\"3.4\" width=\"7.6\" height=\"7.6\" rx=\"2.2\"/><rect x=\"13\" y=\"3.4\" width=\"7.6\" height=\"7.6\" rx=\"2.2\"/><rect x=\"3.4\" y=\"13\" width=\"7.6\" height=\"7.6\" rx=\"2.2\"/><rect x=\"13\" y=\"13\" width=\"7.6\" height=\"7.6\" rx=\"2.2\"/></g>"}};
 function icon(name, size = 18, cls = '') {
   const g = ICONS[name]; if (!g) return '';
   return `<svg class="ic ${cls}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g.d}</svg>`;
@@ -697,11 +714,16 @@ const STR = {
     'cc.f1': '笔记库说明，Claude Code 在这个文件夹里启动时会自动读取', 'cc.f2': '管理笔记的技能：新建、改名或移动并同步双链、整理体检',
     'cc.has': '已有', 'cc.create': '创建', 'cc.createX': (x) => `创建 ${x}`, 'cc.regenX': (x) => `重新生成 ${x}`, 'cc.working': '正在写入…',
     'cc.createAll': '全部创建', 'cc.close': '完成', 'cc.created': (x) => `已创建 ${x}`,
-    'cc.note': '已有的文件（比如别的笔记软件留下的）如果不合适，可以点那一行的“重新生成”（鼠标移上去时出现），旧文件会先备份到 .claude/backup/。这两个文件不会出现在笔记列表和搜索结果里。',
+    'cc.note': '已有的文件（比如别的笔记软件留下的）如果不合适，可以用它右边的按钮重新生成（鼠标放到“已有”上会显示“重新生成”），旧文件会先备份到 .claude/backup/。这两个文件不会出现在笔记列表和搜索结果里。',
     'cc.regen': '重新生成', 'cc.replaced': (a, b) => `已重新生成 ${a}，旧文件备份在 ${b}`, 'cc.same': (a) => `${a} 已经是最新的 Incognote 版本`,
     'cc.dirty': 'CLAUDE.md 里有没保存的修改，请先保存或放弃',
     'cc.backupFail': '备份旧文件没有成功，所以没有替换', 'cc.changedNow': (a) => `${a} 刚刚在别处被修改，所以没有替换，请再试一次`,
     'cc.how': '用法：在终端里进入这个笔记文件夹，运行 claude。Claude 改过的笔记会自动出现在这里，并在列表里标上蓝点。',
+    'cc.gHead': '在其他项目里也能用', 'cc.gDesc': '在任何文件夹里启动 Claude Code，都能说“存到笔记本”“查一下我的笔记”',
+    'cc.gSet': '设置…', 'cc.gSetX': '设置在其他项目里使用这个笔记本', 'cc.gRe': '重新设置', 'cc.gReX': '重新设置在其他项目里使用这个笔记本', 'cc.gHas': '已设置',
+    'cc.g1': IS_MAC ? '在终端里进入这个笔记文件夹：输入 cd 和一个空格，把笔记文件夹从访达拖进终端窗口，按回车。' : '在终端里进入这个笔记文件夹（输入 cd、空格和文件夹的路径，按回车）。需要 macOS 或 Linux 的终端。',
+    'cc.g2': IS_MAC ? '粘贴这条命令，按回车：' : '粘贴这条命令运行：', 'cc.gCopied': '命令已复制，到终端里粘贴运行',
+    'cc.gNote': '只需运行一次，回到这里会显示“已设置”。已经在这个文件夹里开着 Claude Code 的话，也可以在里面输入 ! 再粘贴。Claude Code 第一次在某个项目里用到时，会问要不要使用 incognote 这个 skill，选“不再询问”那项即可。笔记文件夹搬了位置，就在新位置再运行一次；要撤销，在命令后面加上 remove。',
     'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：',
     'saveFail': '保存失败：', 'cf.title': '放弃这篇笔记没保存的修改？', 'cf.body': '这些修改没能保存。留在这里可以继续处理。', 'cf.ok': '放弃修改', 'cf.stay': '留在这里',
     'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
@@ -789,11 +811,16 @@ const STR = {
     'cc.f1': 'Notebook guide. Claude Code reads it automatically when started in this folder', 'cc.f2': 'A skill for managing notes: create, rename or move with link updates, tidy-up check',
     'cc.has': 'Exists', 'cc.create': 'Create', 'cc.createX': (x) => `Create ${x}`, 'cc.regenX': (x) => `Regenerate ${x}`, 'cc.working': 'Writing…',
     'cc.createAll': 'Create both', 'cc.close': 'Done', 'cc.created': (x) => `Created ${x}`,
-    'cc.note': 'If an existing file doesn’t fit (say, one left by another notes app), click Regenerate in its row (it appears when you point at the row). The old file is backed up to .claude/backup/ first. Neither file shows up in the note list or in search.',
+    'cc.note': 'If an existing file doesn’t fit (say, one left by another notes app), regenerate it with the button next to it (pointing at Exists shows Regenerate). The old file is backed up to .claude/backup/ first. Neither file shows up in the note list or in search.',
     'cc.regen': 'Regenerate', 'cc.replaced': (a, b) => `Regenerated ${a}. The old file is backed up at ${b}`, 'cc.same': (a) => `${a} is already Incognote’s latest version`,
     'cc.dirty': 'CLAUDE.md has unsaved edits. Save or discard them first.',
     'cc.backupFail': 'Couldn’t back up the old file, so nothing was replaced', 'cc.changedNow': (a) => `${a} just changed somewhere else, so nothing was replaced. Please try again.`,
     'cc.how': 'To use it, open a terminal in this notes folder and run claude. Notes Claude changes show up here automatically, marked with a blue dot.',
+    'cc.gHead': 'Use from other projects', 'cc.gDesc': 'Start Claude Code in any folder and say “save this to my notes” or “look it up in my notes”',
+    'cc.gSet': 'Set Up…', 'cc.gSetX': 'Set up using this notebook from other projects', 'cc.gRe': 'Set Up Again', 'cc.gReX': 'Set up using this notebook from other projects again', 'cc.gHas': 'Set up',
+    'cc.g1': IS_MAC ? 'In Terminal, go to this notes folder: type cd and a space, drag the notes folder from Finder into the Terminal window, and press Return.' : 'In a terminal, go to this notes folder (type cd, a space and the folder’s path, then press Enter). This needs a macOS or Linux terminal.',
+    'cc.g2': IS_MAC ? 'Paste this command and press Return:' : 'Paste this command and run it:', 'cc.gCopied': 'Command copied. Paste it in Terminal',
+    'cc.gNote': 'You only need to run it once; this row shows “Set up” when you come back. If Claude Code is already open in this folder, you can type ! there and paste instead. The first time Claude Code uses it in a project, it asks whether to use the incognote skill: choose the “don’t ask again” option. If you move the notes folder, run it again in the new place. To undo, add remove after the command.',
     'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ',
     'saveFail': 'Couldn’t save: ', 'cf.title': 'Discard the unsaved changes to this note?', 'cf.body': 'They couldn’t be saved. Stay here to sort it out.', 'cf.ok': 'Discard changes', 'cf.stay': 'Stay here',
     'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
@@ -2732,7 +2759,7 @@ function outlineMenu() {
 }
 // The menu next to the name: things that concern the whole notes folder and the page itself.
 // Filled in by build.py, so the page can say which release it is.
-const VERSION = '1.3.1';
+const VERSION = '1.4.0';
 function libMenu() {
   const rw = S.root && !S.readonly, th = ['light', 'dark'].includes(prefs.get('theme', 'auto')) ? prefs.get('theme', 'auto') : 'auto';
   showMenu('lib', (rw ? mi('claude', tx('fm.claude')) + mi('trash', tx('tr.menu')) + mi('refresh', tx('lib.reload')) + SEP : '') +
@@ -3231,25 +3258,38 @@ async function ccState() {
   const has1 = !!sys || await exists(S.root, 'CLAUDE.md');
   let has2 = false;
   try { has2 = await exists(await skillDir(false), 'SKILL.md'); } catch (e) {}
-  return { has1, has2, sys };
+  return { has1, has2, sys, linked: await globalLinked() };
 }
-// One row per file. A missing file gets its own Create button. An existing file shows a quiet "Exists" mark that turns
-// into Regenerate when the pointer is over the row or the button has keyboard focus; on touch screens both stay visible.
-let ccBusy = null;   // 'guide' | 'skill' | 'all' while a write is running
+// One row per file. A missing file gets its own Create button; an existing one gets a "✓ Exists" button whose label
+// turns into Regenerate under the pointer or keyboard focus (see .swap in the CSS).
+const swapBtn = (has, act, label, attrs) => `<span class="act"><span class="chip ok touch">${icon('checkmark', 13)}${esc(has)}</span>` +
+  `<button class="btn gray small swap" ${attrs} aria-label="${esc(has + ', ' + label)}"${ccBusy ? ' disabled' : ''}>` +
+  `<span class="a" aria-hidden="true">${icon('checkmark', 13)}${esc(has)}</span><span class="b">${esc(act)}</span></button></span>`;
+let ccBusy = null;   // 'guide' | 'skill' | 'all' | 'global' while a write is running
+let ccSteps = false, ccLinked = 0;   // terminal steps shown; global setup marker's time when last drawn (0: none)
 async function openCC() {
   if (!S.root || S.readonly) return;
   const st = await ccState();
   const row = (path, desc, has, which) => {
     const busy = ccBusy === which || ccBusy === 'all';
     const act = busy ? `<span class="act"><span class="chip" role="status">${esc(tx('cc.working'))}</span></span>`
-      : has ? `<span class="act has"><span class="chip ok">${icon('checkmark', 13)}${esc(tx('cc.has'))}</span>` +
-              `<button class="btn plain small regen" data-cc="regen" data-which="${which}" aria-label="${esc(tx('cc.regenX', baseOf(path)))}"${ccBusy ? ' disabled' : ''}>${esc(tx('cc.regen'))}</button></span>`
+      : has ? swapBtn(tx('cc.has'), tx('cc.regen'), tx('cc.regenX', baseOf(path)), `data-cc="regen" data-which="${which}"`)
       : `<span class="act"><button class="btn tinted small" data-cc="create" data-which="${which}" aria-label="${esc(tx('cc.createX', baseOf(path)))}"${ccBusy ? ' disabled' : ''}>${esc(tx('cc.create'))}</button></span>`;
     return `<div class="frow"><span class="mini">${icon('doc', 18)}</span><span class="mid"><span class="p">${esc(path)}</span>` +
       `<span class="footnote secondary">${esc(desc)}</span></span>${act}</div>`;
   };
   const wasOpen = !$('#cc').hidden;
   $('#cc-files').innerHTML = row('CLAUDE.md', tx('cc.f1'), st.has1, 'guide') + row(SKILL_DIR.join('/') + '/SKILL.md', tx('cc.f2'), st.has2, 'skill');
+  // Use from other projects: one row, plus the two terminal steps once the person has asked to set it up.
+  ccLinked = st.linked;
+  const gBusy = ccBusy === 'global';
+  const gAct = gBusy ? `<span class="act"><span class="chip" role="status">${esc(tx('cc.working'))}</span></span>`
+    : st.linked ? swapBtn(tx('cc.gHas'), tx('cc.gRe'), tx('cc.gReX'), 'data-cc="global"')
+    : `<span class="act"><button class="btn tinted small" data-cc="global" aria-label="${esc(tx('cc.gSetX'))}"${ccBusy ? ' disabled' : ''}>${esc(tx('cc.gSet'))}</button></span>`;
+  $('#cc-global').innerHTML = `<div class="frow"><span class="mini g">${icon('square.grid.2x2', 18)}</span><span class="mid"><span class="p">~/.claude/skills/incognote</span>` +
+    `<span class="footnote secondary">${esc(tx('cc.gDesc'))}</span></span>${gAct}</div>` +
+    (ccSteps ? `<div class="gsteps"><ol><li>${esc(tx('cc.g1'))}</li><li>${esc(tx('cc.g2'))}<div class="cmd"><code>${esc(GLOBAL_CMD)}</code>` +
+      `<button class="btn gray small" data-cc="copy">${esc(tx('copy'))}</button></div></li></ol><p class="footnote secondary">${esc(tx('cc.gNote'))}</p></div>` : '');
   $('#cc-x').innerHTML = icon('xmark', 18);
   const both = !st.has1 && !st.has2;          // one missing file has its own Create button in its row
   $('#cc-gen').textContent = tx(both ? 'cc.createAll' : 'cc.close'); $('#cc-gen').disabled = !!ccBusy;
@@ -3258,7 +3298,7 @@ async function openCC() {
   $('#cc').hidden = false;
   if (!wasOpen) (ccBusy ? $('.ccsheet') : $('#cc-gen')).focus();
 }
-function closeCC() { $('#cc').hidden = true; }
+function closeCC() { $('#cc').hidden = true; ccSteps = false; }
 $('#cc-x').onclick = closeCC;
 $('#cc').addEventListener('mousedown', (e) => { if (e.target.id === 'cc') closeCC(); });
 $('#cc-open').onclick = async () => { const st = await ccState(); closeCC(); if (st.sys) openNote(st.sys.path); };
@@ -3310,6 +3350,8 @@ async function ccRun(which, mode) {
       if (!st.has1) out.push(await ccWrite('guide', 'create'));
       if (!st.has2) out.push(await ccWrite('skill', 'create'));
       msg = out.some((r) => r[2] === 'created') && out.every((r) => r[2] === 'created' || r[2] === 'exists') ? tx('cc.done') : out.map((r) => r[0]).filter(Boolean).join(' · ') || null; ms = 5000;
+    } else if (which === 'global') {
+      [msg, ms] = await ccGlobal();
     } else [msg, ms] = await ccWrite(which, mode);
     await refresh(false);
   } catch (x) { msg = tx('cc.fail') + ((x && x.message) || x); ms = 5000; }
@@ -3317,12 +3359,31 @@ async function ccRun(which, mode) {
     ccBusy = null;
     if (!$('#cc').hidden) {
       try { await openCC(); } catch (x) {}
-      if (hadFocus || document.activeElement === $('.ccsheet')) $('#cc-gen').focus();
+      if (hadFocus || document.activeElement === $('.ccsheet')) ((which === 'global' && $('#cc-global [data-cc="copy"]')) || $('#cc-gen')).focus();
     } else for (const x of document.querySelectorAll('#cc [data-cc], #cc-gen')) x.disabled = false;
     if (msg) toast(msg, ms);
   }
 }
 $('#cc-files').addEventListener('click', (e) => { const b = e.target.closest('[data-cc]'); if (b && !b.disabled) ccRun(b.dataset.which, b.dataset.cc); });
+$('#cc-global').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-cc]');
+  if (!b || b.disabled) return;
+  if (b.dataset.cc === 'global') { ccRun('global'); return; }
+  try { await navigator.clipboard.writeText(GLOBAL_CMD); b.textContent = tx('copied'); setTimeout(() => { if (b.isConnected) b.textContent = tx('copy'); }, 1600); }
+  catch (x) { toast(GLOBAL_CMD, 6000); }
+});
+// Coming back from Terminal: show "Set up" as soon as the script has run.
+window.addEventListener('focus', async () => {
+  if ($('#cc').hidden || ccBusy || !S.root) return;
+  try {
+    const lk = await globalLinked();
+    if (lk === ccLinked) return;
+    const had = $('#cc-global').contains(document.activeElement);
+    if (lk) ccSteps = false;                                          // done: fold the steps away
+    await openCC();
+    if (had) $('#cc-gen').focus();
+  } catch (x) {}
+});
 $('#cc-gen').onclick = () => { if ($('#cc-gen').dataset.mode === 'close') closeCC(); else ccRun('all', 'create'); };
 // A few facts about this notebook that help the guide: frontmatter fields in common use.
 function notebookFacts() {
@@ -3518,6 +3579,168 @@ Report only; don’t change anything. Give the report to the person and act only
 3. If its images aren’t used by any other note, ask whether to delete them too.
 `
   }
+};
+
+/* ---------- using the notebook from other projects ---------- */
+// Claude Code started in some other folder only knows about this notebook if a user-level skill names it. The page
+// can't write outside the notes folder or learn its absolute path, so it writes a small sh script into
+// .claude/incognote/global.sh and the person runs it once in a terminal inside the notes folder. The script writes
+// ~/.claude/skills/incognote/SKILL.md with the notebook's path and permission rules for that folder only (so saving
+// a note doesn't ask every time), and leaves .claude/incognote/linked behind so this window can show "Set up".
+// Running it again updates the skill (for example after the folder moved); "remove" undoes it.
+const GLOBAL_DIR = ['.claude', 'incognote'], GLOBAL_CMD = 'sh .claude/incognote/global.sh';
+// The marker's modification time, or 0 when it's missing; a new time means the script just ran (again).
+async function globalLinked() {
+  try { let d = S.root; for (const k of GLOBAL_DIR) d = await d.getDirectoryHandle(k); return (await (await d.getFileHandle('linked')).getFile()).lastModified || 1; }
+  catch (x) { return 0; }
+}
+async function ccGlobal() {
+  const st = await ccState();
+  if (!st.has1) await ccWrite('guide', 'create');      // the global skill points Claude at these two files
+  if (!st.has2) await ccWrite('skill', 'create');
+  let d = S.root; for (const k of GLOBAL_DIR) d = await d.getDirectoryHandle(k, { create: true });
+  const text = globalScript(LANG);
+  if ((await readOrNull(d, 'global.sh')) !== text) await writeText(d, 'global.sh', text);
+  ccSteps = true;
+  try { await navigator.clipboard.writeText(GLOBAL_CMD); return [tx('cc.gCopied'), 4000]; } catch (x) { return [null, 0]; }
+}
+const shq = (s) => "'" + s.replace(/'/g, "'\\''") + "'";
+// One template line as sh words: @NB@ is the notebook path, @NBY@ the same escaped for a YAML double-quoted string,
+// @NBR@ the same with glob characters turned into ? so it can sit inside a permission rule.
+const shLine = (line) => line.split(/(@NB@|@NBY@|@NBR@)/).filter(Boolean)
+  .map((p) => p === '@NB@' ? '"$NB"' : p === '@NBY@' ? '"$NBY"' : p === '@NBR@' ? '"$NBR"' : shq(p)).join('') || "''";
+function globalScript(L) {
+  const T = GLOBAL_TPL[L], say = (...a) => `printf '%s\\n' ${a.join(' ')}`;
+  // Reading and searching cover the whole folder; writing only .md files, so nothing else in the notebook
+  // (.claude/settings.json, this script, git hooks) can be changed from another project without asking.
+  const rules = [['Read', '**'], ['Glob', '**'], ['Grep', '**'], ['Edit', '**/*.md'], ['Write', '**/*.md']].map(([t, g]) => `  - "${t}(/@NBR@/${g})"`);
+  const skill = ['---', 'name: incognote', `description: "${T.desc}"`, 'allowed-tools:', ...rules, '---',
+    '<!-- incognote-notebook: @NB@ -->', `<!-- ${T.gen} -->`, '', ...T.body.split('\n')];
+  return String.raw`#!/bin/sh
+# ${T.head}
+#   ${GLOBAL_CMD}          ${T.set}
+#   ${GLOBAL_CMD} remove   ${T.undo}
+set -e
+unset CDPATH
+case $1 in ''|remove) ;; *) ${say(shq(T.usage), `'  ${GLOBAL_CMD}'`, `'  ${GLOBAL_CMD} remove'`)}; exit 2 ;; esac
+NB=$(cd -- "$(dirname -- "$0")/../.." >/dev/null && pwd -P)
+case $NB in *'
+'*) ${say(shq(T.newline))}; exit 1 ;; esac
+CFG=$HOME/.claude
+[ -n "$CLAUDE_CONFIG_DIR" ] && CFG=$CLAUDE_CONFIG_DIR
+DIR=$CFG/skills/incognote
+SK=$DIR/SKILL.md
+MARK=$NB/.claude/incognote/linked
+old=
+if [ -f "$SK" ]; then
+  if ! grep -q '^<!-- incognote-notebook: ' "$SK"; then ${say(shq(T.foreign), '"  $SK"')}; exit 1; fi
+  old=$(sed -n 's/^<!-- incognote-notebook: \(.*\) -->$/\1/p' "$SK" | head -n 1)
+fi
+if [ "$1" = remove ]; then
+  if [ ! -f "$SK" ]; then rm -f "$MARK"; ${say(shq(T.none))}; exit 0; fi
+  if [ "$old" != "$NB" ] && [ -d "$old/.claude/incognote" ]; then rm -f "$MARK"; ${say(shq(T.other), '"  $old"')}; exit 1; fi
+  rm -f "$SK" "$MARK"; rmdir "$DIR" 2>/dev/null || true
+  ${say(shq(T.removed))}; exit 0
+fi
+NBY=$(printf '%s' "$NB" | sed 's/[\\"]/\\&/g')
+NBR=$(printf '%s' "$NB" | tr '\052\077\133\135\173\175\134\042\041' '?????????')
+mkdir -p "$DIR"
+tmp=$(mktemp "$DIR/.SKILL.XXXXXX")
+trap 'rm -f "$tmp"' EXIT
+printf '%s\n' \
+  ${skill.map(shLine).join(' \\\n  ')} > "$tmp"
+mv -f "$tmp" "$SK"
+printf '%s\n' "$SK" > "$MARK"
+if [ -n "$old" ] && [ "$old" != "$NB" ]; then
+  rm -f "$old/.claude/incognote/linked"
+  ${say(shq(T.moved), '"  $old"')}
+fi
+${say(shq(T.done), '"  $NB"', shq(T.ask), shq(T.again))}
+`;
+}
+const GLOBAL_TPL = {
+  zh: {
+    head: '由 Incognote 生成。让在任何文件夹里启动的 Claude Code 都能使用这个笔记本。',
+    set: '设置（可以重复运行，比如笔记文件夹搬了位置以后）', undo: '撤销',
+    gen: '由 Incognote 生成，重新运行时会整个替换。在笔记文件夹里运行 sh .claude/incognote/global.sh 更新，加 remove 撤销。',
+    desc: '用户的笔记本（Incognote 笔记库）在 @NBY@ 。用户在任何项目里说“存到笔记本”“记到笔记里”“记一下”“查一下我的笔记”“我笔记里有没有……”之类时用这个 skill：把内容存成笔记，或在笔记里查找、修改。',
+    body: `# 用户的笔记本
+
+笔记本文件夹：\`@NB@\`
+
+用户在别的项目里也会让你往这个笔记本里存东西、查东西。上面列出的工具已经允许：读和查找整个文件夹，写 \`.md\` 文件，不用再问用户。读写文件用 Read、Write、Edit；查找用 Grep、Glob，没有这两个工具时用 grep、find、ls 这类只读命令，路径加引号。
+
+## 先看约定
+1. 先读 \`@NB@/CLAUDE.md\`，按里面的约定写笔记（文件名、标题、frontmatter、双链、图片）。改名、移动、整理笔记之前，再读 \`@NB@/.claude/skills/incognote-notes/SKILL.md\`。
+2. 如果这个文件夹不存在，告诉用户笔记本可能换了位置，请在新位置重新运行 \`sh .claude/incognote/global.sh\`。不要去别处找，也不要新建。
+
+## 存到笔记本
+- 默认新建一篇笔记。用户指明了某篇已有笔记时，追加到那篇里合适的位置，不改其余内容。
+- 标题概括内容，同时用作文件名（去掉不允许的字符）和第一行的 \`# 标题\`。
+- 放进最合适的已有文件夹，看不出来就放根目录。不要为一篇笔记新建文件夹，除非用户要求。
+- 正文就是用户要存的内容，整理成清楚的 Markdown。代码、命令、链接、报错原样保留，不要编造用户没给的信息。
+- 已有同名笔记时不要覆盖，问用户是追加进去还是换个名字。
+- 存好后告诉用户笔记在笔记本里的位置。
+
+## 查笔记
+- 在笔记本里按关键词查找，跳过以 \`.\` 开头的文件夹（\`.trash\`、\`.claude\`、\`.git\`）。读出相关笔记再回答，并说明出自哪篇。
+
+## 注意
+- 不要动 \`.trash/\`、\`.claude/\` 和 \`*.crswap\` 文件。
+- 删除笔记，或一次改 5 篇以上之前，先列出要做的事，得到用户同意。
+- 不要把笔记内容写进当前项目，除非用户要求。
+- Incognote 开着时会自动载入你的修改。`,
+    foreign: '没有改动：下面这个 skill 已经存在，而且不是 Incognote 生成的。',
+    usage: '用法：', newline: '没有改动：笔记文件夹的路径里有换行符，请先给文件夹改个名字。',
+    none: '还没有设置过，不需要撤销。',
+    other: '没有改动：现在登记的是另一个笔记本：',
+    removed: '已撤销。在其他项目里，Claude Code 不会再使用这个笔记本。',
+    moved: '原来登记的笔记本已换成这个。原来的是：',
+    done: '✓ 设置好了。以后新开的 Claude Code，不管在哪个文件夹，说“把这个存到笔记本”或“查一下我的笔记”，都会用这个笔记本：',
+    ask: 'Claude Code 第一次在某个项目里用到时，会问要不要使用 incognote 这个 skill，选“不再询问”那项即可。',
+    again: '笔记文件夹搬了位置，就在新位置再运行一次。撤销：sh .claude/incognote/global.sh remove',
+  },
+  en: {
+    head: 'Created by Incognote. Lets Claude Code started in any folder use this notebook.',
+    set: 'set up (safe to run again, for example after moving the notes folder)', undo: 'undo',
+    gen: 'Created by Incognote and replaced whole when run again. Run sh .claude/incognote/global.sh in the notes folder to update it, or add remove to undo.',
+    desc: 'The user’s notebook (an Incognote notes folder) is at @NBY@ . Use this skill in any project when the user says things like “save this to my notes”, “add this to my notebook”, “note this down”, “look it up in my notes” or “do my notes have anything on…”: save content as a note, or find and edit notes.',
+    body: `# The user’s notebook
+
+Notebook folder: \`@NB@\`
+
+The user may ask you, from any project, to save things to this notebook or look things up in it. The tools listed above are already allowed (reading and searching the whole folder, writing \`.md\` files), so don’t ask the user for permission. Read and write files with Read, Write and Edit. Search with Grep and Glob, or, if those tools aren’t available, with read-only commands such as grep, find and ls. Quote paths.
+
+## Check the conventions first
+1. Read \`@NB@/CLAUDE.md\` first and follow its conventions (file names, titles, frontmatter, links, images). Before renaming, moving or tidying notes, also read \`@NB@/.claude/skills/incognote-notes/SKILL.md\`.
+2. If the folder doesn’t exist, tell the user the notebook may have moved and that they can run \`sh .claude/incognote/global.sh\` again in its new place. Don’t look for it elsewhere and don’t create it.
+
+## Save to the notebook
+- By default, create a new note. If the user names an existing note, add to it in a sensible place and leave the rest unchanged.
+- Pick a title that sums up the content. Use it as the file name (without characters that aren’t allowed) and as the first line, \`# Title\`.
+- Put the note in the best-fitting existing folder, or at the top level if none fits. Don’t create a folder for a single note unless the user asks.
+- The body is what the user wants to keep, written up as clear Markdown. Keep code, commands, links and error messages exactly as they are. Don’t add information the user didn’t give.
+- If a note with that name exists, don’t overwrite it. Ask whether to add to it or use another name.
+- When it’s saved, tell the user where the note is in the notebook.
+
+## Look things up
+- Search the notebook by keyword, skipping folders whose names start with \`.\` (\`.trash\`, \`.claude\`, \`.git\`). Read the matching notes before answering, and say which note the answer comes from.
+
+## Take care
+- Leave \`.trash/\`, \`.claude/\` and \`*.crswap\` files alone.
+- Before deleting a note, or changing more than 5 notes at once, list what you’ll do and get the user’s go-ahead.
+- Don’t copy notes into the current project unless the user asks.
+- If Incognote is open, it picks up your changes automatically.`,
+    foreign: 'Nothing changed: this skill already exists and wasn’t created by Incognote.',
+    usage: 'Usage:', newline: 'Nothing changed: the notes folder’s path contains a line break. Rename the folder first.',
+    none: 'It isn’t set up, so there’s nothing to undo.',
+    other: 'Nothing changed: another notebook is set up right now:',
+    removed: 'Done. Claude Code in other projects won’t use this notebook any more.',
+    moved: 'This notebook replaces the one set up before, which was:',
+    done: '✓ All set. From now on, in a new Claude Code session in any folder, say “save this to my notes” or “look it up in my notes” and it will use this notebook:',
+    ask: 'The first time Claude Code uses it in a project, it asks whether to use the incognote skill. Choose the “don’t ask again” option.',
+    again: 'If you move the notes folder, run this again in the new place. To undo: sh .claude/incognote/global.sh remove',
+  },
 };
 
 /* ---------- global search ---------- */

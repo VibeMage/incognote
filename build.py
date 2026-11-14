@@ -3,12 +3,12 @@
 import json, pathlib
 
 here = pathlib.Path(__file__).parent
-VERSION = '1.3.1'    # shown in the page; keep in step with the release tag
+VERSION = '1.4.0'    # shown in the page; keep in step with the release tag
 src = (here / 'src/app.html').read_text(encoding='utf-8')
 icons = json.loads((here / 'src/icons.json').read_text(encoding='utf-8'))
 need = ['chevron.right', 'chevron.down', 'chevron.up.chevron.down', 'plus', 'magnifyingglass', 'folder', 'tray', 'clock',
         'doc', 'photo', 'ellipsis', 'lock', 'xmark', 'checkmark',
-        'folder.badge.plus', 'questionmark.circle', 'square.and.pencil', 'exclamationmark.triangle', 'sidebar.left']
+        'folder.badge.plus', 'questionmark.circle', 'square.and.pencil', 'exclamationmark.triangle', 'sidebar.left', 'square.grid.2x2']
 out = (src
        .replace('@@VERSION@@', VERSION)
        .replace('/*@@ICONS@@*/', json.dumps({k: icons[k] for k in need}, ensure_ascii=False))

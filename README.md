@@ -76,9 +76,18 @@ Your notes are ordinary `.md` files, so [Claude Code](https://claude.com/claude-
 
    Neither file appears in the note list or search. Edit them however you like.
 
-   If your folder already has a `CLAUDE.md` or the skill (for example from another notes app) and it doesn't fit, click **Regenerate** next to it. The old file is copied to `.claude/backup/` first.
+   If your folder already has a `CLAUDE.md` or the skill (for example from another notes app) and it doesn't fit, click the **✓ Exists** button next to it; it reads **Regenerate** when you point at it. The old file is copied to `.claude/backup/` first.
 2. Open a terminal in your notes folder and run `claude`. Ask things like “summarize what I wrote about X”, “file this into a new note”, or “rename note A to B”.
 3. Keep Incognote open next to it. Notes Claude changes appear within seconds, marked with a blue dot. If Claude changes the note you are editing, nothing is overwritten: you choose which version to keep.
+
+### From any project
+
+To say “save this to my notes” while Claude Code is working in some other project, set it up once:
+
+1. In the same window, under **Use from other projects**, click **Set Up…**. This copies a command.
+2. In Terminal, go to your notes folder (type `cd `, drag the folder in from Finder, press Return) and paste: `sh .claude/incognote/global.sh`
+
+The script writes one file, `~/.claude/skills/incognote/SKILL.md`: a Claude Code skill that names your notebook's folder and allows Claude to read and write that folder (and nothing else) without asking each time. In any project you can then say “save this to my notes”, “add this to my meeting note” or “do my notes have anything on X?”. The first time it's used in a project, Claude Code asks whether to use the incognote skill; choose the “don't ask again” option. Run the command again after moving the notes folder. To undo, run `sh .claude/incognote/global.sh remove`. Only one notebook is set up at a time; running it in another notebook switches to that one. (macOS and Linux.)
 
 Tip: run `git init` in the notes folder (or let Claude suggest it) so any change Claude makes can be undone. Incognote ignores the `.git` folder.
 
