@@ -241,18 +241,38 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .overlay{position:fixed;inset:0;z-index:20;background:var(--overlay);display:flex;justify-content:center;align-items:flex-start;padding:10vh 16px 16px;overflow:auto}
 .ccsheet{width:100%;max-width:540px;display:flex;flex-direction:column;gap:14px;padding:20px 24px 24px;background:var(--bg-elevated);border-radius:36px;box-shadow:var(--shadow-float)}
 .ccsheet p{margin:0;text-wrap:pretty}
+.ccsheet:focus{outline:none}
 .sheet-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sheet-h h2{margin:0;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.26px}
-.ccsheet .group-b{background:var(--bg-secondary)}
+.ccsheet .group-b{background:var(--fill-quaternary)}
 .frow{display:flex;align-items:center;gap:12px;padding:10px 12px;min-width:0}
-.frow+.frow{box-shadow:inset 0 1px 0 var(--separator)}
+.frow{position:relative}
+.frow+.frow::before{content:"";position:absolute;top:0;left:53px;right:12px;height:1px;background:var(--separator);transition:opacity .15s var(--ease)}
 .frow .mini{width:29px;height:29px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center;flex:none}
 .frow .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .frow .p{font-family:var(--font-mono);font-size:14px;line-height:20px;letter-spacing:0;overflow-wrap:anywhere}
-.chip{flex:none;padding:2px 10px;border-radius:999px;font-size:13px;line-height:18px;background:var(--fill-tertiary);color:var(--label-secondary)}
-.chip.new{background:var(--accent-soft);color:var(--link)}
-.fact{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.fact .btn{height:24px;padding:0 4px}
+.chip{flex:none;display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;line-height:18px;background:var(--fill-tertiary);color:var(--label-secondary);white-space:nowrap}
+.chip.ok{background:none;padding:3px 8px;color:var(--label-secondary)}
+.chip.ok .ic{color:var(--success)}
+.frow{border-radius:18px;transition:background .15s var(--ease)}
+.act{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:88px}
+.act .btn{white-space:nowrap}
+.act .chip{pointer-events:none}
+.act.has .regen{height:24px;padding:0 4px}
+/* Mouse and trackpad: the row shows a quiet "Exists"; pointing at the row (or tabbing to the button) swaps in Regenerate.
+   Touch screens, including touch laptops, keep both visible so nothing hidden can be tapped. */
+@media (hover:hover) and (pointer:fine){
+  .act{display:grid;justify-items:end;align-items:center}
+  .act>*{grid-area:1/1}
+  .act.has .regen{height:28px}
+  .act.has .chip,.act.has .regen{transition:opacity .15s var(--ease)}
+  .act.has .regen{opacity:0;pointer-events:none}
+  .frow:hover{background:var(--fill-tertiary)}
+  .frow:hover::before,.frow:hover+.frow::before{opacity:0}
+  .frow:hover .act.has .chip,.act.has:focus-within .chip{opacity:0}
+  .frow:hover .act.has .regen,.act.has:focus-within .regen{opacity:1;pointer-events:auto}
+  .frow:hover .act.has .regen:active{opacity:.5}
+}
 .sheet-a{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:4px}
 
 /* popovers */
@@ -408,7 +428,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
   </div>
 </div>
 <div id="cc" class="overlay" hidden>
-  <div class="ccsheet" role="dialog" aria-modal="true" aria-labelledby="cc-title">
+  <div class="ccsheet" role="dialog" aria-modal="true" aria-labelledby="cc-title" tabindex="-1">
     <div class="sheet-h"><h2 id="cc-title" data-i18n="cc.title"></h2><button class="btn gray icon" id="cc-x" data-i18n-aria="close" data-i18n-title="close"></button></div>
     <p class="sub secondary" data-i18n="cc.desc"></p>
     <div class="group-b" id="cc-files"></div>
@@ -561,13 +581,14 @@ const STR = {
     'fm.claude': '配合 Claude Code…', 'cc.title': '配合 Claude Code', 'close': '关闭',
     'cc.desc': '笔记就是这个文件夹里的 .md 文件，Claude Code 可以直接查阅和修改。把下面两个文件放进笔记文件夹，Claude Code 就会知道这个笔记库的约定：怎么命名、怎么写双链、图片放哪里、改名时要同步更新链接。',
     'cc.f1': '笔记库说明，Claude Code 在这个文件夹里启动时会自动读取', 'cc.f2': '管理笔记的技能：新建、改名或移动并同步双链、整理体检',
-    'cc.has': '已有', 'cc.new': '将新建',
-    'cc.note': '“生成”只补上缺少的文件。已有的文件（比如别的笔记软件留下的）如果不合适，点它旁边的“重新生成”：旧文件会先备份到 .claude/backup/。这两个文件不会出现在笔记列表和搜索结果里。',
+    'cc.has': '已有', 'cc.create': '创建', 'cc.createX': (x) => `创建 ${x}`, 'cc.regenX': (x) => `重新生成 ${x}`, 'cc.working': '正在写入…',
+    'cc.createAll': '全部创建', 'cc.close': '完成', 'cc.created': (x) => `已创建 ${x}`,
+    'cc.note': '已有的文件（比如别的笔记软件留下的）如果不合适，可以点那一行的“重新生成”（鼠标移上去时出现），旧文件会先备份到 .claude/backup/。这两个文件不会出现在笔记列表和搜索结果里。',
     'cc.regen': '重新生成', 'cc.replaced': (a, b) => `已重新生成 ${a}，旧文件备份在 ${b}`, 'cc.same': (a) => `${a} 已经是最新的 Incognote 版本`,
     'cc.dirty': 'CLAUDE.md 里有没保存的修改，请先保存或放弃',
     'cc.backupFail': '备份旧文件没有成功，所以没有替换', 'cc.changedNow': (a) => `${a} 刚刚在别处被修改，所以没有替换，请再试一次`,
     'cc.how': '用法：在终端里进入这个笔记文件夹，运行 claude。Claude 改过的笔记会自动出现在这里，并在列表里标上蓝点。',
-    'cc.gen': '生成', 'cc.allDone': '都已生成', 'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：',
+    'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：',
     'saveFail': '保存失败：', 'cf.discard': '这篇笔记的修改还没有保存。\n\n确定：放弃这些修改\n取消：留在这里',
     'paste.name': '粘贴图片', 'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
     'sg.create': (x) => `链接到新笔记「${x}」`, 'untitled': '未命名', 'createFail': '新建失败：',
@@ -636,13 +657,14 @@ const STR = {
     'fm.claude': 'Use with Claude Code…', 'cc.title': 'Use with Claude Code', 'close': 'Close',
     'cc.desc': 'Your notes are plain .md files in this folder, so Claude Code can read and edit them directly. Put the two files below in your notes folder and Claude Code will know how this notebook works: how files are named, how [[links]] work, where images go, and that links must be updated when a note is renamed.',
     'cc.f1': 'Notebook guide. Claude Code reads it automatically when started in this folder', 'cc.f2': 'A skill for managing notes: create, rename or move with link updates, tidy-up check',
-    'cc.has': 'Exists', 'cc.new': 'New',
-    'cc.note': 'Create only adds missing files. If an existing one doesn’t fit (say, left over from another notes app), click Regenerate next to it: the old file is backed up to .claude/backup/ first. Neither file shows up in the note list or in search.',
+    'cc.has': 'Exists', 'cc.create': 'Create', 'cc.createX': (x) => `Create ${x}`, 'cc.regenX': (x) => `Regenerate ${x}`, 'cc.working': 'Writing…',
+    'cc.createAll': 'Create both', 'cc.close': 'Done', 'cc.created': (x) => `Created ${x}`,
+    'cc.note': 'If an existing file doesn’t fit (say, one left by another notes app), click Regenerate in its row (it appears when you point at the row). The old file is backed up to .claude/backup/ first. Neither file shows up in the note list or in search.',
     'cc.regen': 'Regenerate', 'cc.replaced': (a, b) => `Regenerated ${a}. The old file is backed up at ${b}`, 'cc.same': (a) => `${a} is already Incognote’s latest version`,
     'cc.dirty': 'CLAUDE.md has unsaved edits. Save or discard them first.',
     'cc.backupFail': 'Couldn’t back up the old file, so nothing was replaced', 'cc.changedNow': (a) => `${a} just changed somewhere else, so nothing was replaced. Please try again.`,
     'cc.how': 'To use it, open a terminal in this notes folder and run claude. Notes Claude changes show up here automatically, marked with a blue dot.',
-    'cc.gen': 'Create', 'cc.allDone': 'Both created', 'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ',
+    'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ',
     'saveFail': 'Couldn’t save: ', 'cf.discard': 'Your changes to this note haven’t been saved.\n\nOK: discard them\nCancel: stay here',
     'paste.name': 'Pasted image', 'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
     'sg.create': (x) => `Link to new note “${x}”`, 'untitled': 'Untitled', 'createFail': 'Couldn’t create the note: ',
@@ -2230,86 +2252,97 @@ async function ccState() {
   try { has2 = await exists(await skillDir(false), 'SKILL.md'); } catch (e) {}
   return { has1, has2, sys };
 }
+// One row per file. A missing file gets its own Create button. An existing file shows a quiet "Exists" mark that turns
+// into Regenerate when the pointer is over the row or the button has keyboard focus; on touch screens both stay visible.
+let ccBusy = null;   // 'guide' | 'skill' | 'all' while a write is running
 async function openCC() {
   if (!S.root || S.readonly) return;
   const st = await ccState();
-  const row = (path, desc, has, which) => `<div class="frow"><span class="mini">${icon('doc', 18)}</span><span class="mid"><span class="p">${esc(path)}</span>` +
-    `<span class="footnote secondary">${esc(desc)}</span></span>` +
-    (has ? `<span class="fact"><span class="chip">${esc(tx('cc.has'))}</span><button class="btn plain small" data-regen="${which}">${esc(tx('cc.regen'))}</button></span>`
-      : `<span class="chip new">${esc(tx('cc.new'))}</span>`) + '</div>';
+  const row = (path, desc, has, which) => {
+    const busy = ccBusy === which || ccBusy === 'all';
+    const act = busy ? `<span class="act"><span class="chip" role="status">${esc(tx('cc.working'))}</span></span>`
+      : has ? `<span class="act has"><span class="chip ok">${icon('checkmark', 13)}${esc(tx('cc.has'))}</span>` +
+              `<button class="btn plain small regen" data-cc="regen" data-which="${which}" aria-label="${esc(tx('cc.regenX', baseOf(path)))}"${ccBusy ? ' disabled' : ''}>${esc(tx('cc.regen'))}</button></span>`
+      : `<span class="act"><button class="btn tinted small" data-cc="create" data-which="${which}" aria-label="${esc(tx('cc.createX', baseOf(path)))}"${ccBusy ? ' disabled' : ''}>${esc(tx('cc.create'))}</button></span>`;
+    return `<div class="frow"><span class="mini">${icon('doc', 18)}</span><span class="mid"><span class="p">${esc(path)}</span>` +
+      `<span class="footnote secondary">${esc(desc)}</span></span>${act}</div>`;
+  };
+  const wasOpen = !$('#cc').hidden;
   $('#cc-files').innerHTML = row('CLAUDE.md', tx('cc.f1'), st.has1, 'guide') + row(SKILL_DIR.join('/') + '/SKILL.md', tx('cc.f2'), st.has2, 'skill');
-  if (ccBusy) for (const x of document.querySelectorAll('[data-regen]')) x.disabled = true;
   $('#cc-x').innerHTML = icon('xmark', 18);
-  const done = st.has1 && st.has2;
-  $('#cc-gen').textContent = tx(done ? 'cc.allDone' : 'cc.gen'); $('#cc-gen').disabled = done;
+  const both = !st.has1 && !st.has2;          // one missing file has its own Create button in its row
+  $('#cc-gen').textContent = tx(both ? 'cc.createAll' : 'cc.close'); $('#cc-gen').disabled = !!ccBusy;
+  $('#cc-gen').dataset.mode = both ? 'all' : 'close';
   $('#cc-open').hidden = !st.sys;
   $('#cc').hidden = false;
-  (done ? $('#cc-x') : $('#cc-gen')).focus();
+  if (!wasOpen) (ccBusy ? $('.ccsheet') : $('#cc-gen')).focus();
 }
 function closeCC() { $('#cc').hidden = true; }
 $('#cc-x').onclick = closeCC;
 $('#cc').addEventListener('mousedown', (e) => { if (e.target.id === 'cc') closeCC(); });
 $('#cc-open').onclick = async () => { const st = await ccState(); closeCC(); if (st.sys) openNote(st.sys.path); };
 async function writeText(dir, name, text) { const fh = await dir.getFileHandle(name, { create: true }); const w = await fh.createWritable(); await w.write(text); await w.close(); }
-$('#cc-gen').onclick = async () => {
-  const btn = $('#cc-gen'); btn.disabled = true;
-  try {
-    const st = await ccState();
-    if (!st.has1 && !(await exists(S.root, 'CLAUDE.md'))) await writeText(S.root, 'CLAUDE.md', CC_TPL[LANG].guide(notebookFacts()));
-    if (!st.has2) { const d = await skillDir(true); if (!(await exists(d, 'SKILL.md'))) await writeText(d, 'SKILL.md', CC_TPL[LANG].skill()); }
-    await refresh(false);
-    await openCC();
-    toast(tx('cc.done'), 4000);
-  } catch (e) { btn.disabled = false; toast(tx('cc.fail') + (e.message || e)); }
+const readOrNull = async (dir, name) => {
+  try { return await (await (await dir.getFileHandle(name)).getFile()).text(); }
+  catch (x) { if (x && x.name === 'NotFoundError') return null; throw x; }   // anything else: stop rather than overwrite unseen content
 };
-// Replace an existing CLAUDE.md or SKILL.md with Incognote's version. The old file is copied to
-// .claude/backup/<name>-<date>.md first (hidden from Incognote, easy to find again), and nothing is written if that fails.
-let ccBusy = false;
-$('#cc-files').addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-regen]'); if (!b || ccBusy) return;
-  ccBusy = true;
-  for (const x of document.querySelectorAll('[data-regen]')) x.disabled = true;
-  const which = b.dataset.regen;
-  const readOrNull = async (dir, name) => {
-    try { return await (await (await dir.getFileHandle(name)).getFile()).text(); }
-    catch (x) { if (x && x.name === 'NotFoundError') return null; throw x; }   // anything else: stop rather than overwrite unseen content
-  };
-  let msg = '', ms = 3000;
+// Create a missing file, or (mode 'regen') replace an existing one with Incognote's version. Before replacing, the old file
+// is copied to .claude/backup/<name>-<date>.md and read back; nothing is written if that fails or the file changed meanwhile.
+async function ccWrite(which, mode) {
+  const st = await ccState();
+  if (which === 'guide' && st.sys && S.current === st.sys.path && S.dirty) return [tx('cc.dirty'), 4000, 'stop'];
+  let dir, name, text;
+  if (which === 'guide') {
+    dir = S.root; name = st.sys ? baseOf(st.sys.path) : 'CLAUDE.md';    // keep the existing spelling (claude.md on a case-sensitive disk)
+    text = CC_TPL[LANG].guide(notebookFacts());
+  } else { dir = await skillDir(true); name = 'SKILL.md'; text = CC_TPL[LANG].skill(); }
+  const old = await readOrNull(dir, name);
+  if (old !== null && mode !== 'regen') return [null, 0, 'exists'];   // appeared meanwhile: creating never overwrites
+  if (old === text) return [tx('cc.same', name), 3000, 'same'];
+  let saved = '';
+  if (old !== null) {
+    const bdir = await (await S.root.getDirectoryHandle('.claude', { create: true })).getDirectoryHandle('backup', { create: true });
+    const d = new Date(), p2 = (x) => String(x).padStart(2, '0');
+    const stamp = `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
+    const stemName = which === 'guide' ? 'CLAUDE' : 'SKILL';
+    let bn = `${stemName}-${stamp}.md`, k = 2;
+    while (await exists(bdir, bn)) bn = `${stemName}-${stamp}-${k++}.md`;
+    await writeText(bdir, bn, old);
+    if ((await readOrNull(bdir, bn)) !== old) return [tx('cc.backupFail'), 5000, 'stop'];
+    saved = '.claude/backup/' + bn;
+    if ((await readOrNull(dir, name)) !== old) return [tx('cc.changedNow', name), 5000, 'stop'];   // changed elsewhere while copying
+  }
+  await writeText(dir, name, text);
+  return saved ? [tx('cc.replaced', name, saved), 6000, 'replaced'] : [tx('cc.created', name), 4000, 'created'];
+}
+async function ccRun(which, mode) {
+  if (ccBusy) return;
+  ccBusy = which;
+  const hadFocus = !$('#cc').hidden && $('#cc').contains(document.activeElement);
+  for (const x of document.querySelectorAll('#cc [data-cc], #cc-gen')) x.disabled = true;
+  if (hadFocus) $('.ccsheet').focus();                               // the clicked button is about to be replaced
+  if (!$('#cc').hidden) { try { await openCC(); } catch (x) {} }     // show "working" in the row
+  let msg = null, ms = 3000;
   try {
-    const st = await ccState();
-    if (which === 'guide' && st.sys && S.current === st.sys.path && S.dirty) { msg = tx('cc.dirty'); return; }
-    let dir, name, text;
-    if (which === 'guide') {
-      dir = S.root; name = st.sys ? baseOf(st.sys.path) : 'CLAUDE.md';    // keep the existing spelling (claude.md on a case-sensitive disk)
-      text = CC_TPL[LANG].guide(notebookFacts());
-    } else { dir = await skillDir(true); name = 'SKILL.md'; text = CC_TPL[LANG].skill(); }
-    const old = await readOrNull(dir, name);
-    if (old === text) { msg = tx('cc.same', name); return; }
-    let saved = '';
-    if (old !== null) {
-      const bdir = await (await S.root.getDirectoryHandle('.claude', { create: true })).getDirectoryHandle('backup', { create: true });
-      const d = new Date(), p2 = (x) => String(x).padStart(2, '0');
-      const stamp = `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
-      const stemName = which === 'guide' ? 'CLAUDE' : 'SKILL';
-      let bn = `${stemName}-${stamp}.md`, k = 2;
-      while (await exists(bdir, bn)) bn = `${stemName}-${stamp}-${k++}.md`;
-      await writeText(bdir, bn, old);
-      if ((await readOrNull(bdir, bn)) !== old) { msg = tx('cc.backupFail'); return; }
-      saved = '.claude/backup/' + bn;
-      // changed by something else while the copy was made: leave it alone
-      if ((await readOrNull(dir, name)) !== old) { msg = tx('cc.changedNow', name); return; }
-    }
-    await writeText(dir, name, text);
+    if (which === 'all') {
+      const st = await ccState(), out = [];
+      if (!st.has1) out.push(await ccWrite('guide', 'create'));
+      if (!st.has2) out.push(await ccWrite('skill', 'create'));
+      msg = out.some((r) => r[2] === 'created') && out.every((r) => r[2] === 'created' || r[2] === 'exists') ? tx('cc.done') : out.map((r) => r[0]).filter(Boolean).join(' · ') || null; ms = 5000;
+    } else [msg, ms] = await ccWrite(which, mode);
     await refresh(false);
-    msg = saved ? tx('cc.replaced', name, saved) : tx('cc.done'); ms = saved ? 6000 : 4000;
   } catch (x) { msg = tx('cc.fail') + ((x && x.message) || x); ms = 5000; }
   finally {
-    ccBusy = false;
-    if (!$('#cc').hidden) { try { await openCC(); } catch (x) {} }
-    else for (const x of document.querySelectorAll('[data-regen]')) x.disabled = false;
+    ccBusy = null;
+    if (!$('#cc').hidden) {
+      try { await openCC(); } catch (x) {}
+      if (hadFocus || document.activeElement === $('.ccsheet')) $('#cc-gen').focus();
+    } else for (const x of document.querySelectorAll('#cc [data-cc], #cc-gen')) x.disabled = false;
     if (msg) toast(msg, ms);
   }
-});
+}
+$('#cc-files').addEventListener('click', (e) => { const b = e.target.closest('[data-cc]'); if (b && !b.disabled) ccRun(b.dataset.which, b.dataset.cc); });
+$('#cc-gen').onclick = () => { if ($('#cc-gen').dataset.mode === 'close') closeCC(); else ccRun('all', 'create'); };
 // A few facts about this notebook that help the guide: frontmatter fields in common use.
 function notebookFacts() {
   const all = visibleNotes(), keys = new Map();
