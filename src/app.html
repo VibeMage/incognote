@@ -26,7 +26,7 @@
   --focus-ring:0 0 0 2px #fff,0 0 0 4px #0071e3;
   --ease:cubic-bezier(.42,0,.58,1);--ease-out:cubic-bezier(.32,.72,0,1);
 }
-@media (prefers-color-scheme: dark){:root{
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --label:#fff;--label-secondary:#98989f;--label-tertiary:rgba(235,235,245,.3);
   --bg:#000;--bg-secondary:#1c1c1e;--bg-grouped:#000;--bg-grouped-secondary:#1c1c1e;--bg-elevated:#1c1c1e;
   --fill:rgba(120,120,128,.36);--fill-secondary:rgba(120,120,128,.32);--fill-tertiary:rgba(118,118,128,.24);--fill-quaternary:rgba(118,118,128,.18);--fill-raised:#636366;
@@ -38,6 +38,21 @@
   --shadow-glass:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 .5px rgba(255,255,255,.1),0 0 0 .5px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.45);
   --focus-ring:0 0 0 2px #000,0 0 0 4px #319dff;
 }}
+/* The same dark values when the person picks Dark in the menu, whatever the system says. */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --label:#fff;--label-secondary:#98989f;--label-tertiary:rgba(235,235,245,.3);
+  --bg:#000;--bg-secondary:#1c1c1e;--bg-grouped:#000;--bg-grouped-secondary:#1c1c1e;--bg-elevated:#1c1c1e;
+  --fill:rgba(120,120,128,.36);--fill-secondary:rgba(120,120,128,.32);--fill-tertiary:rgba(118,118,128,.24);--fill-quaternary:rgba(118,118,128,.18);--fill-raised:#636366;
+  --separator:rgba(84,84,88,.6);
+  --link:#319dff;--accent-soft:rgba(41,151,255,.14);
+  --danger:#ff666a;--danger-soft:rgba(255,102,106,.16);--success:#4ad968;--success-soft:rgba(74,217,104,.16);--warning:#ffa056;--warning-soft:rgba(255,160,86,.16);
+  --glass:rgba(44,44,46,.58);--overlay:rgba(0,0,0,.48);
+  --shadow-float:0 12px 40px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.1);
+  --shadow-glass:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 .5px rgba(255,255,255,.1),0 0 0 .5px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 2px #000,0 0 0 4px #319dff;
+}
+:root[data-theme="light"]{color-scheme:light}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg-grouped);color:var(--label);font-family:var(--font-sans);font-size:17px;line-height:22px;letter-spacing:-.43px;-webkit-font-smoothing:antialiased}
@@ -51,7 +66,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .secondary{color:var(--label-secondary)}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 16px;border:0;border-radius:999px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px;cursor:pointer;white-space:nowrap;transition:transform .15s var(--ease),opacity .15s var(--ease),filter .15s var(--ease);user-select:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;border:0;border-radius:999px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px;cursor:pointer;white-space:nowrap;transition:transform .15s var(--ease),opacity .15s var(--ease),filter .15s var(--ease);user-select:none}
 .btn:active{transform:scale(.97)}
 .btn.filled{background:var(--accent);color:var(--on-accent)}
 .btn.filled:hover{filter:brightness(1.08)}
@@ -59,22 +74,23 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .btn.tinted{background:var(--accent-soft);color:var(--link)}
 .btn.plain{background:none;color:var(--link);padding:0 8px}
 .btn.plain:active{opacity:.5;transform:none}
-.btn.icon{width:34px;padding:0}
+.btn.icon{width:36px;padding:0}
+.btn.danger{background:var(--danger-soft);color:var(--danger)}
 .btn.large{height:50px;padding:0 28px;font-size:17px;line-height:22px;letter-spacing:-.43px}
 .btn.small{height:28px;padding:0 12px;font-size:13px}
 .btn:disabled{background:var(--fill-tertiary);color:var(--label-tertiary);cursor:default;transform:none}
 
 /* segmented */
-.seg{position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;height:32px;padding:2px;border-radius:999px;background:var(--fill-tertiary)}
-.seg button{position:relative;z-index:1;border:0;background:none;padding:0 16px;border-radius:999px;font-size:13px;line-height:18px;cursor:pointer;color:var(--label)}
+.seg{position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;height:36px;padding:2px;border-radius:999px;background:var(--fill-tertiary)}
+.seg button{position:relative;z-index:1;border:0;background:none;padding:0 16px;border-radius:999px;font-size:15px;line-height:20px;letter-spacing:-.23px;cursor:pointer;color:var(--label)}
 .seg button[aria-pressed="true"]{background:var(--fill-raised);box-shadow:var(--shadow-thumb);font-weight:600}
 
 /* ===== welcome ===== */
-#welcome{position:relative;min-height:100%;display:flex;justify-content:center;padding:12vh 16px 64px}
+#welcome{position:relative;min-height:100%;display:flex;justify-content:center;align-items:center;padding:64px 16px}
 #welcome .inner{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center}
 .tile{width:72px;height:72px;border-radius:23%;background:#0088ff;color:#fff;display:grid;place-items:center}
 .large-title{font-size:34px;line-height:41px;font-weight:700;letter-spacing:.4px;margin:0;text-wrap:balance}
-#welcome p{margin:0;color:var(--label-secondary);text-wrap:balance}
+#welcome p{margin:0;color:var(--label-secondary);text-wrap:balance;white-space:pre-line}
 .notice{width:100%;padding:14px 16px;border-radius:18px;background:var(--warning-soft);color:var(--label);text-align:left;font-size:15px;line-height:20px}
 .group{width:100%;text-align:left}
 .group-h{padding:0 16px 6px;font-size:13px;line-height:18px;color:var(--label-secondary)}
@@ -97,9 +113,13 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 /* ===== app layout ===== */
 #app{height:100vh;display:flex;overflow:hidden}
 #side{flex:0 0 280px;width:280px;min-width:0;padding:8px;display:flex;flex-direction:column;gap:4px;min-height:0}
-.panel{flex:1;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;border-radius:26px;padding:12px 8px;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass)}
-.side-title{margin:6px 4px 10px 12px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+/* The top of the panel (name, search, All notes, Recent) stays put; only the folder tree scrolls. */
+.panel{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden;border-radius:26px;padding:12px 0 0;background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--shadow-glass)}
+.side-top{flex:none;padding:0 8px 4px}
+#tree{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:0 8px 12px}
+.side-title{margin:6px 0 10px 12px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
 .side-title>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-title .btn{flex:none;color:var(--label-secondary);letter-spacing:0}
 .lang-btn{flex:none;letter-spacing:0}
 #welcome>.lang-btn{position:absolute;top:16px;right:16px}
 .fakesearch{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:calc(100% - 8px);margin:0 4px 10px;height:36px;padding:0 10px;border-radius:999px;background:var(--fill-tertiary);color:var(--label-secondary);cursor:text}
@@ -108,6 +128,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .sec-h>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sec-h .ic{flex:none}
 .sec-h{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;margin-top:14px;padding:6px 12px;font-size:15px;line-height:20px;font-weight:600;color:var(--label-secondary);cursor:pointer;border-radius:12px}
+.sec-h:focus-visible{box-shadow:var(--focus-ring)}
 .sec-h .ic{color:var(--link);transition:transform .25s var(--ease)}
 .sec-h[aria-expanded="false"] .ic{transform:rotate(-90deg)}
 .item{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:40px;padding:0 12px;border-radius:18px;cursor:pointer;font-size:17px;line-height:22px}
@@ -118,10 +139,14 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .item.sel{background:var(--accent);color:var(--on-accent)}
 .item.sel .ic.lead,.item.sel .cnt,.item.sel .twisty{color:var(--on-accent)}
 .item:focus-visible{box-shadow:var(--focus-ring)}
-.twisty{all:unset;display:grid;place-items:center;width:16px;height:16px;margin-left:-6px;color:var(--label-secondary);border-radius:4px;transition:transform .25s var(--ease)}
-.twisty.closed{transform:rotate(-90deg)}
+/* The arrow is small but its click area is the full height of the row. */
+.twisty{flex:none;display:grid;place-items:center;width:28px;height:40px;margin:0 -8px 0 -10px;color:var(--label-secondary);border-radius:10px}
+.twisty .ic{transition:transform .25s var(--ease)}
+.twisty.closed .ic{transform:rotate(-90deg)}
 .twisty.none{visibility:hidden}
-.side-foot{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-width:0;padding:8px 12px 8px 16px;border-radius:20px;cursor:pointer}
+.twisty:not(.none):hover{background:var(--fill-tertiary)}
+.item.sel .twisty:not(.none):hover{background:rgba(255,255,255,.22)}
+.side-foot{all:unset;box-sizing:border-box;flex:none;display:flex;align-items:center;gap:10px;width:100%;min-width:0;padding:8px 12px 8px 16px;border-radius:20px;cursor:pointer}
 .side-foot:hover{background:var(--fill-quaternary)}
 .side-foot:focus-visible{box-shadow:var(--focus-ring)}
 .side-foot .txt{flex:1;min-width:0}
@@ -136,9 +161,15 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .menu .fm-h{padding:6px 14px 2px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 
 #list{flex:0 0 320px;width:320px;min-width:0;padding:20px 8px;display:flex;flex-direction:column;gap:12px;min-height:0}
-.list-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:0 4px 0 12px;min-width:0}
+.list-h{display:flex;flex-wrap:wrap;align-items:center;gap:0 12px;padding:0 4px 0 12px;min-width:0}
 .list-h .btn{flex:none}
-.list-h h2{margin:0;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-h h2{flex:1;min-width:calc(100% - 92px);margin:0;font-size:28px;line-height:34px;font-weight:700;letter-spacing:.38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-acts{flex:none;display:flex;gap:6px}
+.metabtn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:3px;max-width:100%;margin-right:auto;border-radius:6px;cursor:pointer;font-size:15px;line-height:20px;letter-spacing:-.23px;color:var(--label-secondary)}
+.metabtn>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.metabtn:disabled{cursor:default}
+.metabtn:not(:disabled):hover{color:var(--label)}
+.metabtn:focus-visible{box-shadow:var(--focus-ring)}
 .list-b{flex:1;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;background:var(--bg-grouped-secondary);border-radius:26px;padding:6px;box-shadow:inset 0 0 0 1px var(--edge)}
 .note{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;width:100%;min-width:0;padding:10px 14px;border-radius:20px;cursor:pointer;position:relative}
 .note+.note::before{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;background:var(--separator)}
@@ -146,7 +177,8 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .note:hover:not(.sel){background:var(--fill-quaternary)}
 .note.sel{background:var(--fill-tertiary)}
 .note:focus-visible{box-shadow:var(--focus-ring)}
-.note .t{font-size:15px;line-height:20px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Titles may take two lines, so long names that start the same can still be told apart. */
+.note .t{font-size:15px;line-height:20px;font-weight:600;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
 .note .m{display:flex;gap:8px;min-width:0;font-size:15px;line-height:20px}
 .note .m .d{flex:none}
 .note .m .s{color:var(--label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -154,17 +186,32 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 
 #main{flex:1;min-width:0;padding:8px 8px 8px 4px;display:flex}
 .pane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg);border-radius:26px;box-shadow:inset 0 0 0 1px var(--edge);overflow:hidden}
-.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px 12px 24px;flex:none}
-.crumb{display:flex;align-items:center;gap:6px;min-width:0;flex:1 1 200px;overflow:hidden;white-space:nowrap;font-size:15px;line-height:20px;color:var(--label-secondary)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px;flex:none}
+.toolbar>.btn{flex:none}
+.crumb{display:flex;align-items:center;gap:2px;min-width:0;flex:1 1 180px;overflow:hidden;white-space:nowrap;padding:4px;margin:-4px;font-size:15px;line-height:20px;color:var(--label-secondary)}
 .crumb .ic{flex:none}
-.crumb span{flex:0 1 auto;min-width:2.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.crumb span:last-child{flex-shrink:1;min-width:0;color:var(--label);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* Folders give way first; the note's own name is the last thing to be cut short. */
+.cseg{all:unset;box-sizing:border-box;flex:0 3 auto;min-width:2.8em;padding:2px 5px;border-radius:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.cseg:hover{background:var(--fill-quaternary);color:var(--label)}
+.cseg:focus-visible{box-shadow:var(--focus-ring)}
+.cseg.cur{flex:0 1 auto;min-width:4.5em;color:var(--label)}
+.cseg:disabled{cursor:default;background:none}
+.cgap{flex:none;padding:0 2px}
+.cname{flex:1 1 12em;min-width:6em;max-width:28em;height:28px;margin:-4px 0;padding:0 8px;border:0;border-radius:8px;outline:none;background:var(--fill-tertiary);color:var(--label);font:inherit;letter-spacing:inherit}
+.cname:focus-visible{box-shadow:var(--focus-ring)}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
 .status{display:flex;align-items:center;gap:6px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 .status .dot{width:8px;height:8px;border-radius:99px;background:var(--warning)}
 .status.saved .dot{background:var(--success)}
 .scroll{flex:1;min-height:0;overflow:auto}
-.placeholder{height:100%;display:grid;place-items:center;color:var(--label-secondary);text-align:center;padding:24px}
+.placeholder{flex:1;min-height:0;overflow:auto;display:grid;place-items:center;color:var(--label-secondary);text-align:center;padding:24px}
+
+/* Sidebar and list can step aside: hidden to give the note the whole window, or shown over it as a drawer when the window is narrow. */
+#app.no-side #side,#app.no-list #list{display:none}
+#app.no-list #main{padding-left:8px}
+#scrim{position:fixed;inset:0;z-index:14;background:var(--overlay)}
+#app.drawer.no-side #side{display:flex;position:fixed;z-index:15;top:0;bottom:0;left:0;width:min(280px,46vw);background:var(--bg-grouped);box-shadow:var(--shadow-float)}
+#app.drawer.no-list #list{display:flex;position:fixed;z-index:15;top:0;bottom:0;left:min(280px,46vw);width:min(320px,54vw);background:var(--bg-grouped);box-shadow:var(--shadow-float)}
 
 /* rendered markdown */
 .md{max-width:692px;margin:0 auto;padding:24px 32px 96px;font-size:17px;line-height:27px;letter-spacing:-.2px;overflow-wrap:anywhere;min-width:0}
@@ -172,7 +219,9 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .md pre,.md pre code{overflow-wrap:normal;white-space:pre}
 .props{display:grid;grid-template-columns:fit-content(40%) minmax(0,1fr);gap:4px 16px;margin:0 0 20px;padding:12px 16px;border-radius:12px;background:var(--bg-secondary);font-size:13px;line-height:18px}
 .props dt{color:var(--label-secondary);overflow-wrap:anywhere;min-width:0}
-.props dd{margin:0;overflow-wrap:anywhere}
+.props dd{margin:0;min-width:0;overflow-wrap:anywhere}
+/* A long web address stays on one line; the full address is in its tooltip and still copies whole. */
+.md a.longurl{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .md .meta{margin:-8px 0 20px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 .md h1{font-size:34px;line-height:41px;font-weight:700;letter-spacing:.4px;margin:8px 0 16px;text-wrap:balance}
 .md h2{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.26px;margin:32px 0 12px}
@@ -197,7 +246,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .md pre{margin:0 0 16px;padding:14px 18px;border-radius:12px;background:var(--bg-secondary);overflow-x:auto;font-size:14px;line-height:22px}
 .md pre code{padding:0;background:none;font-size:inherit}
 .md hr{border:0;height:1px;background:var(--separator);margin:28px 0}
-.md img{max-width:100%;border-radius:12px;display:block;margin:4px 0}
+.md img{max-width:100%;border-radius:12px;display:block;margin:4px 0;cursor:zoom-in}
 .md .img-missing{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;background:var(--bg-secondary);color:var(--label-secondary);font-size:13px;line-height:18px}
 .md .tw{overflow-x:auto;margin:0 0 16px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--separator)}
 .md table{border-collapse:collapse;width:100%;font-size:15px;line-height:20px}
@@ -205,7 +254,8 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .md thead tr{background:var(--bg-secondary)}
 .md th{font-weight:600}
 .md tbody tr{border-top:1px solid var(--separator)}
-.md mark,.hit{background:var(--accent-soft);color:var(--link);border-radius:4px;padding:0 2px}
+.md mark{background:var(--accent-soft);color:var(--link);border-radius:4px;padding:0 2px}
+.hit{background:var(--accent-soft);color:var(--link);border-radius:3px;padding:0}
 .md mark.flash{background:#ffcc00;color:#000;transition:background 1.5s var(--ease)}
 .backlinks{margin-top:48px;padding-top:20px;border-top:1px solid var(--separator)}
 .backlinks h3{margin:0 0 10px;font-size:13px;line-height:18px;font-weight:600;color:var(--label-secondary);letter-spacing:-.08px}
@@ -227,13 +277,14 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .cbar-b{display:flex;flex-wrap:wrap;gap:8px}
 .diff{max-width:900px;margin:0 auto;padding:12px 24px 96px;font-family:var(--font-mono);font-size:13px;line-height:20px;letter-spacing:0}
 .diff .lg{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 12px;font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--label-secondary)}
-.diff .lg span::before{content:attr(data-s);display:inline-block;width:18px;margin-right:6px;border-radius:4px;text-align:center;font-family:var(--font-mono);color:var(--label)}
-.diff .lg .del::before,.dl.del{background:var(--danger-soft)}
-.diff .lg .add::before,.dl.add{background:var(--success-soft)}
-.dl{position:relative;min-height:20px;padding:0 8px 0 28px;white-space:pre-wrap;overflow-wrap:anywhere}
-.dl::before{content:attr(data-s);position:absolute;left:10px;color:var(--label-secondary)}
+.diff .lg span{display:inline-flex;align-items:center;gap:6px}
+.diff .lg i{flex:none;width:14px;height:14px;border-radius:4px}
+.diff .lg .del i,.dl.del{background:var(--warning-soft)}
+.diff .lg .add i,.dl.add{background:var(--accent-soft)}
+.dl{position:relative;min-height:20px;padding:0 8px 0 52px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dl::before{content:attr(data-s);position:absolute;left:8px;width:38px;overflow:hidden;white-space:nowrap;font-family:var(--font-sans);font-size:11px;color:var(--label-secondary)}
 .dl.del+.dl:not(.del),.dl:not(.del)+.dl.del,.dl.add+.dl:not(.add),.dl:not(.add)+.dl.add{margin-top:2px}
-.dl.gap{padding:6px 28px;font-family:var(--font-sans);color:var(--label-secondary)}
+.dl.gap{padding:6px 52px;font-family:var(--font-sans);color:var(--label-secondary)}
 .diff .none{padding:40px 0;text-align:center;font-family:var(--font-sans);color:var(--label-secondary)}
 .udot{display:inline-block;width:8px;height:8px;margin:0 6px 0 0;border-radius:99px;background:var(--accent);vertical-align:2px}
 
@@ -303,7 +354,10 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .res .r{flex:none;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-size:13px;line-height:18px;color:var(--label-secondary)}
 .pal-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:10px 16px 4px;margin-top:6px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
 
-#suggest{position:fixed;z-index:25;width:min(340px,calc(100vw - 24px));max-width:min(340px,calc(100vw - 24px));max-height:320px;overflow-x:hidden;overflow-y:auto}
+#suggest{position:fixed;z-index:25;width:min(460px,calc(100vw - 24px));max-width:min(460px,calc(100vw - 24px));max-height:340px;overflow-x:hidden;overflow-y:auto}
+#suggest button.two{flex-direction:column;align-items:stretch;justify-content:center;gap:1px;padding:7px 14px}
+#suggest .two .t{flex:none;font-size:15px;line-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#suggest .two .p{flex:none;max-width:none;font-size:12px;line-height:16px;letter-spacing:0;color:var(--label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:8px;max-width:calc(100vw - 32px);padding:10px 18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-glass),var(--shadow-float);font-size:15px;line-height:20px}
 
 #toast-b{margin:-4px -10px -4px 0;flex:none}
@@ -327,7 +381,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .guide .acts .btn{height:44px;padding:0 20px}
 .guide .alt{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 8px}
 .tile.warn{background:#ff8d28}
-.item.more-empty{font-size:15px;color:var(--label-secondary)}
+.item.more-empty{min-height:32px;font-size:13px;line-height:18px;color:var(--label-secondary)}
 .item.more-empty .lbl{white-space:normal}
 .linkbtn{all:unset;color:var(--link);cursor:pointer;border-radius:4px}
 .linkbtn:hover{text-decoration:underline}
@@ -340,8 +394,49 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .help dd{margin:0;color:var(--label-secondary)}
 .help .keys{margin-top:12px;padding-top:10px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
 
-@media (max-width: 1100px){#list{flex-basis:280px;width:280px}#side{flex-basis:240px;width:240px}.side-title{font-size:24px;letter-spacing:0}.wide-only{display:none}.lang-btn{padding-left:8px;padding-right:8px}}
-@media (max-width: 860px){#app{flex-direction:column;height:auto;overflow:visible}#side,#list{flex:none;width:auto;max-height:none}#side .panel{max-height:50vh}.list-b{max-height:50vh}#main{min-height:80vh}}
+/* menus */
+#menu{max-height:calc(100vh - 24px);overflow-x:hidden;overflow-y:auto}
+.menu button.danger{color:var(--danger)}
+.menu button:disabled{color:var(--label-tertiary);cursor:default}
+.menu button:disabled:hover{background:none}
+
+/* dialog: one question, its answers */
+#dlg{z-index:45;align-items:center;padding:16px}
+.dlgbox{width:100%;max-width:420px;max-height:100%;display:flex;flex-direction:column;gap:10px;padding:24px 24px 20px;background:var(--bg-elevated);border-radius:36px;box-shadow:var(--shadow-float);text-align:center}
+.dlgbox h2{margin:0;font-size:20px;line-height:25px;font-weight:700;letter-spacing:-.45px;text-wrap:balance;overflow-wrap:anywhere}
+.dlgbox p{margin:0;color:var(--label-secondary);font-size:15px;line-height:20px;text-wrap:pretty}
+.field{width:100%;height:44px;margin-top:6px;padding:0 14px;border:0;border-radius:12px;outline:none;background:var(--fill-tertiary);color:var(--label);font:inherit;letter-spacing:inherit}
+.field:focus-visible{box-shadow:var(--focus-ring)}
+.dlg-list{flex:1;min-height:0;max-height:min(46vh,420px);margin-top:6px;padding:4px;overflow-x:hidden;overflow-y:auto;text-align:left;background:var(--fill-quaternary);border-radius:18px}
+.pick{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:6px 12px;border-radius:14px;cursor:pointer;font-size:15px;line-height:20px}
+.pick:hover:not(:disabled),.pick:focus-visible{background:var(--fill-tertiary)}
+.pick:focus-visible{box-shadow:var(--focus-ring)}
+.pick:disabled{cursor:default;color:var(--label-secondary)}
+.pick .ic{flex:none;color:var(--link)}
+.pick .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.pick .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick .s{font-size:12px;line-height:16px;color:var(--label-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick .go{flex:none;font-size:13px;line-height:18px;color:var(--link)}
+.pick:disabled .go{color:var(--label-secondary)}
+.dlgbox .sheet-actions{margin-top:10px}
+
+/* a picture at full size */
+#zoom{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.82);cursor:zoom-out;outline:none}
+#zoom img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);object-fit:contain;border-radius:8px}
+
+/* footnotes and the Copy button on code blocks */
+.md sup a{padding:0 3px;border-radius:5px;background:var(--accent-soft)}
+.footnotes{margin-top:40px;padding-top:14px;border-top:1px solid var(--separator);font-size:15px;line-height:22px;color:var(--label-secondary)}
+.footnotes ol{margin:0;padding-left:24px}
+.footnotes li{border-radius:6px;transition:background 1.2s var(--ease)}
+.footnotes li.flash{background:#ffcc00;color:#000;transition:none}
+.prew{position:relative;margin:0 0 16px}
+.md .prew pre{margin:0}
+.copyb{position:absolute;top:8px;right:8px;opacity:0;background:var(--bg-elevated);box-shadow:0 0 0 1px var(--separator)}
+.prew:hover .copyb,.copyb:focus-visible{opacity:1}
+@media (hover:none){.copyb{opacity:1}}
+
+@media (max-width: 1100px){#list{flex-basis:280px;width:280px}.wide-only{display:none}.lang-btn{padding-left:8px;padding-right:8px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 @media (prefers-reduced-transparency: reduce){.panel,.menu,#toast{background:var(--bg-elevated);backdrop-filter:none;-webkit-backdrop-filter:none}}
 </style>
@@ -373,12 +468,15 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 </div>
 
 <div id="app" hidden>
+  <div id="scrim" hidden></div>
   <aside id="side">
     <nav class="panel" data-i18n-aria="side.aria">
-      <div class="side-title"><span>Incognote</span><button class="btn plain small lang-btn" id="side-lang"></button></div>
-      <button class="fakesearch" id="open-search" data-i18n-aria="searchAll"></button>
-      <div id="side-fixed"></div>
-      <button class="sec-h" id="tree-toggle" aria-expanded="true"></button>
+      <div class="side-top">
+        <div class="side-title"><span>Incognote</span><button class="btn plain icon" id="lib-more" aria-haspopup="menu" data-i18n-aria="lib.more" data-i18n-title="lib.more"></button></div>
+        <button class="fakesearch" id="open-search" data-i18n-aria="searchAll"></button>
+        <div id="side-fixed"></div>
+        <button class="sec-h" id="tree-toggle" aria-expanded="true"></button>
+      </div>
       <div id="tree"></div>
     </nav>
     <button class="side-foot" id="change-folder" aria-haspopup="menu" data-i18n-title="side.switch">
@@ -390,24 +488,28 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 
   <section id="list" data-i18n-aria="list.aria">
     <div class="list-h">
-      <div style="min-width:0"><h2 id="list-title"></h2><div class="sub secondary" id="list-meta"></div></div>
-      <button class="btn gray icon" id="new-note" data-i18n-aria="list.new" data-i18n-title="list.newTip"></button>
+      <h2 id="list-title"></h2>
+      <div class="list-acts">
+        <button class="btn gray icon" id="list-more" aria-haspopup="menu" data-i18n-aria="list.more" data-i18n-title="list.more"></button>
+        <button class="btn gray icon" id="new-note" data-i18n-aria="list.new" data-i18n-title="list.newTip"></button>
+      </div>
+      <button class="metabtn" id="list-meta" aria-haspopup="menu" data-i18n-title="list.sort"></button>
     </div>
     <div class="list-b" id="notes"></div>
   </section>
 
   <main id="main">
     <div class="pane" id="pane">
-      <div class="placeholder" id="empty-pane"></div>
-      <div class="toolbar" id="toolbar" hidden>
-        <nav class="crumb" id="crumb" data-i18n-aria="crumb"></nav>
-        <div class="tools">
+      <div class="toolbar" id="toolbar">
+        <button class="btn gray icon" id="nav-toggle"></button>
+        <nav class="crumb" id="crumb" data-i18n-aria="crumb" hidden></nav>
+        <div class="tools" id="tools" hidden>
           <span class="status" id="status" hidden><span class="dot"></span><span id="status-t"></span></span>
           <div class="seg" role="group" data-i18n-aria="mode"><button id="m-read" aria-pressed="true" data-i18n="read"></button><button id="m-edit" aria-pressed="false" data-i18n="edit"></button></div>
-          <button class="btn filled" id="save" hidden data-i18n="save"></button>
-          <button class="btn gray icon" id="more" data-i18n-aria="more"></button>
+          <button class="btn gray icon" id="more" aria-haspopup="menu" data-i18n-aria="more" data-i18n-title="more"></button>
         </div>
       </div>
+      <div class="placeholder" id="empty-pane"></div>
       <div class="cbar" id="cbar" role="alert" hidden><span class="cbar-ic" id="cbar-ic"></span><span class="cbar-t" id="cbar-t"></span><span class="cbar-b" id="cbar-b"></span></div>
       <div class="scroll" id="diffv" hidden><div class="diff" id="diff"></div></div>
       <div class="scroll" id="reader" hidden><article class="md" id="article"></article></div>
@@ -450,6 +552,16 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
   </div>
 </div>
 <div class="menu" id="suggest" hidden></div>
+<div id="dlg" class="overlay" hidden>
+  <div class="dlgbox" role="alertdialog" aria-modal="true" aria-labelledby="dlg-t">
+    <h2 id="dlg-t"></h2>
+    <p id="dlg-d"></p>
+    <input class="field" id="dlg-in" autocomplete="off" spellcheck="false" hidden>
+    <div class="dlg-list" id="dlg-list" hidden></div>
+    <div class="sheet-actions"><button class="btn gray" id="dlg-no"></button><button class="btn filled" id="dlg-ok"></button></div>
+  </div>
+</div>
+<div id="zoom" tabindex="-1" role="dialog" data-i18n-aria="zoom.aria" hidden><img id="zoom-img" alt=""></div>
 <div id="toast" hidden role="status"><span id="toast-t"></span><button class="btn plain small" id="toast-b" hidden></button></div>
 
 <script>/*@@MDIT@@*/</script>
@@ -468,7 +580,7 @@ const MD_RE = /\.(md|markdown)$/i;
 // Instructions for coding agents at the top of the folder (CLAUDE.md, AGENTS.md) are files, not notes: kept out of lists, search and links.
 const SYS_RE = /^(claude|agents)\.md$/i;
 const NONCE = Math.random().toString(36).slice(2, 8);
-const A = { wiki: 'data-w' + NONCE, local: 'data-l' + NONCE, byname: 'data-b' + NONCE, task: 'data-t' + NONCE, open: 'data-o' + NONCE };
+const A = { wiki: 'data-w' + NONCE, local: 'data-l' + NONCE, byname: 'data-b' + NONCE, task: 'data-t' + NONCE, open: 'data-o' + NONCE, fn: 'data-f' + NONCE };
 const ds = (el, k) => el.getAttribute(A[k]);
 
 /* ---------- state ---------- */
@@ -479,7 +591,8 @@ const S = {
   dirs: new Map(),    // folder path ('' = root) -> FileSystemDirectoryHandle | null
   view: { kind: 'all', folder: '' },
   current: null, mode: 'read', dirty: false, gen: 0, scanning: null, conflict: false,
-  closed: new Set(), treeOpen: true,
+  open: new Set(),    // folders expanded in the tree (remembered per notes folder)
+  singles: new Set(), opened: [], treeOpen: true,
   imgUrls: new Map(), saving: null, timer: 0, opening: false,
   showEmpty: false
 };
@@ -519,45 +632,45 @@ const prefs = {
 // Interface text in Chinese and English. Default follows the browser; the choice is remembered.
 const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || '') || /Mac OS X/.test(navigator.userAgent);
 const MOD = IS_MAC ? '⌘' : 'Ctrl+';
+const MOD_SHIFT = IS_MAC ? '⇧⌘' : 'Ctrl+Shift+';
 const IS_MOBILE = /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent) || (/Mac/.test(navigator.platform || '') && navigator.maxTouchPoints > 1);
 const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : many}`;
 const STR = {
   zh: {
     'lang.other': 'EN', 'lang.aria': 'Switch to English',
     'w.title': '笔记存在你自己的文件夹里',
-    'w.desc': '每篇笔记都是一个普通的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。',
-    'w.new': '新建笔记库', 'w.openExisting': '打开已有的笔记文件夹',
-    'w.hintFirst': '还没有笔记？点“新建笔记库”，跟着提示建一个文件夹就能开始写。已经有一个放 .md 笔记的文件夹，就点“打开已有的笔记文件夹”。Chrome 会问能否编辑这个文件夹里的文件，选“允许”。',
+    'w.desc': '笔记库就是电脑上的一个文件夹，每篇笔记是一个 .md 文件。\n只在这台电脑上读写，不联网，也不上传任何内容。',
+    'w.new': '新建笔记库', 'w.openExisting': '打开已有的笔记库',
     'w.unsupported': '这个浏览器不能保存到本地文件夹，只能先以只读方式浏览。要编辑和保存，请用电脑上的 Chrome 或 Edge 打开这个文件。浏览器可能会把选择文件夹叫作“上传”，其实文件只在这个页面里读取，不会离开你的电脑。',
     'w.mobile': '手机和平板上的浏览器还不能打开本地的笔记文件夹。请在电脑上用 Chrome 或 Edge 打开这个文件。',
-    'nl.title': '新建笔记库', 'nl.desc': '笔记会存在你电脑上的一个文件夹里。点“继续”后会弹出选择文件夹的窗口：',
+    'nl.title': '新建笔记库', 'nl.desc': '笔记库就是你电脑上的一个文件夹。点“继续”后会弹出选择文件夹的窗口：',
     'nl.s1': '找一个放笔记的位置，比如“文稿”。',
     'nl.s2': IS_MAC ? '点左下角的“新建文件夹”，起个名字，比如“笔记”。' : '点窗口上方的“新建文件夹”，起个名字，比如“笔记”。',
     'nl.s3': '选中这个新文件夹，点右下角的按钮确认。Chrome 问能否编辑文件时，选“允许”。',
-    'nl.note': '选的文件夹里如果已经有文件，会在里面另建一个“Incognote 笔记”文件夹，不会动原来的文件。“文稿”“桌面”“下载”这几个文件夹本身 Chrome 不让直接选，选它们里面的文件夹就行。',
+    'nl.note': '“文稿”“桌面”“下载”这几个文件夹本身不能直接选，请选它们里面的文件夹。',
     'nl.go': '继续', 'lib.name': 'Incognote 笔记',
-    'lib.made': (x) => `笔记库“${x}”已建好，先看看这几篇入门笔记吧`, 'lib.madeIn': (p, x) => `已在“${p}”里新建笔记库“${x}”`, 'lib.fail': '新建笔记库失败：',
-    'ep.emptyT': '这个文件夹里还没有笔记', 'ep.emptyD': '每篇笔记都是一个 .md 文件。可以先放几篇入门笔记看看怎么用，也可以直接开始写。',
+    'lib.made': (x) => `笔记库「${x}」已建好，先看看这几篇入门笔记吧`, 'lib.madeIn': (p, x) => `已在「${p}」里新建笔记库「${x}」`, 'lib.fail': '新建笔记库失败：',
+    'ep.emptyT': '这个笔记库里还没有笔记', 'ep.emptyD': '每篇笔记都是一个 .md 文件。可以先放几篇入门笔记看看怎么用，也可以直接开始写。',
     'ep.starter': '放入入门笔记', 'ep.write': '写第一篇', 'ep.starterNote': '入门笔记会放进“Incognote 入门”文件夹，用完直接删掉就行。',
     'ep.noMdT': '这里没有 Markdown 笔记', 'ep.noMdD': (n) => `Incognote 只显示 .md 文件，这个文件夹里有 ${n.toLocaleString()} 个其他文件，可能选错了文件夹。`,
-    'ep.repick': '选择其他文件夹', 'ep.here': '或者就在这里开始：', 'ep.roD': 'Incognote 只显示 .md 文件，请选择存放笔记的文件夹。',
+    'ep.repick': '打开其他笔记库', 'ep.here': '或者就在这里开始：', 'ep.roD': 'Incognote 只显示 .md 文件，请选择存放笔记的文件夹。',
     'starter.added': '已放入入门笔记', 'starter.fail': '放入入门笔记失败：',
     'side.emptyMore': (n) => `${n} 个文件夹没有笔记`, 'side.emptyHide': (n) => `隐藏 ${n} 个没有笔记的文件夹`,
     'loadingN': (n) => `正在读取笔记… 已查看 ${n.toLocaleString()} 个文件`, 'loadingBig': '。文件很多，可能选了太大的文件夹', 'loadCancelled': '已取消读取',
     'help.btn': 'Markdown 速查', 'help.title': 'Markdown 速查', 'menu.help': 'Markdown 速查', 'fm.newlib': '新建笔记库…',
-    'w.titleBack': '欢迎回来', 'w.descBack': '点一下，回到上次的笔记文件夹。笔记只在你的电脑上读写，不联网，也不上传任何内容。',
-    'w.openX': (x) => `打开“${x}”`, 'w.other': '选择其他文件夹',
+    'w.titleBack': '欢迎回来', 'w.descBack': '点一下，回到上次的笔记库。\n笔记只在这台电脑上读写，不联网，也不上传任何内容。',
+    'w.openX': (x) => `打开「${x}」`, 'w.other': '打开其他笔记库',
     'w.hint': 'Chrome 会问你是否允许访问这个文件夹。如果提示里有“每次访问时都允许”，选它，以后打开这个页面就会直接进入笔记。',
-    'w.recent': '其他最近的文件夹', 'w.forget': '从列表中移除', 'w.when': (d) => `上次打开：${d}`,
-    'gone': (x) => `找不到文件夹“${x}”，它可能被移动、改名或删除了`,
-    'tryAgain': '请再点一次，Chrome 需要你直接点击才能询问权限', 'side.switch': '更换笔记文件夹', 'fm.recent': '最近的文件夹', 'fm.other': '打开其他文件夹…',
+    'w.recent': '其他最近的笔记库', 'w.forget': '从列表中移除', 'w.when': (d) => `上次打开：${d}`,
+    'gone': (x) => `找不到文件夹「${x}」，它可能被移动、改名或删除了`,
+    'tryAgain': '请再点一次，Chrome 需要你直接点击才能询问权限', 'side.switch': '更换笔记库', 'fm.recent': '最近的笔记库', 'fm.other': '打开其他笔记库…',
     'w.local': '数据只在这台电脑上', 'w.roNow': ' · 当前为只读模式', 'w.pick': '选择文件夹', 'w.pickRO': '以只读方式打开',
     'noPermission': '没有获得访问权限', 'cantOpenRetry': '无法打开这个文件夹，请重新选择',
     'cantOpen': '无法打开这个文件夹', 'loading': '正在读取笔记…', 'loadFail': '读取失败：',
-    'side.aria': '笔记文件夹', 'searchAll': '搜索所有笔记', 'search': '搜索', 'side.change': '更换', 'all': '全部笔记', 'recent': '最近',
+    'side.aria': '文件夹', 'searchAll': '搜索所有笔记', 'search': '搜索', 'side.change': '更换', 'all': '全部笔记', 'recent': '最近',
     'side.noSub': '没有子文件夹', 'side.count': (n) => `${n} 篇`, 'side.ro': ' · 只读', 'side.local': ' · 仅存本机',
     'list.aria': '笔记列表', 'list.new': '新建笔记', 'list.newTip': `新建笔记（${MOD}N 在浏览器里被占用，请点这里）`,
-    'list.meta': (n) => `${n} 篇笔记 · 按修改时间`, 'list.noMore': '没有更多内容', 'list.empty': '这里还没有笔记', 'list.emptyHint': '点右上角的 + 新建一篇',
+    'list.meta': (n, s) => `${n} 篇笔记 · ${s}`, 'list.noMore': '没有正文', 'list.empty': '这里还没有笔记', 'list.emptyHint': '点右上角的 + 新建一篇',
     'pane.pick': '选择一篇笔记', 'pane.orSearch': `或者按 ${MOD}K 搜索所有笔记`,
     'crumb': '位置', 'mode': '显示方式', 'read': '阅读', 'edit': '编辑', 'save': '保存', 'more': '更多', 'cancel': '取消',
     'ed.aria': 'Markdown 源码', 'ed.hint': '输入 [[ 可以链接其他笔记 · 粘贴图片会存到 assets 文件夹',
@@ -571,7 +684,7 @@ const STR = {
     'cb.changed': (x) => `「${x}」刚在别处被修改，和你还没保存的修改冲突。`, 'cb.gone': (x) => `「${x}」在别处被删除或改名了，你的修改还没保存。`,
     'cb.diff': '查看差异', 'cb.hide': '收起差异', 'cb.theirs': '用文件里的版本', 'cb.mine': '保留我的版本', 'cb.resave': '重新保存', 'cb.drop': '放弃我的修改',
     'cb.theirsDone': '已换成文件里的版本', 'cb.dropped': '已放弃修改',
-    'df.del': '只在文件里（别处的修改）', 'df.add': '只在你的版本里', 'df.same': (k) => `${k} 行相同`, 'df.none': '两个版本内容相同', 'df.big': '改动太多，按整段显示',
+    'df.del': '文件里的版本（在别处改的）', 'df.add': '你的版本', 'df.sFile': '文件', 'df.sMine': '我的', 'df.same': (k) => `${k} 行相同`, 'df.none': '两个版本内容相同', 'df.big': '改动太多，按整段显示',
     'unseen': '在别处被修改过，还没看',
     'fm.claude': '配合 Claude Code…', 'cc.title': '配合 Claude Code', 'close': '关闭',
     'cc.desc': '笔记就是这个文件夹里的 .md 文件，Claude Code 可以直接查阅和修改。把下面两个文件放进笔记文件夹，Claude Code 就会知道这个笔记库的约定：怎么命名、怎么写双链、图片放哪里、改名时要同步更新链接。',
@@ -584,18 +697,35 @@ const STR = {
     'cc.backupFail': '备份旧文件没有成功，所以没有替换', 'cc.changedNow': (a) => `${a} 刚刚在别处被修改，所以没有替换，请再试一次`,
     'cc.how': '用法：在终端里进入这个笔记文件夹，运行 claude。Claude 改过的笔记会自动出现在这里，并在列表里标上蓝点。',
     'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：',
-    'saveFail': '保存失败：', 'cf.discard': '这篇笔记的修改还没有保存。\n\n确定：放弃这些修改\n取消：留在这里',
-    'paste.name': '粘贴图片', 'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
+    'saveFail': '保存失败：', 'cf.title': '放弃这篇笔记没保存的修改？', 'cf.body': '这些修改没能保存。留在这里可以继续处理。', 'cf.ok': '放弃修改', 'cf.stay': '留在这里',
+    'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
     'sg.create': (x) => `链接到新笔记「${x}」`, 'untitled': '未命名', 'createFail': '新建失败：',
-    'rn.prompt': '新的文件名（不需要 .md）', 'rn.exists': '这个文件夹里已经有同名文件', 'rn.reserved': '根目录的 CLAUDE 和 AGENTS 是留给 Claude Code 说明文件的名字，请换一个',
-    'rn.skipped': (a, b) => `已重命名；更新了 ${a} 篇的链接，${b} 篇因为在别处被改过而跳过`,
-    'rn.touched': (a) => `已重命名，并更新了 ${a} 篇笔记里的链接`, 'rn.done': '已重命名', 'rn.fail': '重命名失败：',
-    'menu.rename': '重命名', 'menu.copy': '复制链接写法', 'menu.refresh': '重新读取文件夹', 'menu.delete': '删除笔记', 'copied': '已复制',
-    'del.confirm': (x, bl) => `删除「${x}」？\n\n文件会从文件夹里永久删除，不会进废纸篓。` + (bl ? `\n有 ${bl} 篇笔记链接到它，这些链接会变成“未创建”。` : ''),
-    'del.done': '已删除', 'del.fail': '删除失败：',
+    'rn.prompt': '文件名（不用写 .md）', 'rn.exists': '这个文件夹里已经有同名文件', 'rn.reserved': '根目录的 CLAUDE 和 AGENTS 是留给 Claude Code 说明文件的名字，请换一个',
+    'ln.skipped': (a, b) => `；更新了 ${a} 篇笔记里的链接，${b} 篇因为在别处被改过而跳过`, 'ln.touched': (a) => `，并更新了 ${a} 篇笔记里的链接`,
+    'rn.done': '已重命名', 'rn.fail': '重命名失败：',
+    'menu.rename': '重命名', 'menu.move': '移动到…', 'menu.copy': '复制双链', 'menu.outline': '大纲', 'menu.delete': '删除笔记', 'copied': '已复制', 'copy': '复制',
+    'del.done': (x) => `已把「${x}」移到废纸篓`, 'undo': '撤销', 'del.fail': '删除失败：',
     'ext.changed': '这篇笔记在别处被修改，已载入最新内容', 'reloaded': '已重新读取',
     'g.recent': '最近修改', 'g.name': '文件名', 'g.body': '正文',
-    'pal.none': (q) => `没有找到包含“${q}”的笔记`, 'pal.found': (a, b) => `在 ${b} 篇笔记中找到 ${a} 篇`, 'pal.total': (a) => `共 ${a} 篇笔记`,
+    'pal.none': (q) => `没有找到包含「${q}」的笔记`, 'pal.found': (a, b) => `在 ${b} 篇笔记中找到 ${a} 篇`, 'pal.foundCap': (a, c) => `找到 ${a} 篇，显示前 ${c} 篇`, 'pal.total': (a) => `共 ${a} 篇笔记`,
+    'lib.more': '笔记库和显示设置', 'lib.reload': '重新读取笔记库',
+    'nav.hide': `隐藏边栏（${MOD}\\）`, 'nav.show': `显示边栏（${MOD}\\）`, 'nav.focus': '隐藏边栏和列表', 'nav.unfocus': '显示边栏和列表',
+    'th.label': '外观', 'th.auto': '跟随系统', 'th.light': '浅色', 'th.dark': '深色', 'lang.label': '语言 Language', 'lang.name': '中文',
+    'sort.mtime': '按修改时间', 'sort.title': '按标题', 'sortm.mtime': '按修改时间', 'sortm.title': '按标题', 'sortm.opened': '按打开时间',
+    'list.sort': '排序方式', 'list.more': '文件夹操作', 'list.recentEmpty': '打开过的笔记会出现在这里',
+    'side.singles': (n) => `${n} 个文件夹各只有一篇笔记`, 'side.singlesHide': '收起只有一篇笔记的文件夹',
+    'crumb.rename': '点一下重命名', 'crumb.go': (x) => `在列表里显示「${x}」`,
+    'mv.title': (x) => `把「${x}」移到哪个文件夹？`, 'mv.filter': '筛选文件夹', 'mv.here': '现在在这里', 'mv.none': '没有匹配的文件夹',
+    'mv.done': (f) => `已移到「${f}」`, 'mv.fail': '移动失败：', 'mv.exists': '那个文件夹里已经有同名的笔记',
+    'tr.menu': '废纸篓…', 'tr.title': '废纸篓', 'tr.desc': '删除的笔记放在笔记库里的 .trash 文件夹。点一篇，把它放回原处。', 'tr.restore': '放回原处',
+    'tr.emptyBtn': '清空废纸篓', 'tr.empty': '废纸篓是空的', 'tr.emptyQ': (n) => `永久删除废纸篓里的 ${n} 篇笔记？`, 'tr.emptyD': '和它们一起删除的图片等文件也会清掉。这一步无法撤销。',
+    'tr.emptyOk': '永久删除', 'tr.emptied': '废纸篓已清空', 'tr.restored': '已放回原处', 'tr.fail': '放回失败：', 'tr.gone': '废纸篓里找不到这个文件', 'done': '完成',
+    'nf.menu': '新建文件夹…', 'nf.menuSub': '新建子文件夹…', 'nf.title': '新文件夹叫什么名字？', 'nf.in': (x) => `会建在「${x}」里。`, 'nf.ph': '文件夹名称', 'nf.ok': '新建',
+    'nf.exists': '这里已经有同名的文件夹或文件', 'nf.fail': '新建文件夹失败：',
+    'rf.menu': '重命名文件夹…', 'rf.title': (x) => `把文件夹「${x}」改成什么名字？`, 'rf.working': '正在重命名文件夹…', 'rf.done': '已重命名文件夹', 'rf.fail': '重命名文件夹失败：',
+    'df2.menu': '删除文件夹…', 'df2.title': (x) => `删除文件夹「${x}」？`, 'df2.body': (n) => (n ? `里面的 ${n} 篇笔记和其他文件会一起移到废纸篓。` : '这个文件夹会移到废纸篓。'),
+    'df2.ok': '移到废纸篓', 'df2.done': (x) => `已把文件夹「${x}」移到废纸篓`, 'df2.fail': '删除文件夹失败：', 'df2.undoFail': '放回文件夹失败：',
+    'wk.title': (x) => `新建笔记「${x}」？`, 'wk.body': '还没有这篇笔记。', 'wk.ok': '新建', 'zoom.aria': '图片大图，点一下关闭',
     'date.md': (d) => `${d.getMonth() + 1}月${d.getDate()}日`, 'date.ymd': (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
   },
   en: {
@@ -603,37 +733,36 @@ const STR = {
     'w.title': 'Notes that live in your own folder',
     'w.desc': 'Every note is a plain .md file. This page reads and writes them only on your computer. It never goes online and never uploads anything.',
     'w.new': 'New notes folder', 'w.openExisting': 'Open an existing notes folder',
-    'w.hintFirst': 'No notes yet? Click “New notes folder” and follow the steps to make one. If you already keep .md notes in a folder, open that instead. Chrome will ask whether this page may edit the files there; choose “Allow”.',
     'w.unsupported': 'This browser can’t save to local folders, so you can only browse read-only. To edit and save, open this file in Chrome or Edge on a computer. The browser may call choosing a folder an “upload”, but the files are only read by this page and never leave your computer.',
     'w.mobile': 'Phone and tablet browsers can’t open a local notes folder yet. Please open this file in Chrome or Edge on a computer.',
     'nl.title': 'New notes folder', 'nl.desc': 'Your notes will live in a folder on your computer. After you click Continue, a folder picker opens:',
     'nl.s1': 'Go to where you want to keep your notes, such as Documents.',
     'nl.s2': IS_MAC ? 'Click “New Folder” at the bottom left and give it a name, such as “Notes”.' : 'Click “New folder” at the top of the window and give it a name, such as “Notes”.',
     'nl.s3': 'Select the new folder and click the button at the bottom right. When Chrome asks whether to allow editing, choose “Allow”.',
-    'nl.note': 'If the folder you pick already has files in it, a new “Incognote Notes” folder is made inside it and nothing else is touched. Chrome won’t let you pick Documents, Desktop, or Downloads themselves; pick a folder inside them.',
+    'nl.note': 'Chrome won’t let you pick Documents, Desktop, or Downloads themselves; pick a folder inside them.',
     'nl.go': 'Continue', 'lib.name': 'Incognote Notes',
     'lib.made': (x) => `“${x}” is ready. Start with these getting-started notes.`, 'lib.madeIn': (p, x) => `Created the notes folder “${x}” in “${p}”`, 'lib.fail': 'Couldn’t create the notes folder: ',
     'ep.emptyT': 'No notes in this folder yet', 'ep.emptyD': 'Every note is a .md file. Add a few getting-started notes to see how things work, or just start writing.',
     'ep.starter': 'Add getting-started notes', 'ep.write': 'Write your first note', 'ep.starterNote': 'They go in a “Getting Started with Incognote” folder. Delete it whenever you like.',
     'ep.noMdT': 'No Markdown notes here', 'ep.noMdD': (n) => `Incognote only shows .md files. This folder has ${plural(n, 'other file', 'other files')}, so it may be the wrong folder.`,
-    'ep.repick': 'Choose another folder', 'ep.here': 'Or start here:', 'ep.roD': 'Incognote only shows .md files. Please choose the folder where you keep your notes.',
+    'ep.repick': 'Open another notes folder', 'ep.here': 'Or start here:', 'ep.roD': 'Incognote only shows .md files. Please choose the folder where you keep your notes.',
     'starter.added': 'Added the getting-started notes', 'starter.fail': 'Couldn’t add the getting-started notes: ',
     'side.emptyMore': (n) => `${plural(n, 'folder', 'folders')} without notes`, 'side.emptyHide': (n) => `Hide ${plural(n, 'folder', 'folders')} without notes`,
     'loadingN': (n) => `Reading notes… ${plural(n, 'file', 'files')} checked`, 'loadingBig': '. That’s a lot of files; this may be too big a folder', 'loadCancelled': 'Stopped reading the folder',
     'help.btn': 'Markdown help', 'help.title': 'Markdown cheat sheet', 'menu.help': 'Markdown help', 'fm.newlib': 'New notes folder…',
     'w.titleBack': 'Welcome back', 'w.descBack': 'One click takes you back to your notes folder. Your notes are read and written only on this computer, never online.',
-    'w.openX': (x) => `Open “${x}”`, 'w.other': 'Choose another folder',
+    'w.openX': (x) => `Open “${x}”`, 'w.other': 'Open another notes folder',
     'w.hint': 'Chrome will ask whether to allow access to this folder. If the prompt offers “Allow on every visit”, choose it, and this page will open straight into your notes from then on.',
-    'w.recent': 'Other recent folders', 'w.forget': 'Remove from list', 'w.when': (d) => `Last opened ${d}`,
+    'w.recent': 'Other recent notes folders', 'w.forget': 'Remove from list', 'w.when': (d) => `Last opened ${d}`,
     'gone': (x) => `Couldn’t find the folder “${x}”. It may have been moved, renamed, or deleted.`,
-    'tryAgain': 'Please click again. Chrome only asks for access right after a click.', 'side.switch': 'Switch notes folder', 'fm.recent': 'Recent folders', 'fm.other': 'Open another folder…',
+    'tryAgain': 'Please click again. Chrome only asks for access right after a click.', 'side.switch': 'Switch notes folder', 'fm.recent': 'Recent notes folders', 'fm.other': 'Open another notes folder…',
     'w.local': 'Your notes stay on this computer', 'w.roNow': ' · Read-only mode', 'w.pick': 'Choose folder', 'w.pickRO': 'Open read-only',
     'noPermission': 'Access was not granted', 'cantOpenRetry': 'Couldn’t open this folder. Please choose it again.',
     'cantOpen': 'Couldn’t open this folder', 'loading': 'Reading notes…', 'loadFail': 'Couldn’t read the folder: ',
-    'side.aria': 'Note folders', 'searchAll': 'Search all notes', 'search': 'Search', 'side.change': 'Change', 'all': 'All notes', 'recent': 'Recent',
+    'side.aria': 'Folders', 'searchAll': 'Search all notes', 'search': 'Search', 'side.change': 'Change', 'all': 'All notes', 'recent': 'Recent',
     'side.noSub': 'No subfolders', 'side.count': (n) => plural(n, 'note', 'notes'), 'side.ro': ' · Read-only', 'side.local': ' · Local only',
     'list.aria': 'Notes', 'list.new': 'New note', 'list.newTip': `New note (${MOD}N is taken by the browser, so use this button)`,
-    'list.meta': (n) => `${plural(n, 'note', 'notes')} · by last modified`, 'list.noMore': 'No text yet', 'list.empty': 'No notes here yet', 'list.emptyHint': 'Click + above to create one',
+    'list.meta': (n, s) => `${plural(n, 'note', 'notes')} · ${s}`, 'list.noMore': 'No text yet', 'list.empty': 'No notes here yet', 'list.emptyHint': 'Click + above to create one',
     'pane.pick': 'Select a note', 'pane.orSearch': `or press ${MOD}K to search all notes`,
     'crumb': 'Location', 'mode': 'View', 'read': 'Read', 'edit': 'Edit', 'save': 'Save', 'more': 'More', 'cancel': 'Cancel',
     'ed.aria': 'Markdown source', 'ed.hint': 'Type [[ to link another note · Pasted images are saved to the assets folder',
@@ -647,7 +776,7 @@ const STR = {
     'cb.changed': (x) => `“${x}” was just changed somewhere else, and you have unsaved edits.`, 'cb.gone': (x) => `“${x}” was deleted or renamed somewhere else. Your edits aren’t saved yet.`,
     'cb.diff': 'Show differences', 'cb.hide': 'Hide differences', 'cb.theirs': 'Use the file’s version', 'cb.mine': 'Keep my version', 'cb.resave': 'Save again', 'cb.drop': 'Discard my edits',
     'cb.theirsDone': 'Switched to the file’s version', 'cb.dropped': 'Edits discarded',
-    'df.del': 'Only in the file (changed elsewhere)', 'df.add': 'Only in your version', 'df.same': (k) => `${plural(k, 'unchanged line', 'unchanged lines')}`, 'df.none': 'Both versions are the same', 'df.big': 'Too many changes to compare line by line',
+    'df.del': 'The file’s version (changed elsewhere)', 'df.add': 'Your version', 'df.sFile': 'File', 'df.sMine': 'Mine', 'df.same': (k) => `${plural(k, 'unchanged line', 'unchanged lines')}`, 'df.none': 'Both versions are the same', 'df.big': 'Too many changes to compare line by line',
     'unseen': 'Changed somewhere else, not viewed yet',
     'fm.claude': 'Use with Claude Code…', 'cc.title': 'Use with Claude Code', 'close': 'Close',
     'cc.desc': 'Your notes are plain .md files in this folder, so Claude Code can read and edit them directly. Put the two files below in your notes folder and Claude Code will know how this notebook works: how files are named, how [[links]] work, where images go, and that links must be updated when a note is renamed.',
@@ -660,18 +789,35 @@ const STR = {
     'cc.backupFail': 'Couldn’t back up the old file, so nothing was replaced', 'cc.changedNow': (a) => `${a} just changed somewhere else, so nothing was replaced. Please try again.`,
     'cc.how': 'To use it, open a terminal in this notes folder and run claude. Notes Claude changes show up here automatically, marked with a blue dot.',
     'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ',
-    'saveFail': 'Couldn’t save: ', 'cf.discard': 'Your changes to this note haven’t been saved.\n\nOK: discard them\nCancel: stay here',
-    'paste.name': 'Pasted image', 'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
+    'saveFail': 'Couldn’t save: ', 'cf.title': 'Discard the unsaved changes to this note?', 'cf.body': 'They couldn’t be saved. Stay here to sort it out.', 'cf.ok': 'Discard changes', 'cf.stay': 'Stay here',
+    'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
     'sg.create': (x) => `Link to new note “${x}”`, 'untitled': 'Untitled', 'createFail': 'Couldn’t create the note: ',
-    'rn.prompt': 'New file name (without .md)', 'rn.exists': 'A file with this name already exists in this folder', 'rn.reserved': 'CLAUDE and AGENTS at the top level are reserved for Claude Code instructions. Please choose another name.',
-    'rn.skipped': (a, b) => (a ? `Renamed. Updated links in ${plural(a, 'note', 'notes')}; ` : 'Renamed. ') + `skipped ${plural(b, 'note', 'notes')} that changed somewhere else`,
-    'rn.touched': (a) => `Renamed and updated links in ${plural(a, 'note', 'notes')}`, 'rn.done': 'Renamed', 'rn.fail': 'Couldn’t rename: ',
-    'menu.rename': 'Rename', 'menu.copy': 'Copy link', 'menu.refresh': 'Reload folder', 'menu.delete': 'Delete note', 'copied': 'Copied',
-    'del.confirm': (x, bl) => `Delete “${x}”?\n\nThe file will be permanently deleted from the folder. It won’t go to the Trash.` + (bl ? `\n${plural(bl, 'note links', 'notes link')} to it; those links will point to a missing note.` : ''),
-    'del.done': 'Deleted', 'del.fail': 'Couldn’t delete: ',
+    'rn.prompt': 'File name (without .md)', 'rn.exists': 'A file with this name already exists in this folder', 'rn.reserved': 'CLAUDE and AGENTS at the top level are reserved for Claude Code instructions. Please choose another name.',
+    'ln.skipped': (a, b) => '. ' + (a ? `Updated links in ${plural(a, 'note', 'notes')}; skipped ` : 'Skipped ') + `${plural(b, 'note', 'notes')} that changed somewhere else`, 'ln.touched': (a) => ` and updated links in ${plural(a, 'note', 'notes')}`,
+    'rn.done': 'Renamed', 'rn.fail': 'Couldn’t rename: ',
+    'menu.rename': 'Rename', 'menu.move': 'Move to…', 'menu.copy': 'Copy wiki link', 'menu.outline': 'Outline', 'menu.delete': 'Delete note', 'copied': 'Copied', 'copy': 'Copy',
+    'del.done': (x) => `Moved “${x}” to the Trash`, 'undo': 'Undo', 'del.fail': 'Couldn’t delete: ',
     'ext.changed': 'This note was changed somewhere else. The latest version is loaded.', 'reloaded': 'Reloaded',
     'g.recent': 'Recently modified', 'g.name': 'File name', 'g.body': 'Content',
-    'pal.none': (q) => `No notes contain “${q}”`, 'pal.found': (a, b) => `Found ${a} of ${plural(b, 'note', 'notes')}`, 'pal.total': (a) => plural(a, 'note', 'notes'),
+    'pal.none': (q) => `No notes contain “${q}”`, 'pal.found': (a, b) => `Found ${a} of ${plural(b, 'note', 'notes')}`, 'pal.foundCap': (a, c) => `Found ${a.toLocaleString('en-US')}; showing the first ${c}`, 'pal.total': (a) => plural(a, 'note', 'notes'),
+    'lib.more': 'Notes folder and display settings', 'lib.reload': 'Reload notes folder',
+    'nav.hide': `Hide sidebar (${MOD}\\)`, 'nav.show': `Show sidebar (${MOD}\\)`, 'nav.focus': 'Hide sidebar and list', 'nav.unfocus': 'Show sidebar and list',
+    'th.label': 'Appearance', 'th.auto': 'Automatic', 'th.light': 'Light', 'th.dark': 'Dark', 'lang.label': 'Language 语言', 'lang.name': 'English',
+    'sort.mtime': 'By last modified', 'sort.title': 'By title', 'sortm.mtime': 'by last modified', 'sortm.title': 'by title', 'sortm.opened': 'by last opened',
+    'list.sort': 'Sort order', 'list.more': 'Folder actions', 'list.recentEmpty': 'Notes you open will show up here',
+    'side.singles': (n) => `${plural(n, 'folder', 'folders')} with one note each`, 'side.singlesHide': 'Hide folders with one note each',
+    'crumb.rename': 'Click to rename', 'crumb.go': (x) => `Show “${x}” in the list`,
+    'mv.title': (x) => `Move “${x}” to which folder?`, 'mv.filter': 'Filter folders', 'mv.here': 'It’s here now', 'mv.none': 'No matching folders',
+    'mv.done': (f) => `Moved to “${f}”`, 'mv.fail': 'Couldn’t move: ', 'mv.exists': 'That folder already has a note with this name',
+    'tr.menu': 'Trash…', 'tr.title': 'Trash', 'tr.desc': 'Deleted notes are kept in the .trash folder inside your notes folder. Click one to put it back.', 'tr.restore': 'Put back',
+    'tr.emptyBtn': 'Empty Trash', 'tr.empty': 'The Trash is empty', 'tr.emptyQ': (n) => `Permanently delete the ${plural(n, 'note', 'notes')} in the Trash?`, 'tr.emptyD': 'Images and other files deleted with them go too. This can’t be undone.',
+    'tr.emptyOk': 'Delete permanently', 'tr.emptied': 'Trash emptied', 'tr.restored': 'Put back', 'tr.fail': 'Couldn’t put it back: ', 'tr.gone': 'The file is no longer in the Trash', 'done': 'Done',
+    'nf.menu': 'New folder…', 'nf.menuSub': 'New subfolder…', 'nf.title': 'What should the new folder be called?', 'nf.in': (x) => `It will be created inside “${x}”.`, 'nf.ph': 'Folder name', 'nf.ok': 'Create',
+    'nf.exists': 'A folder or file with this name is already here', 'nf.fail': 'Couldn’t create the folder: ',
+    'rf.menu': 'Rename folder…', 'rf.title': (x) => `What should the folder “${x}” be called?`, 'rf.working': 'Renaming the folder…', 'rf.done': 'Folder renamed', 'rf.fail': 'Couldn’t rename the folder: ',
+    'df2.menu': 'Delete folder…', 'df2.title': (x) => `Delete the folder “${x}”?`, 'df2.body': (n) => (n ? `Its ${plural(n, 'note', 'notes')} and other files will move to the Trash.` : 'The folder will move to the Trash.'),
+    'df2.ok': 'Move to Trash', 'df2.done': (x) => `Moved the folder “${x}” to the Trash`, 'df2.fail': 'Couldn’t delete the folder: ', 'df2.undoFail': 'Couldn’t put the folder back: ',
+    'wk.title': (x) => `Create the note “${x}”?`, 'wk.body': 'This note doesn’t exist yet.', 'wk.ok': 'Create', 'zoom.aria': 'Full-size image. Click to close.',
     'date.md': (d) => d.toLocaleDateString(enLocale(), { month: 'short', day: 'numeric' }), 'date.ymd': (d) => d.toLocaleDateString(enLocale(), { year: 'numeric', month: 'short', day: 'numeric' })
   }
 };
@@ -687,17 +833,19 @@ function applyStatic() {
   for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', tx(el.dataset.i18nAria));
   for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = tx(el.dataset.i18nTitle);
   for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = tx(el.dataset.i18nPh);
-  for (const b of [$('#w-lang'), $('#side-lang')]) { b.textContent = tx('lang.other'); b.setAttribute('aria-label', tx('lang.aria')); b.lang = LANG === 'zh' ? 'en' : 'zh-CN'; }
+  for (const b of [$('#w-lang')]) { b.textContent = tx('lang.other'); b.setAttribute('aria-label', tx('lang.aria')); b.lang = LANG === 'zh' ? 'en' : 'zh-CN'; }
 }
 function setLang(l) {
   LANG = l === 'zh' ? 'zh' : 'en';
   applyStatic(); hideToast(); $('#menu').hidden = true; $('#help').hidden = true;
+  if (dlgDone) dlgDone(null);
   if (!$('#sheet').hidden) openNewSheet();
   if (!$('#welcome').hidden) { showWelcome(); return; }
   if ($('#app').hidden) return;
-  renderSide(); renderListKeepScroll();
+  layout(); renderSide(); renderListKeepScroll();
   const n = S.current && S.notes.get(S.current);
   if (n) {
+    renderCrumb(n);
     if (S.mode === 'read') { const y = $('#reader').scrollTop; renderArticle(n); $('#reader').scrollTop = y; }
     else updateEdBar();
     updateStatus(); renderConflict(); if (S.diffOpen) renderDiff();
@@ -730,6 +878,22 @@ function wikiRule(isEmbed) {
 }
 md.inline.ruler.before('image', 'wikiembed', wikiRule(true));
 md.inline.ruler.before('link', 'wikilink', wikiRule(false));
+// "[^1]" becomes a footnote mark when the note defines that footnote (see takeFootnotes); otherwise it stays as typed.
+md.inline.ruler.before('link', 'footref', (state, silent) => {
+  const s = state.src, p = state.pos;
+  if (s.charCodeAt(p) !== 0x5B || s.charCodeAt(p + 1) !== 0x5E) return false;
+  const end = s.indexOf(']', p + 2), fn = state.env && state.env.fn;
+  if (end < 0 || !fn) return false;
+  const id = s.slice(p + 2, end);
+  if (!id || /\s/.test(id) || !fn.defs.has(id)) return false;
+  if (!silent) {
+    if (!fn.order.includes(id)) fn.order.push(id);
+    state.push('footref', '', 0).meta = { n: fn.order.indexOf(id) + 1 };
+  }
+  state.pos = end + 1;
+  return true;
+});
+md.renderer.rules.footref = (t, i) => `<sup><a href="#" ${A.fn}="${t[i].meta.n}">${t[i].meta.n}</a></sup>`;
 md.renderer.rules.wikilink = (t, i) => {
   const { target, label } = t[i].meta;
   const name = target.split('#')[0];
@@ -823,7 +987,12 @@ function splitFrontmatter(text) {
   for (const line of m[1].split(/\r?\n/)) {
     if (!line.trim() || /^\s*#/.test(line)) continue;
     const kv = line.match(/^([A-Za-z0-9_\u4e00-\u9fff][\w\u4e00-\u9fff .-]*):(?:\s+(.*))?$/);
-    if (kv) { const v = (kv[2] || '').trim(); fm.push([kv[1].trim(), /^(["']).*\1$/.test(v) ? v.slice(1, -1) : v]); }
+    if (kv) {
+      let v = (kv[2] || '').trim();
+      // a list on one line, [a, b], reads the same as one written out item by item
+      if (/^\[.*\]$/.test(v)) v = v.slice(1, -1).split(',').map((x) => x.trim().replace(/^(["'])(.*)\1$/, '$2')).filter(Boolean).join(', ');
+      fm.push([kv[1].trim(), /^(["']).*\1$/.test(v) ? v.slice(1, -1) : v]);
+    }
     else if (fm.length && /^(\s+|-\s)/.test(line)) { const last = fm[fm.length - 1]; const v = line.trim().replace(/^-\s*/, ''); last[1] += (last[1] ? ', ' : '') + v; }
     else return { fm: null, body: text, lines: 0 };     // not YAML: a leading --- divider, keep everything
   }
@@ -850,19 +1019,26 @@ function analyse(n) {
   const h1 = plain.match(/^#\s+(.+?)\s*#*\s*$/m);
   const fmTitle = fm && (fm.find(([k]) => k.toLowerCase() === 'title') || [])[1];
   n.fmTitle = fmTitle || '';
-  n.title = h1 ? h1[1].trim() : fmTitle || n.name;
+  n.h1 = h1 ? h1[1].trim() : '';
+  n.title = n.h1 || fmTitle || n.name;
   n.lower = n.text.toLowerCase();
   n.body = body; n.bodyLower = body.toLowerCase();
-  let snip = '';
+  // Preview: the first line that says something. A line that is only a link, or a label in front of one
+  // ("Source: https://…"), is kept as a fallback in case nothing better follows.
+  let snip = '', weak = '';
   for (const line of plain.split('\n')) {
     const l = line.trim();
-    if (!l || /^#{1,6}\s/.test(l) || /^(```|~~~|---|\||<)/.test(l)) continue;
+    if (!l || /^#{1,6}\s/.test(l) || /^(```|~~~|---|\||<|\[\^[^\]\s]+\]:)/.test(l)) continue;
     snip = l.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[\[([^\]|]+)\|?([^\]]*)\]\]/g, (m, a, b) => b || a)
       .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_`>#~]/g, '').replace(/^\s*[-+]\s+(\[[ xX]\]\s*)?/, '').trim();
     snip = shortUrls(snip);
-    if (snip) break;
+    if (!snip) continue;
+    const said = l.replace(/https?:\/\/\S+/g, '').replace(/[*_`>#~\[\]()!<-]/g, '').trim();
+    if (said && !/[:：]$/.test(said)) break;
+    if (!weak) weak = snip;
+    snip = '';
   }
-  n.snippet = snip.slice(0, 120);
+  n.snippet = (snip || weak).slice(0, 120);
   const links = new Set();
   const re = /\[\[([^\]\n|#]+)(?:#[^\]\n|]*)?(?:\|[^\]\n]*)?\]\]/g;
   let m;
@@ -889,16 +1065,16 @@ const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /* ---------- loading a folder ---------- */
 // `ctl` belongs to one pass: ctl.n counts the entries seen so far, and setting ctl.stop makes that pass give up.
 const stopped = () => new DOMException('Stopped', 'AbortError');
-async function walk(dir, prefix, mdList, ctl) {
-  S.dirs.set(prefix, dir);
+async function walk(dir, prefix, mdList, ctl, files, dirs) {
+  dirs.set(prefix, dir);
   for await (const [name, h] of dir.entries()) {
     if (ctl.stop) throw stopped();
     if (name.startsWith('.') || name === 'node_modules') continue;
     ctl.n++;
     const p = prefix ? prefix + '/' + name : name;
-    if (h.kind === 'directory') await walk(h, p, mdList, ctl);
+    if (h.kind === 'directory') await walk(h, p, mdList, ctl, files, dirs);
     else if (MD_RE.test(name)) mdList.push([p, h]);
-    else S.files.set(p, h);
+    else files.set(p, h);
   }
 }
 async function loadFromHandle(root, ctl) {
@@ -914,11 +1090,10 @@ async function scan(first, ctl = { n: 0, stop: false }) {
   if (S.scanning) return S.scanning;
   S.scanning = (async () => {
     const gen = S.gen;
+    // The walk fills maps of its own. The page keeps using the current ones until the pass is complete,
+    // so anything drawn meanwhile (after a rename, say) still sees every folder.
     const mdList = [], files = new Map(), dirs = new Map();
-    const saveFiles = S.files, saveDirs = S.dirs;
-    S.files = files; S.dirs = dirs;            // walk() fills these
-    try { await walk(S.root, '', mdList, ctl); } catch (e) { S.files = saveFiles; S.dirs = saveDirs; throw e; }
-    S.files = saveFiles; S.dirs = saveDirs;
+    await walk(S.root, '', mdList, ctl, files, dirs);
     const oldNotes = S.notes, next = new Map();
     let changed = first || mdList.length !== oldNotes.size;
     const queue = mdList.slice(), touched = new Set(), updates = [];
@@ -997,8 +1172,8 @@ async function showWelcome() {
   $('#w-pick').hidden = !canWrite && IS_MOBILE;
   $('#w-other').textContent = tx(back ? 'w.other' : 'w.openExisting');
   $('#w-other').hidden = !canWrite; $('#w-new').hidden = !back;
-  $('#w-hint').hidden = !canWrite;
-  $('#w-hint').textContent = tx(back ? 'w.hint' : 'w.hintFirst');
+  $('#w-hint').hidden = !canWrite || !back;     // first visit: the two buttons speak for themselves
+  $('#w-hint').textContent = tx('w.hint');
   const rest = list.slice(1);
   $('#w-recent').hidden = !rest.length;
   $('#w-recents').innerHTML = rest.map((x, i) =>
@@ -1064,37 +1239,151 @@ async function openRoot(h) {
   return true;
 }
 $('#change-folder').onclick = async (e) => {
-  const btn = e.currentTarget, menu = $('#menu');
-  if (!menu.hidden && menu.dataset.kind === 'folders') { menu.hidden = true; return; }
+  const btn = e.currentTarget;
+  if (menuOpen('folders')) { closeMenu(); return; }
   if (!canWrite) { if (await flushSave()) pickFolder(); return; }
   const list = welcomeList = await folders.list();
   let cur = -1;
   if (S.root) for (let i = 0; i < list.length && cur < 0; i++) if (await folders.same(list[i].h, S.root)) cur = i;
-  menu.dataset.kind = 'folders';
-  menu.innerHTML = (list.length ? `<div class="fm-h">${esc(tx('fm.recent'))}</div>` : '') +
+  showMenu('folders', (list.length ? `<div class="fm-h">${esc(tx('fm.recent'))}</div>` : '') +
     list.map((x, i) => i === cur
       ? `<button data-act="noop" aria-current="true" title="${esc(x.name)}"><span>${esc(x.name)}</span>${icon('checkmark', 16, 'cur')}</button>`
       : `<div class="mrow"><button data-act="folder" data-i="${i}" title="${esc(x.name)}"><span>${esc(x.name)}</span></button>` +
         `<button class="rm" data-rm="${i}" aria-label="${esc(tx('w.forget') + ': ' + x.name)}" title="${esc(tx('w.forget'))}">${icon('xmark', 14)}</button></div>`).join('') +
-    (list.length ? '<div class="sep"></div>' : '') +
-    `<button data-act="other"><span>${esc(tx('fm.other'))}</span>${icon('folder', 18, 'cur')}</button>` +
-    `<button data-act="newlib"><span>${esc(tx('fm.newlib'))}</span>${icon('folder.badge.plus', 18, 'cur')}</button>` +
-    (S.root && !S.readonly ? `<div class="sep"></div><button data-act="claude"><span>${esc(tx('fm.claude'))}</span>${icon('doc', 18, 'cur')}</button>` : '');
-  menu.hidden = false;
-  const r = btn.getBoundingClientRect();
-  menu.style.left = Math.max(12, Math.min(r.left, innerWidth - menu.offsetWidth - 12)) + 'px';
-  menu.style.top = Math.max(12, r.top - 8 - menu.offsetHeight) + 'px';
-  (menu.querySelector('[data-act=folder]') || menu.querySelector('button')).focus();
+    (list.length ? SEP : '') + mi('other', tx('fm.other'), { icon: 'folder' }) + mi('newlib', tx('fm.newlib'), { icon: 'folder.badge.plus' }),
+    { el: btn, above: true, first: '[data-act=folder]' });
 };
 function enterApp() {
   $('#welcome').hidden = true; $('#app').hidden = false;
   S.view = prefs.get('view:' + S.rootName, { kind: 'all', folder: '' });
-  if (S.view.kind === 'folder' && !S.dirs.has(S.view.folder)) S.view = { kind: 'all', folder: '' };
+  if (!S.view || !['all', 'recent', 'folder'].includes(S.view.kind) || (S.view.kind === 'folder' && !S.dirs.has(S.view.folder))) S.view = { kind: 'all', folder: '' };
+  const open = prefs.get('open:' + S.rootName, []), opened = prefs.get('opened:' + S.rootName, []);
+  S.open = new Set((Array.isArray(open) ? open : []).filter((d) => S.dirs.has(d)));
+  S.opened = (Array.isArray(opened) ? opened : []).filter((p) => typeof p === 'string');
+  S.singles = new Set(); S.showEmpty = false;
   S.current = null; S.dirty = false; clearConflict();
+  NAV.drawer = false; layout();
+  if (S.view.kind === 'folder') reveal(S.view.folder);
   renderSide(); renderList();
+  try { history.replaceState({ inc: 1, root: S.rootName, path: null }, ''); } catch (e) {}
   const last = prefs.get('last:' + S.rootName, null);
-  if (last && S.notes.has(last)) openNote(last); else showPane(false);
+  if (last && S.notes.has(last)) openNote(last, { replace: true }); else showPane(false);
   startWatch();
+}
+
+/* ---------- appearance ---------- */
+// Follows the system unless the person picks Light or Dark in the menu next to the name.
+function applyTheme() {
+  const t = prefs.get('theme', 'auto');
+  if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+}
+
+/* ---------- sidebar and list can step aside ---------- */
+// Wide windows show all three columns. Narrower ones keep the note readable: first the sidebar, then the list
+// move into a drawer that the button at the top left of the note opens. NAV.side is the person's own choice
+// for wide windows; NAV.focus hides both columns at any width.
+const NAV = { side: prefs.get('nav.side', true) !== false, focus: prefs.get('nav.focus', false) === true, drawer: false };
+const mqWide = window.matchMedia('(min-width: 1100px)'), mqMid = window.matchMedia('(min-width: 860px)');
+const sideInline = () => mqWide.matches && NAV.side && !NAV.focus;
+const listInline = () => mqMid.matches && !NAV.focus;
+function layout() {
+  const app = $('#app'), si = sideInline(), li = listInline();
+  if (si && li) NAV.drawer = false;
+  app.classList.toggle('no-side', !si); app.classList.toggle('no-list', !li);
+  app.classList.toggle('drawer', NAV.drawer); $('#scrim').hidden = !NAV.drawer;
+  const b = $('#nav-toggle'), label = tx(si || NAV.drawer ? 'nav.hide' : 'nav.show');
+  b.innerHTML = icon('sidebar.left', 20); b.title = label; b.setAttribute('aria-label', label);
+  b.setAttribute('aria-expanded', String(si || NAV.drawer));
+}
+function toggleNav() {
+  if (NAV.focus && mqMid.matches) { NAV.focus = false; prefs.set('nav.focus', false); }
+  else if (mqWide.matches && !NAV.focus) { NAV.side = !NAV.side; prefs.set('nav.side', NAV.side); }
+  else NAV.drawer = !NAV.drawer;
+  layout();
+  if (NAV.drawer) (document.querySelector('#side .item.sel') || $('#open-search')).focus();
+}
+function toggleFocus() { NAV.focus = !NAV.focus; NAV.drawer = false; prefs.set('nav.focus', NAV.focus); layout(); }
+function closeDrawer() { if (NAV.drawer) { NAV.drawer = false; layout(); } }
+mqWide.addEventListener('change', layout); mqMid.addEventListener('change', layout);
+$('#nav-toggle').onclick = toggleNav;
+$('#scrim').onclick = closeDrawer;
+
+/* ---------- back and forward ---------- */
+// Every note that is opened becomes a step in the browser's history, so Back and Forward (and their
+// shortcuts) move between notes. The address never changes and nothing is sent anywhere.
+let histLock = false;
+function noteHistory(path, replace) {
+  if (histLock) return;
+  const st = { inc: 1, root: S.rootName, path };
+  try { if (replace || !history.state || !history.state.inc || history.state.path == null) history.replaceState(st, ''); else history.pushState(st, ''); } catch (e) {}
+}
+window.addEventListener('popstate', async (e) => {
+  const st = e.state;
+  if (!st || !st.inc || st.root !== S.rootName || $('#app').hidden || S.opening || !$('#dlg').hidden) return;
+  if (!st.path || !S.notes.has(st.path) || st.path === S.current) return;
+  histLock = true;
+  try { closePalette(); await openNote(st.path); } finally { histLock = false; }
+});
+
+/* ---------- dialogs ---------- */
+// One dialog for every question the page asks: the title is the question, the buttons are the answers.
+// Resolves with true, the typed text, or the value of the row that was picked; null when dismissed.
+let dlgDone = null;
+function ask(o) {
+  if (dlgDone) dlgDone(null);
+  return new Promise((res) => {
+    const d = $('#dlg'), inp = $('#dlg-in'), list = $('#dlg-list'), ok = $('#dlg-ok'), no = $('#dlg-no');
+    const from = document.activeElement, rows = o.list || [], typed = o.input != null && !o.filter;
+    $('#dlg-t').textContent = o.title;
+    $('#dlg-d').textContent = o.body || ''; $('#dlg-d').hidden = !o.body;
+    inp.hidden = o.input == null; inp.value = o.input || ''; inp.placeholder = o.placeholder || '';
+    inp.setAttribute('aria-label', o.placeholder || o.title);
+    const draw = () => {
+      const q = o.filter ? inp.value.trim().toLowerCase() : '';
+      const vis = rows.map((r, i) => [r, i]).filter(([r]) => !q || (r.label + ' ' + (r.sub || '')).toLowerCase().includes(q));
+      list.innerHTML = vis.map(([r, i]) => `<button class="pick" data-i="${i}"${r.disabled ? ' disabled' : ''} style="padding-left:${12 + (q ? 0 : Math.min(r.depth || 0, 6)) * 14}px">` +
+        (r.icon ? icon(r.icon, 18) : '') + `<span class="mid"><span class="t">${esc(r.label)}</span>${r.sub && (q || !o.filter) ? `<span class="s">${esc(r.sub)}</span>` : ''}</span>` +
+        (r.go ? `<span class="go">${esc(r.go)}</span>` : '') + '</button>').join('') || `<div class="empty">${esc(o.none || '')}</div>`;
+    };
+    list.hidden = !o.list; if (o.list) draw();
+    ok.hidden = !o.ok; ok.textContent = o.ok || ''; ok.className = 'btn ' + (o.danger ? 'danger' : 'filled');
+    no.textContent = o.cancel || tx('cancel');
+    $('#app').inert = true; $('#welcome').inert = true;
+    d.hidden = false;
+    const done = (v) => {
+      dlgDone = null; d.hidden = true;
+      inp.oninput = list.onclick = ok.onclick = no.onclick = d.onkeydown = d.onmousedown = null;
+      if (!S.opening && $('#sheet').hidden) { $('#app').inert = false; $('#welcome').inert = false; }
+      refocus(from); res(v);
+    };
+    dlgDone = done;
+    const accept = () => {
+      if (typed) { if (inp.value.trim()) done(inp.value); }
+      else if (o.filter) { const b = list.querySelector('.pick:not([disabled])'); if (b) done(rows[+b.dataset.i].value); }
+      else if (o.ok) done(true);
+    };
+    ok.onclick = () => (typed ? accept() : done(true));
+    no.onclick = () => done(null);
+    inp.oninput = () => { if (o.filter) draw(); };
+    list.onclick = (e) => { const b = e.target.closest('.pick'); if (b && !b.disabled) done(rows[+b.dataset.i].value); };
+    d.onmousedown = (e) => { if (e.target === d) done(null); };
+    d.onkeydown = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(null); }
+      else if (e.key === 'Enter' && !e.isComposing && e.target === inp) { e.preventDefault(); accept(); }
+      else if (e.key === 'Tab') {                 // keep focus inside the dialog
+        const f = [...d.querySelectorAll('input, button')].filter((x) => !x.hidden && !x.disabled && !x.closest('[hidden]'));
+        const i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && o.list) {
+        const f = [...list.querySelectorAll('.pick:not([disabled])')]; if (!f.length) return;
+        e.preventDefault();
+        const i = f.indexOf(document.activeElement), down = e.key === 'ArrowDown';
+        if (!down && i <= 0) { if (!inp.hidden) inp.focus(); } else f[Math.max(0, Math.min(f.length - 1, i + (down ? 1 : -1)))].focus();
+      }
+    };
+    if (o.input != null) { inp.focus(); inp.select(); } else if (o.danger || !o.ok) no.focus(); else ok.focus();
+  });
 }
 
 /* ---------- first use: new notes folder, getting-started notes, empty folder guide ---------- */
@@ -1166,8 +1455,11 @@ $('#sh-go').onclick = async () => {
 async function writeStarter(root) {
   const k = starterNotes();
   const dir = await freshDir(root, k.folder);
-  for (const [name, body] of k.notes) await writeNew(dir, name + '.md', body);
+  for (const [name, body] of k.notes.slice(1)) await writeNew(dir, name + '.md', body);
   await writeNew(await dir.getDirectoryHandle('assets', { create: true }), 'incognote-sample.svg', k.svg);
+  // The welcome note goes in last, a moment later, so it is the newest and sits at the top of the list.
+  await new Promise((r) => setTimeout(r, 30));
+  await writeNew(dir, k.notes[0][0] + '.md', k.notes[0][1]);
   return joinPath(dir.name, k.notes[0][0] + '.md');
 }
 async function addStarter() {
@@ -1223,20 +1515,22 @@ const HELP = {
     ['- 项目', '列表'], ['1. 项目', '编号列表'], ['- [ ] 待办', '待办，阅读时点一下就能勾上'], ['> 引用', '引用'],
     ['`代码`', '行内代码'], ['```\n代码块\n```', '代码块'], ['[文字](https://…)', '网页链接'],
     ['[[笔记名]]', '链接到另一篇笔记，输入 [[ 会提示'], ['[[笔记名|显示文字]]', '换一种显示文字'],
-    ['![](assets/图.png)', '图片，也可以直接粘贴'], ['---', '分割线'], ['| 列 | 列 |\n| - | - |', '表格']],
+    ['![](assets/图.png)', '图片，也可以直接粘贴'], ['---', '分割线'], ['| 列 | 列 |\n| - | - |', '表格'],
+    ['文字[^1]\n[^1]: 说明', '脚注']],
   en: [['# Heading', 'Heading; ## for a smaller one'], ['**bold**', 'Bold'], ['*italic*', 'Italic'], ['~~strike~~', 'Strikethrough'],
     ['- item', 'Bulleted list'], ['1. item', 'Numbered list'], ['- [ ] task', 'To-do; click it while reading to check it off'], ['> quote', 'Quote'],
     ['`code`', 'Inline code'], ['```\ncode block\n```', 'Code block'], ['[text](https://…)', 'Web link'],
     ['[[Note name]]', 'Link to another note; typing [[ suggests names'], ['[[Note name|label]]', 'Show different text'],
-    ['![](assets/pic.png)', 'Image; you can also just paste one'], ['---', 'Divider'], ['| col | col |\n| - | - |', 'Table']]
+    ['![](assets/pic.png)', 'Image; you can also just paste one'], ['---', 'Divider'], ['| col | col |\n| - | - |', 'Table'],
+    ['text[^1]\n[^1]: the note', 'Footnote']]
 };
 function openHelp(anchor, toggle = true) {
   const el = $('#help');
   if (!el.hidden && toggle) { el.hidden = true; return; }
   $('#menu').hidden = true;
   const keys = LANG === 'zh'
-    ? `${MOD}E 切换阅读和编辑 · ${MOD}S 保存 · ${MOD}K 搜索`
-    : `${MOD}E read/edit · ${MOD}S save · ${MOD}K search`;
+    ? `${MOD}E 切换阅读和编辑 · ${MOD}S 保存 · ${MOD}K 搜索 · ${MOD}\\ 显示或隐藏边栏 · ${IS_MAC ? '⌘[ 和 ⌘]' : 'Alt+← 和 Alt+→'} 后退和前进`
+    : `${MOD}E read/edit · ${MOD}S save · ${MOD}K search · ${MOD}\\ show or hide the sidebar · ${IS_MAC ? '⌘[ and ⌘]' : 'Alt+← and Alt+→'} back and forward`;
   el.innerHTML = `<h3>${esc(tx('help.title'))}</h3><dl>` +
     HELP[LANG].map(([a, b]) => `<dt><code>${esc(a)}</code></dt><dd>${esc(b)}</dd>`).join('') + `</dl><div class="keys">${esc(keys)}</div>`;
   el.hidden = false;
@@ -1255,7 +1549,6 @@ $('#help').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.prev
 
 // Getting-started notes, written into the user's folder only when they ask for them. All examples are made up.
 function starterNotes() {
-  const fm = IS_MAC ? (LANG === 'zh' ? '访达' : 'Finder') : (LANG === 'zh' ? '文件资源管理器' : 'File Explorer');
   const F = '```';
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="240" viewBox="0 0 640 240">
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#5e5ce6"/></linearGradient></defs>
@@ -1275,10 +1568,10 @@ function starterNotes() {
 
 ## 常用操作
 
-- **新建笔记**：点笔记列表右上角的 **+**。
+- **新建笔记**：点笔记列表右上角的 **+**。第一行的 \`# 标题\` 就是笔记的名字，文件也会跟着它命名。
 - **编辑**：点右上角的“编辑”，或者按 ${MOD}E。改动会自动保存，也可以随时按 ${MOD}S。
 - **搜索**：按 ${MOD}K，在所有笔记的文件名和正文里找。
-- **整理**：笔记放在哪个子文件夹里，左边栏就按那个文件夹显示。子文件夹在${fm}里新建就行。
+- **整理**：笔记放在哪个文件夹里，左边栏就按那个文件夹显示。点笔记列表右上角的 **⋯** 新建文件夹，点笔记右上角的 **⋯** 把它移到别的文件夹。
 
 ## 试试看
 
@@ -1289,7 +1582,7 @@ function starterNotes() {
 
 ## 用完以后
 
-这几篇入门笔记都在“Incognote 入门”文件夹里。熟悉之后，在${fm}里把整个文件夹删掉就行，不会影响其他笔记。
+这几篇入门笔记都在“Incognote 入门”文件夹里。熟悉之后，在左边栏选中这个文件夹，点笔记列表右上角的 **⋯**，选“删除文件夹”就行，不会影响其他笔记。
 
 > 你的笔记只在这台电脑上读写。Incognote 不联网，也不上传任何内容。
 `],
@@ -1356,7 +1649,7 @@ ${F}
 
 想让链接显示别的文字，用竖线隔开，比如 [[Markdown 速查|格式怎么写]]。
 
-链接的笔记还不存在时，链接会显示成灰色虚线，比如 [[我的第一篇笔记]]。点一下就会新建这篇笔记。
+链接的笔记还不存在时，链接会显示成灰色虚线，比如 [[我的第一篇笔记]]。点一下，确认后就会新建这篇笔记。
 
 ## 反向链接
 
@@ -1381,10 +1674,10 @@ This is a getting-started note. Like every note you write, it's just a plain \`.
 
 ## The basics
 
-- **New note**: click **+** at the top right of the note list.
+- **New note**: click **+** at the top right of the note list. The first line, \`# Title\`, is the note's name, and the file is named after it.
 - **Edit**: click Edit at the top right, or press ${MOD}E. Changes save automatically, and you can press ${MOD}S at any time.
 - **Search**: press ${MOD}K to search the names and text of all your notes.
-- **Organize**: the sidebar follows the subfolders your notes are in. Make new subfolders in ${fm}.
+- **Organize**: the sidebar follows the folders your notes are in. Click **⋯** at the top right of the note list to make a folder, and **⋯** at the top right of a note to move it to another folder.
 
 ## Try it
 
@@ -1395,7 +1688,7 @@ This is a getting-started note. Like every note you write, it's just a plain \`.
 
 ## When you're done
 
-These notes all live in the “Getting Started with Incognote” folder. Once you're comfortable, delete that folder in ${fm}; your other notes won't be affected.
+These notes all live in the “Getting Started with Incognote” folder. Once you're comfortable, select that folder in the sidebar, click **⋯** at the top right of the note list and choose “Delete folder”. Your other notes won't be affected.
 
 > Your notes are read and written only on this computer. Incognote never goes online and never uploads anything.
 `],
@@ -1462,7 +1755,7 @@ While editing, type \`[[\` and Incognote suggests note names.
 
 To show different text, add a vertical bar: [[Markdown Cheat Sheet|how formatting works]].
 
-If the note doesn't exist yet, the link shows as a gray dashed line, like [[My First Note]]. Click it to create that note.
+If the note doesn't exist yet, the link shows as a gray dashed line, like [[My First Note]]. Click it and confirm to create that note.
 
 ## Backlinks
 
@@ -1483,8 +1776,19 @@ You can also write it yourself: \`![description](assets/picture.png)\`. Images f
 const visibleNotes = () => [...S.notes.values()].filter((n) => !n.sys);
 function noteCount() { let c = 0; for (const n of S.notes.values()) if (!n.sys) c++; return c; }
 function countIn(folder) { let c = 0; for (const n of S.notes.values()) if (!n.sys && (n.folder === folder || n.folder.startsWith(folder + '/'))) c++; return c; }
+const inFolder = (p, folder) => p === folder || p.startsWith(folder + '/');
+const saveOpen = () => prefs.set('open:' + S.rootName, [...S.open].slice(0, 400));
+// Make sure the folders above `folder` are expanded, so its row can be seen in the tree.
+function reveal(folder) {
+  let ch = false;
+  for (let d = dirOf(folder); d; d = dirOf(d)) if (!S.open.has(d)) { S.open.add(d); ch = true; }
+  if (ch) saveOpen();
+}
+const SINGLES_MIN = 8;   // this many one-note folders side by side fold into a single row
 function renderSide() {
+  const act = document.activeElement, keep = act && act.closest && act.closest('#side') ? (act.dataset.folder != null ? ['folder', act.dataset.folder] : act.dataset.view ? ['view', act.dataset.view] : null) : null;
   $('#open-search').innerHTML = icon('magnifyingglass', 17) + `<span>${esc(tx('search'))}</span><kbd>${MOD}K</kbd>`;
+  $('#lib-more').innerHTML = icon('ellipsis', 20);
   const fixed = [['all', 'tray', tx('all'), noteCount()], ['recent', 'clock', tx('recent'), '']];
   $('#side-fixed').innerHTML = fixed.map(([k, ic, l, c]) =>
     `<button class="item${S.view.kind === k ? ' sel' : ''}" data-view="${k}">${icon(ic, 20, 'lead')}<span class="lbl">${l}</span><span class="cnt">${c}</span></button>`).join('');
@@ -1492,27 +1796,41 @@ function renderSide() {
   $('#tree-toggle').setAttribute('aria-expanded', S.treeOpen);
   const kids = new Map();
   for (const d of S.dirs.keys()) if (d) { const p = dirOf(d); if (!kids.has(p)) kids.set(p, []); kids.get(p).push(d); }
-  for (const v of kids.values()) v.sort((a, b) => baseOf(a).localeCompare(baseOf(b), 'zh'));
-  const rows = [];
-  // Folders without any notes (a Documents folder full of other files, say) fold into one row that can be expanded.
-  const counts = new Map();
-  for (const d of S.dirs.keys()) if (d) counts.set(d, countIn(d));
+  for (const v of kids.values()) v.sort((a, b) => COLL.compare(baseOf(a), baseOf(b)));
+  // notes per folder (subfolders included), and which folders hold files that are not notes
+  const counts = new Map(), other = new Set();
+  for (const d of S.dirs.keys()) if (d) counts.set(d, 0);
+  for (const n of S.notes.values()) { if (n.sys) continue; for (let d = n.folder; d; d = dirOf(d)) counts.set(d, (counts.get(d) || 0) + 1); }
+  for (const p of S.files.keys()) for (let d = dirOf(p); d && !other.has(d); d = dirOf(d)) other.add(d);
+  const picked = (d) => S.view.kind === 'folder' && inFolder(S.view.folder, d);
   const skip = (d) => /(^|\/)assets$/i.test(d) && !counts.get(d);
-  const picked = (d) => S.view.kind === 'folder' && (S.view.folder === d || S.view.folder.startsWith(d + '/'));
-  const shown = (d) => !skip(d) && (counts.get(d) > 0 || S.showEmpty || picked(d));
+  // A folder that only holds other files (a Documents folder, say) folds into one row at the bottom.
+  // A folder that is simply empty stays: it was probably just made to put notes in.
+  const noNotes = (d) => !counts.get(d) && other.has(d) && !picked(d);
+  const shown = (d) => !skip(d) && (!noNotes(d) || S.showEmpty);
   let empty = 0;
-  for (const d of counts.keys()) if (!skip(d) && !counts.get(d) && !picked(d)) empty++;
+  for (const d of counts.keys()) if (!skip(d) && noNotes(d)) empty++;
+  const rows = [];
+  const pad = (depth) => 12 + Math.round(depth <= 4 ? depth * 12 : 48 + (depth - 4) * 6);
   const visit = (dir, depth) => {
-    for (const d of kids.get(dir) || []) {
-      if (!shown(d)) continue;
+    const list = (kids.get(dir) || []).filter(shown);
+    // Folders that hold exactly one note and nothing below (a clipped article with its images, say) say no more
+    // than the note itself. Many of them side by side fold into one row, so the tree stays short.
+    const single = (d) => counts.get(d) === 1 && !(kids.get(d) || []).some(shown) && !picked(d);
+    const singles = list.filter(single);
+    const fold = singles.length >= SINGLES_MIN && !S.singles.has(dir);
+    for (const d of list) {
+      if (fold && single(d)) continue;
       const has = (kids.get(d) || []).some(shown);
-      const open = !S.closed.has(d);
+      const open = S.open.has(d);
       const sel = S.view.kind === 'folder' && S.view.folder === d;
-      rows.push(`<button class="item${sel ? ' sel' : ''}" data-folder="${esc(d)}" style="padding-left:${12 + Math.round(depth <= 4 ? depth * 12 : 48 + (depth - 4) * 6)}px" title="${esc(d)}">` +
+      rows.push(`<button class="item${sel ? ' sel' : ''}" data-folder="${esc(d)}"${has ? ` aria-expanded="${open}"` : ''} style="padding-left:${pad(depth)}px" title="${esc(d)}">` +
         `<span class="twisty${has ? (open ? '' : ' closed') : ' none'}" data-twisty="${esc(d)}">${icon('chevron.down', 12)}</span>` +
-        `${icon('folder', 20, 'lead')}<span class="lbl">${esc(baseOf(d))}</span><span class="cnt">${countIn(d) || ''}</span></button>`);
+        `${icon('folder', 20, 'lead')}<span class="lbl">${esc(baseOf(d))}</span><span class="cnt">${counts.get(d) || ''}</span></button>`);
       if (has && open) visit(d, depth + 1);
     }
+    if (singles.length >= SINGLES_MIN) rows.push(`<button class="item more-empty" data-singles="${esc(dir)}" aria-expanded="${!fold}" style="padding-left:${pad(depth) + 22}px">` +
+      `<span class="lbl">${esc(fold ? tx('side.singles', singles.length) : tx('side.singlesHide'))}</span></button>`);
   };
   visit('', 0);
   if (empty) rows.push(`<button class="item more-empty" data-empty-toggle aria-expanded="${S.showEmpty}"><span class="lbl">${esc(tx(S.showEmpty ? 'side.emptyHide' : 'side.emptyMore', empty))}</span></button>`);
@@ -1523,19 +1841,49 @@ function renderSide() {
   $('#foot-meta').innerHTML = esc(tx('side.count', noteCount())) + `<span class="wide-only">${esc(S.readonly ? tx('side.ro') : tx('side.local'))}</span>`;
   $('#change-folder').title = S.rootName + ' · ' + tx('side.switch');
   $('#foot-chg').innerHTML = esc(tx('side.change')) + icon('chevron.up.chevron.down', 13);
+  if (keep) { const el = document.querySelector(keep[0] === 'folder' ? `#tree [data-folder="${CSS.escape(keep[1])}"]` : `#side-fixed [data-view="${keep[1]}"]`); if (el) el.focus(); }
 }
-$('#side').addEventListener('click', async (e) => {
+const COLL = new Intl.Collator(['zh-Hans-CN', 'en'], { numeric: true });
+function toggleFolder(d) { S.open.has(d) ? S.open.delete(d) : S.open.add(d); saveOpen(); renderSide(); }
+// Show a folder (or All notes / Recent) in the list.
+function setView(v) {
+  S.view = v; prefs.set('view:' + S.rootName, v);
+  if (v.kind === 'folder') reveal(v.folder);
+  renderSide(); renderList(); $('#notes').scrollTop = 0;
+  const sel = document.querySelector('#side .item.sel'); if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+$('#side').addEventListener('click', (e) => {
   const tw = e.target.closest('[data-twisty]');
-  if (tw && !tw.classList.contains('none')) { const d = tw.dataset.twisty; S.closed.has(d) ? S.closed.delete(d) : S.closed.add(d); renderSide(); return; }
+  if (tw && !tw.classList.contains('none')) { toggleFolder(tw.dataset.twisty); return; }
   if (e.target.closest('[data-empty-toggle]')) { S.showEmpty = !S.showEmpty; renderSide(); const t = $('[data-empty-toggle]'); if (t) t.focus(); return; }
+  const sg = e.target.closest('[data-singles]');
+  if (sg) {
+    const d = sg.dataset.singles; S.singles.has(d) ? S.singles.delete(d) : S.singles.add(d); renderSide();
+    const t = document.querySelector(`[data-singles="${CSS.escape(d)}"]`); if (t) t.focus(); return;
+  }
   const b = e.target.closest('[data-view],[data-folder]');
   if (!b) return;
-  S.view = b.dataset.view ? { kind: b.dataset.view, folder: '' } : { kind: 'folder', folder: b.dataset.folder };
-  prefs.set('view:' + S.rootName, S.view);
-  renderSide(); renderList();
+  setView(b.dataset.view ? { kind: b.dataset.view, folder: '' } : { kind: 'folder', folder: b.dataset.folder });
+  if (listInline()) closeDrawer();            // otherwise the list sits in the drawer too: stay to pick a note
+});
+// Arrow keys: up and down move through the rows, right and left open and close a folder.
+$('#side').addEventListener('keydown', (e) => {
+  const it = e.target.closest('.item'); if (!it || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    const all = [...document.querySelectorAll('#side-fixed .item, #tree .item')];
+    const nx = all[all.indexOf(it) + (e.key === 'ArrowDown' ? 1 : -1)];
+    e.preventDefault(); if (nx) nx.focus();
+  } else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && it.hasAttribute('aria-expanded') && it.dataset.folder != null) {
+    if ((it.getAttribute('aria-expanded') === 'true') !== (e.key === 'ArrowRight')) { e.preventDefault(); toggleFolder(it.dataset.folder); }
+  }
+});
+$('#tree').addEventListener('contextmenu', (e) => {
+  const b = e.target.closest('[data-folder]'); if (!b || S.readonly) return;
+  e.preventDefault(); folderMenu(b.dataset.folder, { x: e.clientX, y: e.clientY });
 });
 $('#tree-toggle').onclick = () => { S.treeOpen = !S.treeOpen; renderSide(); };
-$('#open-search').onclick = openPalette;
+$('#open-search').onclick = () => { closeDrawer(); openPalette(); };
+$('#lib-more').onclick = () => { if (menuOpen('lib')) return closeMenu(); libMenu(); };
 
 /* ---------- note list ---------- */
 function fmtDate(ms) {
@@ -1545,58 +1893,134 @@ function fmtDate(ms) {
   if (d.getFullYear() === now.getFullYear()) return tx('date.md', d);
   return tx('date.ymd', d);
 }
+const sortKey = () => (prefs.get('sort', 'mtime') === 'title' ? 'title' : 'mtime');
 function notesInView() {
+  // Recent: the notes opened lately in this folder, newest first.
+  if (S.view.kind === 'recent') return S.opened.map((p) => S.notes.get(p)).filter((n) => n && !n.sys);
   let arr = visibleNotes();
-  if (S.view.kind === 'folder') { const f = S.view.folder; arr = arr.filter((n) => n.folder === f || n.folder.startsWith(f + '/')); }
-  arr.sort((a, b) => b.mtime - a.mtime);
-  if (S.view.kind === 'recent') arr = arr.slice(0, 30);
+  if (S.view.kind === 'folder') { const f = S.view.folder; arr = arr.filter((n) => inFolder(n.folder, f)); }
+  if (sortKey() === 'title') arr.sort((a, b) => COLL.compare(a.title, b.title) || b.mtime - a.mtime);
+  else arr.sort((a, b) => b.mtime - a.mtime || COLL.compare(a.path, b.path));
   return arr;
 }
+// Remember that a note was opened, for the Recent list.
+function touchOpened(path, was) {
+  S.opened = [path, ...S.opened.filter((p) => p !== path && p !== was)].slice(0, 30);
+  prefs.set('opened:' + S.rootName, S.opened);
+}
 function renderList() {
-  const arr = notesInView();
-  $('#list-title').textContent = S.view.kind === 'all' ? tx('all') : S.view.kind === 'recent' ? tx('recent') : baseOf(S.view.folder);
-  $('#list-meta').textContent = tx('list.meta', arr.length);
+  const arr = notesInView(), recent = S.view.kind === 'recent';
+  const act = document.activeElement, keep = act && act.classList && act.classList.contains('note') ? act.dataset.path : null;
+  $('#list-title').textContent = S.view.kind === 'all' ? tx('all') : recent ? tx('recent') : baseOf(S.view.folder);
+  $('#list-title').title = S.view.kind === 'folder' ? S.view.folder : '';
+  const meta = $('#list-meta');
+  meta.innerHTML = `<span>${esc(tx('list.meta', arr.length, tx(recent ? 'sortm.opened' : 'sortm.' + sortKey())))}</span>` + (recent ? '' : icon('chevron.up.chevron.down', 11));
+  meta.disabled = recent; meta.title = recent ? '' : tx('list.sort');
   $('#new-note').innerHTML = icon('plus', 18);
   $('#new-note').disabled = S.readonly;
+  $('#list-more').innerHTML = icon('ellipsis', 20);
+  $('#list-more').hidden = S.readonly || !S.root;
   $('#notes').innerHTML = arr.length ? arr.map((n) =>
     `<button class="note${n.path === S.current ? ' sel' : ''}" data-path="${esc(n.path)}"><span class="t">${n.unseen ? `<span class="udot" role="img" aria-label="${esc(tx('unseen'))}" title="${esc(tx('unseen'))}"></span>` : ''}${esc(n.title)}</span>` +
     `<span class="m"><span class="d">${fmtDate(n.mtime)}</span><span class="s">${esc(n.snippet || tx('list.noMore'))}</span></span></button>`).join('')
-    : `<div class="empty">${esc(tx('list.empty'))}${S.readonly ? '' : '<br>' + esc(tx('list.emptyHint'))}</div>`;
+    : `<div class="empty">${esc(tx(recent ? 'list.recentEmpty' : 'list.empty'))}${S.readonly || recent ? '' : '<br>' + esc(tx('list.emptyHint'))}</div>`;
+  if (keep) { const el = document.querySelector(`.note[data-path="${CSS.escape(keep)}"]`); if (el) el.focus(); }
   if (!S.current) renderEmptyPane();          // the guide changes once the folder gains or loses its last note
 }
 $('#notes').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (b) openNote(b.dataset.path); });
+// Arrow keys walk through the list and show each note as they go, like a mail list.
+$('#notes').addEventListener('keydown', (e) => {
+  if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key) || e.metaKey || e.ctrlKey || e.altKey) return;
+  const rows = [...document.querySelectorAll('#notes .note')]; if (!rows.length) return;
+  const cur = e.target.closest('.note'), i = rows.indexOf(cur);
+  const j = e.key === 'Home' ? 0 : e.key === 'End' ? rows.length - 1 : Math.max(0, Math.min(rows.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
+  e.preventDefault();
+  if (rows[j] === cur) return;
+  rows[j].focus(); openNote(rows[j].dataset.path, { replace: true, keepDrawer: true });
+});
+$('#notes').addEventListener('contextmenu', async (e) => {
+  const b = e.target.closest('[data-path]'); if (!b) return;
+  e.preventDefault();
+  const at = { x: e.clientX, y: e.clientY }, path = b.dataset.path;
+  await openNote(path, { keepDrawer: true });
+  if (S.current === path) noteMenu(at);
+});
+$('#list-meta').onclick = () => { if (menuOpen('sort')) return closeMenu(); sortMenu(); };
+$('#list-more').onclick = () => { if (menuOpen('list')) return closeMenu(); listMenu(); };
 
 /* ---------- main pane ---------- */
 function showPane(on) {
   $('#empty-pane').hidden = on;
   if (!on) renderEmptyPane();
-  for (const id of ['#toolbar']) $(id).hidden = !on;
+  $('#crumb').hidden = !on; $('#tools').hidden = !on;
   if (!on) { $('#reader').hidden = true; $('#editor').hidden = true; $('#edbar').hidden = true; $('#diffv').hidden = true; $('#cbar').hidden = true; S.diffOpen = false; }
 }
 async function openNote(path, opts = {}) {
   const n = S.notes.get(path); if (!n) return;
+  if (!opts.keepDrawer) closeDrawer();
   if (path === S.current) {
     if (opts.mode && opts.mode !== S.mode) setMode(opts.mode, opts);
     else if (S.mode === 'read') renderArticle(n, opts.highlight);
     return;
   }
   if (!(await flushSave())) return;
+  if (!S.notes.has(path)) return;             // gone while the previous note was being saved
   const prev = S.notes.get(S.current); if (prev) prev.draft = null;
   S.current = path; S.dirty = false; clearConflict();
   if (n.unseen) { n.unseen = false; const el = document.querySelector(`.note[data-path="${CSS.escape(path)}"] .udot`); if (el) el.remove(); }
   prefs.set('last:' + S.rootName, path);
+  touchOpened(path);
+  noteHistory(path, opts.replace);
   showPane(true);
   renderCrumb(n);
   setMode(opts.mode || 'read', opts);
   for (const el of document.querySelectorAll('.note')) el.classList.toggle('sel', el.dataset.path === path);
   const sel = document.querySelector('.note.sel'); if (sel) sel.scrollIntoView({ block: 'nearest' });
 }
+// Where the note is: the notes folder, the folder it sits in, then its file name. Folders are buttons that
+// show that folder in the list; the name is a button that renames the note in place.
 function renderCrumb(n) {
-  const parts = [S.rootName, ...(n.folder ? n.folder.split('/') : [])];
-  const shown = parts.length > 2 ? ['…', parts[parts.length - 1]] : parts;
-  $('#crumb').title = [...parts, baseOf(n.path)].join(' / ');
-  $('#crumb').innerHTML = shown.map((p) => `<span>${esc(p)}</span>`).join(icon('chevron.right', 12)) + icon('chevron.right', 12) + `<span>${esc(baseOf(n.path))}</span>`;
+  const segs = [[S.rootName, '']];
+  let acc = '';
+  for (const f of n.folder ? n.folder.split('/') : []) { acc = acc ? acc + '/' + f : f; segs.push([f, acc]); }
+  const shown = segs.length > 2 ? [segs[0], null, segs[segs.length - 1]] : segs;
+  const sep = icon('chevron.right', 12);
+  $('#crumb').innerHTML = shown.map((s) => (s
+    ? `<button class="cseg" data-crumb="${esc(s[1])}" title="${esc(tx('crumb.go', s[1] || S.rootName))}">${esc(s[0])}</button>`
+    : `<span class="cgap" title="${esc(n.folder)}">…</span>`)).join(sep) + sep +
+    `<button class="cseg cur" id="crumb-name"${S.readonly ? ' disabled' : ''} title="${esc(baseOf(n.path) + (S.readonly ? '' : ' · ' + tx('crumb.rename')))}">${esc(n.name)}</button>`;
   $('#more').innerHTML = icon('ellipsis', 20);
+}
+$('#crumb').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-crumb]');
+  if (c) {
+    const f = c.dataset.crumb;
+    setView(f && S.dirs.has(f) ? { kind: 'folder', folder: f } : { kind: 'all', folder: '' });
+    if (!listInline()) { NAV.drawer = true; layout(); const sel = document.querySelector('#notes .note.sel') || document.querySelector('#notes .note'); if (sel) sel.focus(); }
+    return;
+  }
+  if (e.target.closest('#crumb-name')) startRename();
+});
+// Rename in place: the name in the path turns into a text field. Return or clicking away renames, Esc leaves it.
+function startRename() {
+  const n = S.notes.get(S.current), b = $('#crumb-name');
+  if (!n || !b || S.readonly) return;
+  const inp = document.createElement('input');
+  inp.className = 'cname'; inp.value = n.name; inp.spellcheck = false; inp.setAttribute('aria-label', tx('rn.prompt'));
+  b.replaceWith(inp); inp.focus(); inp.select();
+  let done = false;
+  const finish = async (commit, back) => {
+    if (done) return; done = true;
+    const v = inp.value, cur = S.notes.get(S.current);
+    if (cur) renderCrumb(cur);
+    if (commit && cur === n && cleanName(v) && cleanName(v) !== n.name) await renameNote(v);
+    if (back && $('#crumb-name')) $('#crumb-name').focus();
+  };
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); finish(true, true); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finish(false, true); }
+  });
+  inp.addEventListener('blur', () => finish(true, false));
 }
 function setMode(mode, opts = {}) {
   const n = S.notes.get(S.current); if (!n) return;
@@ -1607,7 +2031,6 @@ function setMode(mode, opts = {}) {
   $('#reader').hidden = mode !== 'read';
   $('#editor').hidden = mode !== 'edit';
   $('#edbar').hidden = mode !== 'edit';
-  $('#save').hidden = mode !== 'edit';
   updateStatus();
   if (mode === 'read') { renderArticle(n, opts.highlight); }
   else {
@@ -1617,22 +2040,48 @@ function setMode(mode, opts = {}) {
     updateEdBar();
     ed.focus();
     if (opts.selectTitle) { const m = ed.value.match(/^#\s+(.*)$/m); if (m) { const s = ed.value.indexOf(m[1]); ed.setSelectionRange(s, s + m[1].length); } }
+    else { ed.setSelectionRange(0, 0); ed.scrollTop = 0; }
   }
 }
 $('#m-read').onclick = () => setMode('read');
 $('#m-edit').onclick = () => setMode('edit');
 
+// Footnotes: "[^1]" in the text and "[^1]: the note" on a line of its own. The definitions are lifted out before
+// rendering (their lines are left blank, so line numbers stay put) and listed at the end of the note.
+function takeFootnotes(body) {
+  const defs = new Map(), lines = body.split('\n');
+  let fence = null;
+  for (let i = 0; i < lines.length; i++) {
+    const f = lines[i].match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) { if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = null; continue; }
+    if (f) { fence = f[1]; continue; }
+    const m = lines[i].match(/^\[\^([^\]\s]+)\]:[ \t]*(.*?)\r?$/);
+    if (!m) continue;
+    let text = m[2]; lines[i] = '';
+    while (i + 1 < lines.length && /^(?: {2,}|\t)\S/.test(lines[i + 1])) { text += ' ' + lines[++i].trim(); lines[i] = ''; }
+    if (!defs.has(m[1])) defs.set(m[1], text);
+  }
+  return { body: defs.size ? lines.join('\n') : body, defs };
+}
 function renderArticle(n, highlight) {
   const src = n.draft != null ? n.draft : n.text;
   const { fm, body, lines: fmLines } = splitFrontmatter(src);
-  const html = DOMPurify.sanitize(md.render(body), PURIFY);
+  const fn = takeFootnotes(body); fn.order = [];
+  const html = DOMPurify.sanitize(md.render(fn.body, { fn }), PURIFY);
   const art = $('#article');
   art.innerHTML = html;
+  if (fn.order.length) art.insertAdjacentHTML('beforeend', '<section class="footnotes"><ol>' +
+    fn.order.map((id, i) => `<li data-fnt="${i + 1}">${DOMPurify.sanitize(md.renderInline(fn.defs.get(id), {}), PURIFY)}</li>`).join('') + '</ol></section>');
   const meta = `<div class="meta">${esc(tx('meta', fmtDate(n.mtime), body))}</div>`;
   const firstEl = art.firstElementChild;
-  const props = fm && fm.length ? `<dl class="props">${fm.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : '';
-  if (firstEl && firstEl.tagName === 'H1') firstEl.insertAdjacentHTML('afterend', meta + props);
-  else art.insertAdjacentHTML('afterbegin', `<h1>${esc(n.fmTitle || n.name)}</h1>` + meta + props);
+  const hasH1 = firstEl && firstEl.tagName === 'H1';
+  const heading = hasH1 ? firstEl.textContent.trim() : n.fmTitle || n.name;
+  // Properties: a title that only repeats the heading is left out, and web addresses become links on one line.
+  const rows = (fm || []).filter(([k, v]) => !(k.toLowerCase() === 'title' && v.trim() === heading));
+  const val = (v) => (/^https?:\/\/\S+$/i.test(v) ? `<a href="${esc(v)}">${esc(v)}</a>` : esc(v));
+  const props = rows.length ? `<dl class="props">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${val(v)}</dd>`).join('')}</dl>` : '';
+  if (hasH1) firstEl.insertAdjacentHTML('afterend', meta + props);
+  else art.insertAdjacentHTML('afterbegin', `<h1>${esc(heading)}</h1>` + meta + props);
   // task lists (only items the renderer marked, so a note cannot fake one)
   for (const li of art.querySelectorAll(`li[${A.task}]`)) {
     const host = li.firstElementChild && li.firstElementChild.tagName === 'P' ? li.firstElementChild : li;
@@ -1659,10 +2108,19 @@ function renderArticle(n, highlight) {
     img.removeAttribute('src'); img.loading = 'lazy';
     imgUrl(key).then((u) => { img.src = u; }).catch(() => replaceImg(img, tx('img.cantRead') + raw));
   }
-  // links
+  // links: web links open in a new tab; a long bare address stays on one line
   for (const a of art.querySelectorAll('a[href]')) {
     const h = a.getAttribute('href');
-    if (/^https?:/i.test(h)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = h; }
+    if (!/^https?:/i.test(h)) continue;
+    a.target = '_blank'; a.rel = 'noopener noreferrer'; a.title = h;
+    if (!a.children.length && /^https?:\/\//i.test(a.textContent.trim()) && a.textContent.length > 48) a.classList.add('longurl');
+  }
+  // code blocks get a Copy button
+  for (const pre of art.querySelectorAll('pre')) {
+    const w = document.createElement('div'); w.className = 'prew';
+    pre.replaceWith(w); w.appendChild(pre);
+    const b = document.createElement('button'); b.className = 'btn gray small copyb'; b.textContent = tx('copy');
+    w.appendChild(b);
   }
   // backlinks
   const bl = backlinksOf(n);
@@ -1702,6 +2160,19 @@ $('#article').addEventListener('click', async (e) => {
   if (cb) { await toggleTask(+ds(cb, 'task')); return; }
   const op = e.target.closest(`[${A.open}]`);
   if (op) { openNote(ds(op, 'open')); return; }
+  const cp = e.target.closest('.copyb');
+  if (cp) {
+    const code = cp.parentNode.querySelector('pre');
+    try { await navigator.clipboard.writeText(code.textContent.replace(/\n$/, '')); cp.textContent = tx('copied'); setTimeout(() => { if (cp.isConnected) cp.textContent = tx('copy'); }, 1600); } catch (x) {}
+    return;
+  }
+  const fr = e.target.closest(`a[${A.fn}]`);
+  if (fr) {
+    e.preventDefault();
+    const li = $('#article').querySelector(`li[data-fnt="${CSS.escape(ds(fr, 'fn'))}"]`);
+    if (li) { li.scrollIntoView({ block: 'center' }); li.classList.add('flash'); setTimeout(() => li.classList.remove('flash'), 1600); }
+    return;
+  }
   const wl = e.target.closest(`a[${A.wiki}]`);
   if (wl) { e.preventDefault(); followWiki(ds(wl, 'wiki')); return; }
   const a = e.target.closest('a[href]');
@@ -1713,8 +2184,19 @@ $('#article').addEventListener('click', async (e) => {
     let p = h; try { p = decodeURIComponent(h); } catch (x) {}
     const target = resolveNote(joinPath(n.folder, p.split('#')[0]), '') || resolveNote(p.split('#')[0], n.folder);
     if (target) openNote(target.path); else toast(tx('link.notFound') + p);
+    return;
   }
+  const img = e.target.closest('img');
+  if (img && img.src) openZoom(img);
 });
+// Click a picture to see it at full size; click again or press Esc to go back.
+function openZoom(img) {
+  const z = $('#zoom'); S.zoomFrom = document.activeElement;
+  $('#zoom-img').src = img.src; $('#zoom-img').alt = img.alt || '';
+  z.hidden = false; z.focus();
+}
+function closeZoom() { if ($('#zoom').hidden) return; $('#zoom').hidden = true; $('#zoom-img').removeAttribute('src'); refocus(S.zoomFrom); }
+$('#zoom').onclick = closeZoom;
 async function followWiki(target) {
   const hi = target.indexOf('#');
   const name = hi >= 0 ? target.slice(0, hi) : target, heading = hi >= 0 ? target.slice(hi + 1) : '';
@@ -1725,12 +2207,17 @@ async function followWiki(target) {
   const sysN = !cur || !cur.folder ? [...S.notes.values()].find((x) => x.sys && x.name.toLowerCase() === name.trim().toLowerCase()) : null;
   if (sysN) { await openNote(sysN.path); return; }
   if (S.readonly) { toast(tx('link.noNote', name)); return; }
-  await createNote(cur ? cur.folder : '', name.trim(), `# ${name.trim()}\n\n`);
+  // The note is only made once the person says so: a stray click should not leave an empty file behind.
+  const base = baseOf(name.trim()) || name.trim();
+  if (!(await ask({ title: tx('wk.title', base), body: tx('wk.body'), ok: tx('wk.ok') }))) return;
+  await createNote(cur ? cur.folder : '', base, `# ${base}\n\n`);
 }
 function scrollToHeading(h) {
   const want = h.trim().toLowerCase();
   for (const el of $('#article').querySelectorAll('h1,h2,h3,h4,h5,h6')) if (el.textContent.trim().toLowerCase() === want) { el.scrollIntoView({ block: 'start' }); return; }
 }
+// Headings of the open note, for the outline in the note's menu.
+const outline = () => [...$('#article').querySelectorAll(':scope > h2, :scope > h3, :scope > h4')];
 async function toggleTask(line) {
   const n = S.notes.get(S.current); if (!n || S.readonly) return;
   const src = n.draft != null ? n.draft : n.text;
@@ -1750,7 +2237,6 @@ function updateStatus() {
   st.hidden = false;
   st.classList.toggle('saved', !S.dirty);
   $('#status-t').textContent = tx(S.saving ? 'st.saving' : S.conflict ? 'st.conflict' : S.dirty ? 'st.dirty' : 'st.saved');
-  $('#save').disabled = !S.dirty;
 }
 function updateEdBar() {
   const ed = $('#ed');
@@ -1765,13 +2251,15 @@ $('#ed').addEventListener('input', () => {
 });
 $('#ed').addEventListener('click', () => { updateEdBar(); suggestCheck(); });
 $('#ed').addEventListener('keyup', (e) => { if (!['ArrowUp', 'ArrowDown', 'Enter', 'Tab', 'Escape'].includes(e.key)) { updateEdBar(); suggestCheck(); } });
-$('#save').onclick = () => saveNow(true);
-async function saveNow(explicit, accept) {
+// `leaving` is set when the note is about to be left (another note, another folder): the last moment to name a new note.
+async function saveNow(explicit, accept, leaving) {
   clearTimeout(S.timer);
   const n = S.notes.get(S.current);
-  if (!n || !S.dirty || S.readonly || n.draft == null) return true;
+  if (!n || S.readonly) return true;
+  if (!S.dirty || n.draft == null) { if (explicit === true || leaving) await autoName(n, true); return true; }
   if (S.conflict && explicit !== true) return false;      // waiting for the person to decide; don't nag on every pause
-  if (S.saving) { await S.saving; return saveNow(explicit, accept); }
+  if (S.renaming) { try { await S.renaming; } catch (e) {} return saveNow(explicit, accept, leaving); }
+  if (S.saving) { await S.saving; return saveNow(explicit, accept, leaving); }
   const text = n.draft;
   S.saving = (async () => {
     updateStatus();
@@ -1786,7 +2274,7 @@ async function saveNow(explicit, accept) {
       }
       const w = await n.handle.createWritable(); await w.write(text); await w.close();
       const f2 = await n.handle.getFile();
-      n.text = text; n.base = text; n.mtime = f2.lastModified; n.gone = false; analyse(n);
+      n.text = text; n.base = text; n.mtime = f2.lastModified; n.gone = false; analyse(n); S.mine.add(n.path);
       clearConflict();
       if (n.draft === text) { n.draft = null; S.dirty = false; }
       S.gen++;
@@ -1795,21 +2283,61 @@ async function saveNow(explicit, accept) {
     } catch (e) { toast(tx('saveFail') + (e.message || e)); return false; }
   })();
   const ok = await S.saving; S.saving = null; updateStatus();
-  if (S.current === n.path) renderCrumb(n);
+  if (ok) await autoName(n, explicit === true || leaving);
   return ok;
 }
+// A new note starts as “Untitled”. Once it has a heading of its own the file takes that name, so the list, the
+// links and the file on disk all agree. While the title line is still being typed the rename waits.
+// Only notes made or edited here in this visit are renamed: just reading an old “Untitled” file never moves it.
+S.mine = new Set();
+const UNTITLED_RE = /^(未命名|untitled)( \d+)?$/i;
+async function autoName(n, force) {
+  if (!UNTITLED_RE.test(n.name) || !S.mine.has(n.path) || S.readonly || n.sys || n.gone || S.conflict || S.renaming || S.notes.get(n.path) !== n || !n.handle) return;
+  const want = cleanName((n.h1 || '').replace(/[*_`~]/g, '')).replace(/\s+/g, ' ').slice(0, 80).trim();
+  if (!want || UNTITLED_RE.test(want)) return;
+  if (!force && S.current === n.path && S.mode === 'edit' && document.activeElement === $('#ed')) {
+    const ed = $('#ed'), v = ed.value, ls = v.lastIndexOf('\n', ed.selectionStart - 1) + 1, le = v.indexOf('\n', ls);
+    if (/^#\s/.test(v.slice(ls, le < 0 ? v.length : le))) return;
+  }
+  try {
+    const dir = await dirHandle(n.folder);
+    let name = want, i = 2;
+    while (S.notes.has(joinPath(n.folder, name + '.md')) || (!n.folder && SYS_RE.test(name + '.md')) || (await exists(dir, name + '.md'))) name = `${want} ${i++}`;
+    await renameNote(name, { auto: true, note: n });
+  } catch (e) {}
+}
 async function flushSave() {
-  if (!S.dirty) return true;
-  if (await saveNow(S.conflict ? true : undefined)) return true;
-  return confirm(tx('cf.discard'));
+  if (!S.dirty) { const n = S.notes.get(S.current); if (n && !S.readonly) await autoName(n, true); return true; }
+  if (await saveNow(S.conflict ? true : undefined, undefined, true)) return true;
+  return (await ask({ title: tx('cf.title'), body: tx('cf.body'), ok: tx('cf.ok'), cancel: tx('cf.stay'), danger: true })) === true;
 }
 function renderListKeepScroll() { const y = $('#notes').scrollTop; renderList(); $('#notes').scrollTop = y; renderSide(); }
 window.addEventListener('beforeunload', (e) => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
 
 $('#ed').addEventListener('keydown', (e) => {
   if (handleSuggestKey(e)) return;
-  if (e.key === 'Tab' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); document.execCommand('insertText', false, '  '); }
+  if (e.key === 'Tab' && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); document.execCommand('insertText', false, '  '); }
+  else if (e.key === 'Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && !e.isComposing && continueList()) e.preventDefault();
 });
+// Return inside a list, a to-do or a quote starts the next item; Return on an empty item ends the list.
+function continueList() {
+  const ed = $('#ed'); if (ed.selectionStart !== ed.selectionEnd) return false;
+  const v = ed.value, pos = ed.selectionStart, ls = v.lastIndexOf('\n', pos - 1) + 1;
+  const head = v.slice(ls, pos);
+  const m = head.match(/^([ \t]*(?:>[ \t]?)*)((?:[-*+]|\d{1,9}[.)])[ \t]+(?:\[[ xX]\][ \t]+)?)?/);
+  const lead = m[1], marker = m[2] || '';
+  if (!marker && !lead.includes('>')) return false;
+  if (/^[ \t]*([-*_])([ \t]*\1){2,}[ \t]*$/.test(head)) return false;      // a divider such as "* * *"
+  const le = v.indexOf('\n', pos), rest = v.slice(pos, le < 0 ? v.length : le);
+  if (head.length === m[0].length && !rest.trim()) {
+    ed.setSelectionRange(ls, pos + rest.length); document.execCommand('delete');
+    return true;
+  }
+  const num = marker.match(/^(\d+)([.)])([ \t]+)/);
+  const next = num ? (+num[1] + 1) + num[2] + num[3] + (/\[[ xX]\]/.test(marker) ? '[ ] ' : '') : marker.replace(/\[[xX]\]/, '[ ]');
+  document.execCommand('insertText', false, '\n' + lead + next);
+  return true;
+}
 $('#ed').addEventListener('paste', async (e) => {
   const item = [...(e.clipboardData ? e.clipboardData.items : [])].find((i) => i.kind === 'file' && i.type.startsWith('image/'));
   if (!item) return;
@@ -1819,7 +2347,8 @@ $('#ed').addEventListener('paste', async (e) => {
     const blob = item.getAsFile();
     const ext = (item.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/\+.*/, '');
     const d = new Date(); const p2 = (x) => String(x).padStart(2, '0');
-    const stamp = `${tx('paste.name')}-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
+    // A plain ASCII name, so the link in the note reads the same in every editor.
+    const stamp = `pasted-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}`;
     const dir = await dirHandle(n.folder);
     const assets = await dir.getDirectoryHandle('assets', { create: true });
     let name = `${stamp}.${ext}`, k = 2;
@@ -1828,7 +2357,7 @@ $('#ed').addEventListener('paste', async (e) => {
     const w = await fh.createWritable(); await w.write(blob); await w.close();
     const key = joinPath(n.folder, 'assets/' + name);
     S.files.set(key, fh); S.dirs.set(joinPath(n.folder, 'assets'), assets);
-    document.execCommand('insertText', false, `![](assets/${encodeURI(name)})`);
+    document.execCommand('insertText', false, `![](assets/${name})`);
     toast(tx('paste.saved') + name);
   } catch (err) { toast(tx('paste.fail') + (err.message || err)); }
 });
@@ -1840,9 +2369,47 @@ async function dirHandle(folder) {
   for (const seg of folder.split('/').filter(Boolean)) { h = await h.getDirectoryHandle(seg); acc = acc ? acc + '/' + seg : seg; S.dirs.set(acc, h); }
   return h;
 }
+/* ---------- file helpers ---------- */
+async function ensureDir(base, path) { let h = base; for (const seg of path.split('/').filter(Boolean)) h = await h.getDirectoryHandle(seg, { create: true }); return h; }
+// A name in `dir` that is not taken yet: “name”, then “name 2”, “name 3”…
+async function freeName(dir, base, ext) { let name = base + ext, i = 2; while (await exists(dir, name)) name = `${base} ${i++}${ext}`; return name; }
+async function copyFile(fh, dir, name) {
+  const out = await dir.getFileHandle(name, { create: true });
+  const w = await out.createWritable(); await w.write(await fh.getFile()); await w.close();
+  return out;
+}
+const isTemp = (name) => /\.crswap$/i.test(name);
+// Copy a whole folder; returns how many files were written.
+async function copyDir(src, dst) {
+  let c = 0;
+  for await (const [name, h] of src.entries()) {
+    if (h.kind === 'directory') c += await copyDir(h, await dst.getDirectoryHandle(name, { create: true }));
+    else if (!isTemp(name)) { await copyFile(h, dst, name); c++; }
+  }
+  return c;
+}
+async function countFiles(dir) { let c = 0; for await (const [name, h] of dir.entries()) c += h.kind === 'directory' ? await countFiles(h) : isTemp(name) ? 0 : 1; return c; }
+// Read the folder again from scratch after a change that moved many files at once.
+async function rescan() {
+  for (let i = 0; i < 4; i++) {
+    if (S.scanning) { try { await S.scanning; } catch (e) {} }
+    try { if ((await scan(true)) !== null) return true; } catch (e) { return false; }
+  }
+  return false;
+}
 
 /* ---------- [[ autocomplete ---------- */
 const SG = { open: false, items: [], idx: 0, start: 0 };
+// What to write between [[ and ]] for a note. A name that only one note has is enough; when several notes
+// share it (many folders with an index.md, say) the path says which one, and the title is shown as the text.
+function linkText(n) {
+  const low = n.name.toLowerCase();
+  let same = 0;
+  for (const x of S.notes.values()) if (!x.sys && x.name.toLowerCase() === low) same++;
+  if (same < 2) return n.name;
+  const label = n.title.replace(/[\[\]|\n]/g, ' ').trim();
+  return n.path.replace(MD_RE, '') + (label && label !== n.name ? '|' + label : '');
+}
 function suggestCheck() {
   const ed = $('#ed'); const pos = ed.selectionStart;
   const before = ed.value.slice(Math.max(0, pos - 80), pos);
@@ -1851,22 +2418,25 @@ function suggestCheck() {
   const q = m[1].trim().toLowerCase();
   const cur = S.current;
   const all = visibleNotes().filter((n) => n.path !== cur);
+  // The file name and the title both count, best match first.
   const scored = all.map((n) => {
     const a = n.name.toLowerCase(), t = n.title.toLowerCase();
-    const s = !q ? 1 : a.startsWith(q) ? 4 : a.includes(q) ? 3 : t.includes(q) ? 2 : 0;
+    const s = !q ? 1 : a === q || t === q ? 6 : a.startsWith(q) ? 5 : t.startsWith(q) ? 4 : a.includes(q) ? 3 : t.includes(q) ? 2 : 0;
     return [s, n];
   }).filter(([s]) => s > 0).sort((x, y) => y[0] - x[0] || y[1].mtime - x[1].mtime).slice(0, 8).map(([, n]) => n);
   SG.items = scored; SG.start = pos - m[1].length; SG.query = m[1].trim(); SG.idx = 0;
-  const exact = scored.some((n) => n.name.toLowerCase() === q);
+  const exact = all.some((n) => n.name.toLowerCase() === q || n.title.toLowerCase() === q);
   SG.create = q && !exact ? m[1].trim() : null;
   if (!scored.length && !SG.create) return closeSuggest();
   renderSuggest(); positionSuggest();
 }
 function renderSuggest() {
   const box = $('#suggest');
-  const rows = SG.items.map((n, i) => `<button data-i="${i}" class="${i === SG.idx ? 'on' : ''}"><span>${esc(n.name)}</span><span class="s">${esc(n.folder || S.rootName)}</span></button>`);
+  const rows = SG.items.map((n, i) => `<button data-i="${i}" class="two${i === SG.idx ? ' on' : ''}"><span class="t">${esc(n.title)}</span>` +
+    `<span class="p">${esc((n.title !== n.name ? baseOf(n.path) + ' · ' : '') + (n.folder || S.rootName))}</span></button>`);
   if (SG.create) rows.push(`<button data-i="${SG.items.length}" class="${SG.idx === SG.items.length ? 'on' : ''}"><span>${esc(tx('sg.create', SG.create))}</span>${icon('plus', 16)}</button>`);
   box.innerHTML = rows.join(''); box.hidden = false; SG.open = true;
+  const on = box.querySelector('.on'); if (on) on.scrollIntoView({ block: 'nearest' });
 }
 function positionSuggest() {
   const ed = $('#ed'); const cs = getComputedStyle(ed);
@@ -1874,7 +2444,7 @@ function positionSuggest() {
   for (const p of ['fontFamily', 'fontSize', 'lineHeight', 'letterSpacing', 'paddingTop', 'paddingLeft', 'paddingRight', 'width', 'tabSize', 'boxSizing']) mirror.style[p] = cs[p];
   Object.assign(mirror.style, { position: 'absolute', visibility: 'hidden', whiteSpace: 'pre-wrap', wordWrap: 'break-word', top: '0', left: '0' });
   mirror.textContent = ed.value.slice(0, ed.selectionStart);
-  const mk = document.createElement('span'); mk.textContent = '​'; mirror.appendChild(mk);
+  const mk = document.createElement('span'); mk.textContent = '\u200b'; mirror.appendChild(mk);
   document.body.appendChild(mirror);
   const r = ed.getBoundingClientRect();
   let x = r.left + mk.offsetLeft - ed.scrollLeft, y = r.top + mk.offsetTop - ed.scrollTop + parseFloat(cs.lineHeight);
@@ -1886,7 +2456,7 @@ function positionSuggest() {
 }
 function closeSuggest() { SG.open = false; $('#suggest').hidden = true; }
 function handleSuggestKey(e) {
-  if (!SG.open) return false;
+  if (!SG.open || e.isComposing) return false;
   const total = SG.items.length + (SG.create ? 1 : 0);
   if (e.key === 'ArrowDown') { SG.idx = (SG.idx + 1) % total; renderSuggest(); }
   else if (e.key === 'ArrowUp') { SG.idx = (SG.idx - 1 + total) % total; renderSuggest(); }
@@ -1897,7 +2467,7 @@ function handleSuggestKey(e) {
 }
 function acceptSuggest(i) {
   const ed = $('#ed');
-  const name = i < SG.items.length ? SG.items[i].name : SG.create;
+  const name = i < SG.items.length ? linkText(SG.items[i]) : SG.create;
   const after = ed.value.slice(ed.selectionStart, ed.selectionStart + 2);
   ed.setSelectionRange(SG.start, ed.selectionStart);
   document.execCommand('insertText', false, name + (after === ']]' ? '' : ']]'));
@@ -1908,7 +2478,7 @@ $('#suggest').addEventListener('mousedown', (e) => { const b = e.target.closest(
 $('#ed').addEventListener('blur', () => setTimeout(closeSuggest, 100));
 $('#ed').addEventListener('scroll', () => { if (SG.open) positionSuggest(); });
 
-/* ---------- new / rename ---------- */
+/* ---------- new / rename / move ---------- */
 async function createNote(folder, base, body) {
   if (S.readonly) return;
   if (!(await flushSave())) return;
@@ -1924,7 +2494,7 @@ async function createNote(folder, base, body) {
     const f = await fh.getFile();
     path = joinPath(folder, name + '.md');
     const n = { path, name, folder, handle: fh, text: body, base: body, mtime: f.lastModified }; analyse(n);
-    S.gen++; S.notes.set(path, n);
+    S.gen++; S.notes.set(path, n); S.mine.add(path);
   } catch (e) { toast(tx('createFail') + (e.message || e)); return; } finally { S.mutating = false; }
   renderSide(); renderList();
   await openNote(path, { mode: 'edit', selectTitle: true });
@@ -1934,9 +2504,11 @@ $('#new-note').onclick = () => {
   const folder = S.view.kind === 'folder' ? S.view.folder : cur ? cur.folder : '';
   createNote(folder, tx('untitled'), `# ${tx('untitled')}\n\n`);
 };
-// Rewrite [[links]] in `text` (outside code) that point at `note`, giving them the new name.
-function relink(text, fromDir, note, newName) {
+// Rewrite [[links]] in `text` (outside code) that point at `note`, giving them the new name. When the note moves to
+// another folder (`newFolder` is given), links written with a path get the new path; links by name stay as they are.
+function relink(text, fromDir, note, newName, newFolder) {
   let fence = null, count = 0;
+  const moved = newFolder != null;
   const out = text.split('\n').map((line) => {
     const f = line.match(/^\s{0,3}(`{3,}|~{3,})/);
     if (fence) { if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = null; return line; }
@@ -1945,84 +2517,234 @@ function relink(text, fromDir, note, newName) {
     return line.split(/(`+[^`\n]*?`+)/).map((part, i) => i % 2 ? part : part.replace(/(!?)\[\[([^\]\n|#]+)((?:#[^\]\n|]*)?(?:\|[^\]\n]*)?)\]\]/g, (m, bang, target, rest) => {
       if (resolveNote(target.trim(), fromDir) !== note) return m;
       const t = target.trim();
-      const dir = t.includes('/') ? t.slice(0, t.lastIndexOf('/') + 1) : '';
+      const hasDir = t.includes('/');
+      if (moved && !hasDir && t.replace(MD_RE, '').toLowerCase() === newName.toLowerCase()) return m;
+      const dir = moved ? (hasDir && newFolder ? newFolder + '/' : '') : hasDir ? t.slice(0, t.lastIndexOf('/') + 1) : '';
       const ext = MD_RE.test(t) ? t.match(MD_RE)[0] : '';
       count++;
       return `${bang}[[${dir}${newName}${ext}${rest}]]`;
+    }).replace(/(\]\(\s*<?)([^)\s>]+)/g, (m, pre, raw) => {      // [text](path/to/note.md)
+      if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || /^[/#\\]/.test(raw)) return m;
+      let p = raw; try { p = decodeURIComponent(raw); } catch (e) {}
+      const cut = p.search(/[#?]/), tail = cut < 0 ? '' : p.slice(cut); if (cut >= 0) p = p.slice(0, cut);
+      if (!MD_RE.test(p)) return m;
+      const rootRel = joinPath(fromDir, p) !== note.path;
+      if (rootRel && joinPath('', p) !== note.path) return m;
+      const dest = joinPath(moved ? newFolder : note.folder, newName + '.md');
+      count++;
+      return pre + (pre.endsWith('<') ? (rootRel && fromDir ? dest : relPath(fromDir, dest)) : mdUrl(rootRel && fromDir ? dest : relPath(fromDir, dest))) + tail;
     })).join('');
   });
   return { text: out.join('\n'), count };
 }
-async function renameNote() {
-  const n = S.notes.get(S.current); if (!n || S.readonly) return;
-  if (!(await flushSave())) return;
-  const nv = prompt(tx('rn.prompt'), n.name);
-  if (nv == null) return;
-  const name = cleanName(nv);
-  if (!name || name === n.name) return;
-  if (!n.folder && SYS_RE.test(name + '.md')) { toast(tx('rn.reserved')); return; }
-  const path = joinPath(n.folder, name + '.md');
-  const caseOnly = name.toLowerCase() === n.name.toLowerCase();
+// Give the first heading a new text (used when a file is renamed and the heading was the same as the old name).
+function setH1(text, title) {
+  const raw = text.split('\n'), plain = stripCode(text).split('\n');
+  for (let i = splitFrontmatter(text).lines; i < raw.length; i++) {
+    if (/^#\s+\S/.test(plain[i])) { raw[i] = '# ' + title + (raw[i].endsWith('\r') ? '\r' : ''); return raw.join('\n'); }
+  }
+  return text;
+}
+// Path from a folder to a file elsewhere in the notes folder, e.g. "../Trips/assets/map.png".
+function relPath(fromDir, to) {
+  const a = fromDir ? fromDir.split('/') : [], b = to.split('/');
+  let i = 0; while (i < a.length && i < b.length - 1 && a[i] === b[i]) i++;
+  return '../'.repeat(a.length - i) + b.slice(i).join('/');
+}
+const mdUrl = (p) => p.replace(/ /g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29');
+// Pictures a note points to with a path of its own (not web addresses, not ![[name]]): [written form, decoded path].
+function localRefs(text) {
+  const out = new Map(), plain = stripCode(text);
+  const add = (raw) => {
+    if (!raw || /^[a-z][a-z0-9+.-]*:/i.test(raw) || /^[/#\\]/.test(raw)) return;
+    let p = raw; try { p = decodeURIComponent(raw); } catch (e) {}
+    out.set(raw, p.split('#')[0].split('?')[0]);
+  };
+  let m;
+  const re1 = /!\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+["'][^"']*["'])?\s*\)/g, re2 = /<img\b[^>]*?\bsrc\s*=\s*["']([^"']+)["']/gi;
+  while ((m = re1.exec(plain))) add(m[1]);
+  while ((m = re2.exec(plain))) add(m[1]);
+  return out;
+}
+// Rename a note, move it to another folder, or both. Links to it in other notes are updated, pictures it
+// uses come along when it changes folder, and the heading follows the file name when the two were the same.
+async function relocate(n, folder, name, o = {}) {
+  const path = joinPath(folder, name + '.md');
+  const sameDir = folder === n.folder, oldName = n.name, oldPath = n.path, oldFolder = n.folder;
+  const caseOnly = sameDir && name.toLowerCase() === oldName.toLowerCase();
   S.mutating = true;
   try {
-    const dir = await dirHandle(n.folder);
-    if (!caseOnly && (S.notes.has(path) || (await exists(dir, name + '.md')))) { toast(tx('rn.exists')); return; }
+    const dir = await dirHandle(oldFolder), dest = sameDir ? dir : await dirHandle(folder);
+    if (!caseOnly && (S.notes.has(path) || (await exists(dest, name + '.md')))) { toast(tx(sameDir ? 'rn.exists' : 'mv.exists')); return false; }
     // 1. work out link updates while the old name still resolves
     const edits = [];
-    for (const o of S.notes.values()) {
-      if (o === n || !o.handle || o.sys) continue;
-      const r = relink(o.text, o.folder, n, name);
-      if (r.count) edits.push([o, r.text]);
+    for (const x of S.notes.values()) {
+      if (x === n || !x.handle || x.sys) continue;
+      const r = relink(x.text, x.folder, n, name, sameDir ? null : folder);
+      if (r.count) edits.push([x, r.text]);
     }
-    const selfLinks = relink(n.text, n.folder, n, name);
-    // 2. write the note under its new name, then remove the old file
-    const body = selfLinks.text;
+    let body = relink(n.text, oldFolder, n, name, sameDir ? null : folder).text;
+    if (!o.auto && name !== oldName && n.h1 && n.h1 === oldName) body = setH1(body, name);
+    // 2. pictures the note points to from its own folder: take them along, or point back at them when they are shared
+    const movedImgs = [];
+    if (!sameDir) {
+      const others = [...S.notes.values()].filter((x) => x !== n);
+      for (const [raw, p] of localRefs(n.text)) {
+        if (p.startsWith('..')) continue;
+        const key = joinPath(oldFolder, p), to = joinPath(folder, p);
+        if (key === to || !S.files.has(key)) continue;
+        const base = baseOf(key), enc = encodeURI(base);
+        const shared = others.some((x) => x.text.includes(base) || x.text.includes(enc));
+        let taken = S.files.has(to);
+        if (!shared && !taken) {
+          try {
+            const sub = dirOf(p), td = await ensureDir(dest, sub), sd = await dirHandle(joinPath(oldFolder, sub));
+            if (await exists(td, base)) taken = true;
+            else { const fh = await copyFile(S.files.get(key), td, base); await sd.removeEntry(base); movedImgs.push([key, to, fh]); continue; }
+          } catch (e) { taken = true; }
+        }
+        // stays where it is: write the way back to it from the new folder
+        const rel = mdUrl(relPath(folder, key));
+        body = body.split('](' + raw).join('](' + rel).split('src="' + raw + '"').join('src="' + rel + '"').split("src='" + raw + "'").join("src='" + rel + "'");
+      }
+    }
+    // 3. write the note under its new name, then remove the old file
     let fh;
     if (caseOnly) {
       const tmp = `.${name}.renaming-${Date.now()}.md`;
       const th = await dir.getFileHandle(tmp, { create: true });
       let w = await th.createWritable(); await w.write(body); await w.close();
-      await dir.removeEntry(baseOf(n.path));
+      await dir.removeEntry(baseOf(oldPath));
       fh = await dir.getFileHandle(name + '.md', { create: true });
       w = await fh.createWritable(); await w.write(body); await w.close();
       await dir.removeEntry(tmp);
     } else {
-      fh = await dir.getFileHandle(name + '.md', { create: true });
+      fh = await dest.getFileHandle(name + '.md', { create: true });
       const w = await fh.createWritable(); await w.write(body); await w.close();
-      await dir.removeEntry(baseOf(n.path));
+      await dir.removeEntry(baseOf(oldPath));
     }
     const mtime = (await fh.getFile()).lastModified;
     S.gen++;
-    S.notes.delete(n.path);
-    n.path = path; n.name = name; n.handle = fh; n.text = body; n.base = body; n.mtime = mtime; analyse(n);
-    S.notes.set(path, n); S.current = path;
-    prefs.set('last:' + S.rootName, path);
-    // 3. update the other notes, skipping any that changed on disk since they were read
+    S.notes.delete(oldPath);
+    const wasText = n.text;
+    n.path = path; n.name = name; n.folder = folder; n.handle = fh; n.text = body; n.base = body; n.mtime = mtime; n.gone = false; analyse(n);
+    S.notes.set(path, n);
+    for (const [key, to, h] of movedImgs) { S.files.delete(key); S.files.set(to, h); const u = S.imgUrls.get(key); if (u) { S.imgUrls.delete(key); S.imgUrls.set(to, u); } }
+    S.opened = S.opened.map((p) => (p === oldPath ? path : p)); prefs.set('opened:' + S.rootName, S.opened);
+    const isCur = S.current === oldPath;
+    if (isCur) { S.current = path; prefs.set('last:' + S.rootName, path); noteHistory(path, true); }
+    // 4. update the other notes, skipping any that changed on disk since they were read
     let touched = 0, skipped = 0;
-    for (const [o, t] of edits) {
+    for (const [x, t] of edits) {
       try {
-        const disk = await (await o.handle.getFile()).text();
-        if (disk !== o.text) { skipped++; continue; }
-        const w = await o.handle.createWritable(); await w.write(t); await w.close();
-        o.text = t; o.base = t; o.mtime = (await o.handle.getFile()).lastModified; analyse(o); touched++;
+        const disk = await (await x.handle.getFile()).text();
+        if (disk !== x.text) { skipped++; continue; }
+        const w = await x.handle.createWritable(); await w.write(t); await w.close();
+        x.text = t; x.base = t; x.mtime = (await x.handle.getFile()).lastModified; analyse(x); touched++;
       } catch (e) { skipped++; }
     }
-    renderSide(); renderList(); renderCrumb(n); if (S.mode === 'read') renderArticle(n);
-    toast(skipped ? tx('rn.skipped', touched, skipped) : touched ? tx('rn.touched', touched) : tx('rn.done'));
-  } catch (e) { S.mutating = false; toast(tx('rn.fail') + (e.message || e)); refresh(true); } finally { S.mutating = false; }
+    renderSide(); renderListKeepScroll();
+    if (isCur) {
+      if (!$('#crumb .cname')) renderCrumb(n);
+      if (S.mode === 'read') { const y = $('#reader').scrollTop; renderArticle(n); $('#reader').scrollTop = y; }
+      else if (n.draft == null && $('#ed').value !== body) {     // the text changed under the editor (heading, links to itself)
+        const ed = $('#ed'), a = ed.selectionStart, b = ed.selectionEnd;
+        ed.value = body; ed.setSelectionRange(Math.min(a, body.length), Math.min(b, body.length)); updateEdBar();
+      } else if (n.draft != null && body !== wasText && n.draft === wasText) { n.draft = null; S.dirty = false; updateStatus(); }
+    }
+    if (!o.auto) toast((sameDir ? tx('rn.done') : tx('mv.done', folder ? baseOf(folder) : S.rootName)) + (skipped ? tx('ln.skipped', touched, skipped) : touched ? tx('ln.touched', touched) : ''), 3200);
+    return true;
+  } catch (e) { S.mutating = false; toast(tx(sameDir ? 'rn.fail' : 'mv.fail') + (e.message || e)); refresh(true); return false; } finally { S.mutating = false; }
 }
-$('#more').onclick = (e) => {
+// One rename or move at a time; saving waits for it (see saveNow).
+async function locked(fn) {
+  if (S.renaming) { try { await S.renaming; } catch (e) {} }
+  const p = S.renaming = fn();
+  try { return await p; } finally { if (S.renaming === p) S.renaming = null; }
+}
+async function renameNote(nv, o = {}) {
+  const n = o.note || S.notes.get(S.current); if (!n || S.readonly) return false;
+  if (!o.auto && !(await flushSave())) return false;
+  if (S.notes.get(n.path) !== n) return false;
+  const name = cleanName(nv);
+  if (!name || name === n.name) return false;
+  if (!n.folder && SYS_RE.test(name + '.md')) { toast(tx('rn.reserved')); return false; }
+  return locked(() => relocate(n, n.folder, name, o));
+}
+// Folders a note can be moved to, as rows for the dialog: the notes folder itself first, then every folder in tree order.
+function folderRows(cur) {
+  const kids = new Map();
+  for (const d of S.dirs.keys()) if (d && !/(^|\/)assets$/i.test(d)) { const p = dirOf(d); if (!kids.has(p)) kids.set(p, []); kids.get(p).push(d); }
+  for (const v of kids.values()) v.sort((a, b) => COLL.compare(baseOf(a), baseOf(b)));
+  const here = tx('mv.here');
+  const rows = [{ value: '', label: S.rootName, icon: 'tray', disabled: cur === '', go: cur === '' ? here : '' }];
+  const visit = (dir, depth) => { for (const d of kids.get(dir) || []) { rows.push({ value: d, label: baseOf(d), sub: dirOf(d), icon: 'folder', depth, disabled: d === cur, go: d === cur ? here : '' }); visit(d, depth + 1); } };
+  visit('', 1);
+  return rows;
+}
+async function moveNote() {
+  const n = S.notes.get(S.current); if (!n || S.readonly) return;
+  if (!(await flushSave())) return;
+  const to = await ask({ title: tx('mv.title', n.title), input: '', filter: true, placeholder: tx('mv.filter'), list: folderRows(n.folder), none: tx('mv.none') });
+  if (to == null || to === n.folder || S.notes.get(n.path) !== n) return;
+  const ok = await locked(() => relocate(n, to, n.name));
+  if (ok && S.view.kind === 'folder' && !inFolder(to, S.view.folder)) setView({ kind: 'folder', folder: to || S.view.folder });
+}
+
+/* ---------- menus ---------- */
+const menuOpen = (kind) => !$('#menu').hidden && $('#menu').dataset.kind === kind;
+function closeMenu(back) { const m = $('#menu'); if (m.hidden) return; m.hidden = true; if (back) refocus(S.menuFrom); }
+// `at` is a point { x, y } or an element { el } the menu hangs from (right: line up right edges, above: open upwards).
+function showMenu(kind, html, at) {
+  const menu = $('#menu');
+  if (menu.hidden) S.menuFrom = document.activeElement;
+  $('#help').hidden = true;
+  menu.dataset.kind = kind; menu.innerHTML = html; menu.hidden = false; menu.scrollTop = 0;
+  let x = at.x, y = at.y;
+  if (at.el) { const r = at.el.getBoundingClientRect(); x = at.right ? r.right - menu.offsetWidth : r.left; y = at.above ? r.top - 8 - menu.offsetHeight : r.bottom + 8; }
+  menu.style.left = Math.max(12, Math.min(x, innerWidth - menu.offsetWidth - 12)) + 'px';
+  menu.style.top = Math.max(12, Math.min(y, innerHeight - menu.offsetHeight - 12)) + 'px';
+  const f = (at.first && menu.querySelector(at.first)) || menu.querySelector('button:not([disabled])'); if (f) f.focus();
+}
+const SEP = '<div class="sep"></div>';
+const mi = (act, label, o = {}) => `<button data-act="${act}"${o.arg != null ? ` data-arg="${esc(o.arg)}"` : ''}${o.disabled ? ' disabled' : ''}${o.danger ? ' class="danger"' : ''}` +
+  `${o.checked != null ? ` role="menuitemradio" aria-checked="${!!o.checked}"` : ''}><span>${esc(label)}</span>` +
+  (o.hint ? `<span class="s">${esc(o.hint)}</span>` : o.icon ? icon(o.icon, 18, 'cur') : o.checked ? icon('checkmark', 16, 'cur') : '') + '</button>';
+const newNoteBody = () => `# ${tx('untitled')}\n\n`;
+function noteMenu(at) {
   const n = S.notes.get(S.current); if (!n) return;
-  const menu = $('#menu'); menu.dataset.kind = 'note';
-  menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>${esc(tx('menu.rename'))}</span></button>` +
-    `<button data-act="copy"><span>${esc(tx('menu.copy'))}</span><span class="s">[[${esc(n.name)}]]</span></button>` +
-    `<button data-act="refresh"><span>${esc(tx('menu.refresh'))}</span></button>` +
-    `<button data-act="help"><span>${esc(tx('menu.help'))}</span>${icon('questionmark.circle', 18, 'cur')}</button>` +
-    (S.readonly ? '' : `<div class="sep"></div><button data-act="delete" style="color:var(--danger)"><span>${esc(tx('menu.delete'))}</span></button>`);
-  menu.hidden = false;
-  const r = e.currentTarget.getBoundingClientRect();
-  menu.style.top = r.bottom + 8 + 'px'; menu.style.left = Math.max(12, r.right - menu.offsetWidth) + 'px';
-};
+  const ro = S.readonly, heads = S.mode === 'read' && !S.diffOpen ? outline() : [];
+  showMenu('note', mi('rename', tx('menu.rename'), { disabled: ro }) + mi('move', tx('menu.move'), { disabled: ro }) +
+    mi('copy', tx('menu.copy'), { hint: `[[${linkText(n)}]]` }) +
+    (heads.length > 1 ? mi('outline', tx('menu.outline'), { icon: 'chevron.right' }) : '') +
+    mi('help', tx('menu.help'), { icon: 'questionmark.circle' }) +
+    (ro ? '' : SEP + mi('delete', tx('menu.delete'), { danger: true })), at);
+}
+$('#more').onclick = (e) => { if (menuOpen('note') || menuOpen('outline')) return closeMenu(); noteMenu({ el: e.currentTarget, right: true }); };
+function outlineMenu() {
+  showMenu('outline', outline().map((h, i) => `<button data-act="goto" data-arg="${i}" style="padding-left:${14 + (+h.tagName[1] - 2) * 16}px"><span>${esc(h.textContent)}</span></button>`).join(''), { el: $('#more'), right: true });
+}
+// The menu next to the name: things that concern the whole notes folder and the page itself.
+function libMenu() {
+  const rw = S.root && !S.readonly, th = ['light', 'dark'].includes(prefs.get('theme', 'auto')) ? prefs.get('theme', 'auto') : 'auto';
+  showMenu('lib', (rw ? mi('claude', tx('fm.claude')) + mi('trash', tx('tr.menu')) + mi('refresh', tx('lib.reload')) + SEP : '') +
+    mi('theme', tx('th.label'), { hint: tx('th.' + th) }) + mi('lang', tx('lang.label'), { hint: tx('lang.name') }) +
+    mi('focus', tx(NAV.focus ? 'nav.unfocus' : 'nav.focus'), { hint: MOD_SHIFT + '\\' }), { el: $('#lib-more'), first: S.libFirst });
+  S.libFirst = null;
+}
+function listMenu() {
+  const f = S.view.kind === 'folder' ? S.view.folder : '';
+  showMenu('list', mi('newfolder', tx(f ? 'nf.menuSub' : 'nf.menu'), { arg: f }) +
+    (f ? mi('rnfolder', tx('rf.menu'), { arg: f }) + SEP + mi('delfolder', tx('df2.menu'), { arg: f, danger: true }) : ''), { el: $('#list-more'), right: true });
+}
+function sortMenu() {
+  const s = sortKey();
+  showMenu('sort', mi('sort', tx('sort.mtime'), { arg: 'mtime', checked: s === 'mtime' }) + mi('sort', tx('sort.title'), { arg: 'title', checked: s === 'title' }), { el: $('#list-meta') });
+}
+function folderMenu(folder, at) {
+  showMenu('folder', mi('newin', tx('list.new'), { arg: folder }) + mi('newfolder', tx('nf.menuSub'), { arg: folder }) + mi('rnfolder', tx('rf.menu'), { arg: folder }) +
+    SEP + mi('delfolder', tx('df2.menu'), { arg: folder, danger: true }), at);
+}
 $('#menu').addEventListener('click', async (e) => {
   const rm = e.target.closest('[data-rm]');
   if (rm) {                                   // remove a folder from the recent list, keep the menu open
@@ -2030,36 +2752,289 @@ $('#menu').addEventListener('click', async (e) => {
     const x = welcomeList[+rm.dataset.rm]; if (!x) return;
     await folders.forget(x.h); $('#menu').hidden = true; $('#change-folder').click(); return;
   }
-  const b = e.target.closest('[data-act]'); if (!b) return;
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  const act = b.dataset.act, arg = b.dataset.arg;
+  if (act === 'theme') {                      // steps through the three choices and stays open, so the change can be seen
+    const order = ['auto', 'light', 'dark'], cur = order.indexOf(prefs.get('theme', 'auto'));
+    prefs.set('theme', order[(cur + 1) % 3]); applyTheme(); S.libFirst = '[data-act=theme]'; libMenu(); return;
+  }
   $('#menu').hidden = true;
-  if (b.dataset.act === 'noop') return;
-  if (b.dataset.act === 'other') { pickFolder(); return; }
-  if (b.dataset.act === 'claude') { openCC(); return; }
-  if (b.dataset.act === 'newlib') { openNewSheet(); return; }
-  if (b.dataset.act === 'help') { openHelp($('#more'), false); return; }
-  if (b.dataset.act === 'folder') { const x = welcomeList[+b.dataset.i]; if (x) openSaved(x.h); return; }
   const n = S.notes.get(S.current);
-  if (b.dataset.act === 'rename') renameNote();
-  if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(`[[${n.name}]]`); toast(tx('copied')); } catch (x) { toast(`[[${n.name}]]`); } }
-  if (b.dataset.act === 'refresh') refresh(true);
-  if (b.dataset.act === 'delete') deleteNote();
+  switch (act) {
+    case 'other': pickFolder(); break;
+    case 'newlib': openNewSheet(); break;
+    case 'folder': { const x = welcomeList[+b.dataset.i]; if (x) openSaved(x.h); break; }
+    case 'claude': openCC(); break;
+    case 'trash': openTrash(); break;
+    case 'refresh': refresh(true); break;
+    case 'lang': setLang(LANG === 'zh' ? 'en' : 'zh'); prefs.set('lang', LANG); break;
+    case 'focus': toggleFocus(); break;
+    case 'sort': prefs.set('sort', arg); renderList(); $('#notes').scrollTop = 0; $('#list-meta').focus(); break;
+    case 'newin': createNote(arg, tx('untitled'), newNoteBody()); break;
+    case 'newfolder': newFolder(arg || ''); break;
+    case 'rnfolder': renameFolder(arg); break;
+    case 'delfolder': deleteFolder(arg); break;
+    case 'rename': startRename(); break;
+    case 'move': moveNote(); break;
+    case 'copy': if (n) { const t = `[[${linkText(n)}]]`; try { await navigator.clipboard.writeText(t); toast(tx('copied')); } catch (x) { toast(t); } } break;
+    case 'outline': outlineMenu(); break;
+    case 'goto': { const h = outline()[+arg]; if (h) h.scrollIntoView({ block: 'start' }); break; }
+    case 'help': openHelp($('#more'), false); break;
+    case 'delete': deleteNote(); break;
+  }
 });
+// Up and down move through a menu.
+$('#menu').addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const f = [...$('#menu').querySelectorAll('button:not([disabled])')]; if (!f.length) return;
+  e.preventDefault();
+  const i = f.indexOf(document.activeElement);
+  f[(i + (e.key === 'ArrowDown' ? 1 : -1) + f.length) % f.length].focus();
+});
+document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more,#change-folder,#lib-more,#list-more,#list-meta')) $('#menu').hidden = true; });
+
+/* ---------- trash ---------- */
+// Deleting moves things into a .trash folder inside the notes folder (names that start with a dot stay out of
+// the lists), so a slip can be undone. The Trash in the menu next to the name puts notes back or empties it.
+const trashRoot = (create) => S.root.getDirectoryHandle('.trash', { create });
 async function deleteNote() {
   const n = S.notes.get(S.current); if (!n || S.readonly) return;
-  const bl = backlinksOf(n).length;
-  if (!confirm(tx('del.confirm', n.title, bl))) return;
+  clearTimeout(S.timer);
+  if (S.saving) { try { await S.saving; } catch (e) {} }
+  if (S.renaming) { try { await S.renaming; } catch (e) {} }
+  if (S.notes.get(n.path) !== n) return;
+  let info;
   S.mutating = true;
   try {
-    clearTimeout(S.timer);
     const dir = await dirHandle(n.folder);
-    await dir.removeEntry(baseOf(n.path));
+    const text = n.draft != null ? n.draft : (await diskText(n)) ?? n.text;     // what the person last saw
+    const tdir = await ensureDir(await trashRoot(true), n.folder);
+    const tname = await freeName(tdir, n.name, '.md');
+    await writeText(tdir, tname, text);
+    if ((await readOrNull(tdir, tname)) !== text) throw new Error('.trash');
+    try { await dir.removeEntry(baseOf(n.path)); } catch (e) { if (!e || e.name !== 'NotFoundError') throw e; }
+    info = { folder: n.folder, name: n.name, tdir, tname };
     S.gen++; n.draft = null;
     S.notes.delete(n.path); S.current = null; S.dirty = false; clearConflict();
     showPane(false); renderSide(); renderList();
-    toast(tx('del.done'));
-  } catch (e) { toast(tx('del.fail') + (e.message || e)); } finally { S.mutating = false; }
+  } catch (e) { toast(tx('del.fail') + (e.message || e), 5000); return; } finally { S.mutating = false; }
+  toast(tx('del.done', n.title), 8000, { label: tx('undo'), fn: () => restoreNote(info, true) });
 }
-document.addEventListener('mousedown', (e) => { if (!e.target.closest('#menu,#more,#change-folder')) $('#menu').hidden = true; });
+// Put a note from the trash back where it was (under a free name if that name is taken again).
+async function restoreNote({ folder, name, tdir, tname }, open) {
+  if (S.readonly || !S.root) return false;
+  if (!(await flushSave())) return false;
+  let path;
+  S.mutating = true;
+  try {
+    const text = await readOrNull(tdir, tname);
+    if (text === null) throw new Error(tx('tr.gone'));
+    const dir = await ensureDir(S.root, folder);
+    const fname = await freeName(dir, name, '.md');
+    await writeText(dir, fname, text);
+    // pictures that went to the trash with a deleted folder come back with the note
+    for (const p of localRefs(text).values()) {
+      if (p.startsWith('..')) continue;
+      try {
+        const parts = p.split('/'), base = parts.pop();
+        let sd = tdir; for (const s of parts) sd = await sd.getDirectoryHandle(s);
+        const src = await sd.getFileHandle(base), dd = await ensureDir(dir, parts.join('/'));
+        if (!(await exists(dd, base))) S.files.set(joinPath(folder, p), await copyFile(src, dd, base));
+      } catch (e) {}
+    }
+    await tdir.removeEntry(tname);
+    await dirHandle(folder);
+    const fh = await dir.getFileHandle(fname), f = await fh.getFile();
+    path = joinPath(folder, fname);
+    const n = { path, name: stem(fname), folder, handle: fh, text, base: text, mtime: f.lastModified }; analyse(n);
+    S.gen++; S.notes.set(path, n);
+  } catch (e) { toast(tx('tr.fail') + (e.message || e), 5000); return false; } finally { S.mutating = false; }
+  renderSide(); renderList();
+  if (open) await openNote(path);
+  toast(tx('tr.restored'));
+  return true;
+}
+async function listTrash() {
+  const out = [];
+  let root; try { root = await trashRoot(false); } catch (e) { return out; }
+  const visit = async (dir, prefix) => {
+    for await (const [name, h] of dir.entries()) {
+      const p = prefix ? prefix + '/' + name : name;
+      if (h.kind === 'directory') await visit(h, p);
+      else if (MD_RE.test(name)) out.push({ path: p, dir, name, t: (await h.getFile()).lastModified });
+    }
+  };
+  await visit(root, '');
+  return out.sort((a, b) => b.t - a.t);
+}
+async function openTrash() {
+  if (!S.root || S.readonly) return;
+  let items;
+  try { items = await listTrash(); } catch (e) { toast(tx('tr.fail') + (e.message || e)); return; }
+  if (!items.length) { toast(tx('tr.empty')); return; }
+  const r = await ask({ title: tx('tr.title'), body: tx('tr.desc'), ok: tx('tr.emptyBtn'), danger: true, cancel: tx('done'),
+    list: items.map((x, i) => ({ value: i, label: stem(x.name), sub: (dirOf(x.path) || S.rootName) + ' · ' + fmtDate(x.t), icon: 'doc', go: tx('tr.restore') })) });
+  if (r === true) {
+    if (!(await ask({ title: tx('tr.emptyQ', items.length), body: tx('tr.emptyD'), ok: tx('tr.emptyOk'), danger: true }))) return;
+    try { await S.root.removeEntry('.trash', { recursive: true }); toast(tx('tr.emptied')); } catch (e) { toast(tx('del.fail') + (e.message || e), 5000); }
+  } else if (typeof r === 'number') {
+    const x = items[r];
+    await restoreNote({ folder: dirOf(x.path), name: stem(x.name), tdir: x.dir, tname: x.name }, true);
+  }
+}
+
+/* ---------- folders ---------- */
+async function newFolder(parent) {
+  if (S.readonly || !S.root) return;
+  const v = await ask({ title: tx('nf.title'), body: parent ? tx('nf.in', baseOf(parent)) : '', input: '', placeholder: tx('nf.ph'), ok: tx('nf.ok') });
+  if (v == null) return;
+  const name = cleanName(v); if (!name) return;
+  try {
+    const dir = await dirHandle(parent);
+    if (await exists(dir, name)) { toast(tx('nf.exists')); return; }
+    const p = joinPath(parent, name);
+    S.dirs.set(p, await dir.getDirectoryHandle(name, { create: true })); S.gen++;
+    setView({ kind: 'folder', folder: p });
+  } catch (e) { toast(tx('nf.fail') + (e.message || e), 5000); }
+}
+// After a folder changed its path: point everything that remembers a path at the new one, then read the folder again.
+async function afterFolderMove(from, to) {
+  const map = (p) => (to != null && inFolder(p, from) ? to + p.slice(from.length) : p);
+  const cur = S.current, mode = S.mode;
+  S.current = null; S.dirty = false; clearConflict();
+  S.mutating = false;
+  await rescan();
+  S.open = new Set([...S.open].map(map).filter((d) => S.dirs.has(d))); saveOpen();
+  S.opened = S.opened.map(map).filter((p) => S.notes.has(p)); prefs.set('opened:' + S.rootName, S.opened);
+  if (S.view.kind === 'folder') {
+    let f = map(S.view.folder);
+    if (!S.dirs.has(f)) { f = dirOf(from); while (f && !S.dirs.has(f)) f = dirOf(f); }
+    S.view = f ? { kind: 'folder', folder: f } : { kind: 'all', folder: '' }; prefs.set('view:' + S.rootName, S.view);
+    if (f) reveal(f);
+  }
+  renderSide(); renderList();
+  const next = cur && map(cur);
+  if (next && S.notes.has(next)) await openNote(next, { replace: true, mode: mode === 'edit' ? 'edit' : 'read' }); else showPane(false);
+}
+// Chrome cannot rename a folder in place, so the folder is copied under its new name and the old one removed.
+async function renameFolder(path) {
+  if (S.readonly || !S.dirs.has(path)) return;
+  if (!(await flushSave())) return;
+  const old = baseOf(path), parent = dirOf(path);
+  const v = await ask({ title: tx('rf.title', old), input: old, placeholder: tx('nf.ph'), ok: tx('menu.rename') });
+  if (v == null) return;
+  const name = cleanName(v); if (!name || name === old) return;
+  const np = joinPath(parent, name), caseOnly = name.toLowerCase() === old.toLowerCase();
+  if (S.saving) { try { await S.saving; } catch (e) {} }
+  S.mutating = true;
+  let done = false; const edits = [];
+  try {
+    const pdir = await dirHandle(parent), src = await pdir.getDirectoryHandle(old);
+    if (!caseOnly && (await exists(pdir, name))) { toast(tx('nf.exists')); return; }
+    toast(tx('rf.working'), 0);
+    // links written with a path that runs through this folder get the new path
+    for (const x of S.notes.values()) {
+      if (!x.handle || x.sys) continue;
+      const r = repath(x.text, x.folder, path, np);
+      if (r.count) edits.push([inFolder(x.path, path) ? np + x.path.slice(path.length) : x.path, x.text, r.text]);
+    }
+    const total = await countFiles(src);
+    const copyTo = async (target) => { const dst = await pdir.getDirectoryHandle(target, { create: true }); if ((await copyDir(src, dst)) !== total) throw new Error(target); return dst; };
+    if (caseOnly) {
+      const tmp = `.${name}.renaming-${Date.now()}`;
+      const th = await copyTo(tmp);
+      await pdir.removeEntry(old, { recursive: true });
+      const dst = await pdir.getDirectoryHandle(name, { create: true });
+      if ((await copyDir(th, dst)) !== total) throw new Error(name);
+      await pdir.removeEntry(tmp, { recursive: true });
+    } else { await copyTo(name); await pdir.removeEntry(old, { recursive: true }); }
+    S.gen++; done = true;
+  } catch (e) { toast(tx('rf.fail') + (e.message || e), 5000); } finally { S.mutating = false; }
+  await afterFolderMove(path, done ? np : null);
+  if (!done) return;
+  let touched = 0;
+  for (const [p, was, text] of edits) {
+    const x = S.notes.get(p); if (!x || x.text !== was) continue;
+    try { const w = await x.handle.createWritable(); await w.write(text); await w.close(); x.text = text; x.base = text; x.mtime = (await x.handle.getFile()).lastModified; analyse(x); touched++; } catch (e) {}
+  }
+  if (touched) { S.gen++; renderListKeepScroll(); const n = S.notes.get(S.current); if (n && S.mode === 'read') renderArticle(n); else if (n && n.draft == null) $('#ed').value = n.text; }
+  toast(tx('rf.done') + (touched ? tx('ln.touched', touched) : ''), 3200);
+}
+// [[links]] written with a path into the folder `from` (or below) get the same path under `to`.
+function repath(text, fromDir, from, to) {
+  let fence = null, count = 0;
+  const out = text.split('\n').map((line) => {
+    const f = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) { if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = null; return line; }
+    if (f) { fence = f[1]; return line; }
+    return line.split(/(`+[^`\n]*?`+)/).map((part, i) => i % 2 ? part : part.replace(/(!?)\[\[([^\]\n|#]+)((?:#[^\]\n|]*)?(?:\|[^\]\n]*)?)\]\]/g, (m, bang, target, rest) => {
+      const t = target.trim();
+      if (!t.includes('/')) return m;
+      const x = resolveNote(t, fromDir);
+      if (!x || !inFolder(x.path, from)) return m;
+      const ext = MD_RE.test(t) ? t.match(MD_RE)[0] : '';
+      count++;
+      return `${bang}[[${(to + x.path.slice(from.length)).replace(MD_RE, '')}${ext}${rest}]]`;
+    }).replace(/(\]\(\s*<?)([^)\s>]+)/g, (m, pre, raw) => {      // [text](path) and ![](path) written from outside the folder
+      if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || /^[/#\\]/.test(raw)) return m;
+      let p = raw; try { p = decodeURIComponent(raw); } catch (e) {}
+      const cut = p.search(/[#?]/), tail = cut < 0 ? '' : p.slice(cut); if (cut >= 0) p = p.slice(0, cut);
+      let abs = null, rootRel = false;
+      for (const [c, r] of [[joinPath(fromDir, p), false], [joinPath('', p), true]]) if (S.files.has(c) || S.notes.has(c)) { abs = c; rootRel = r; break; }
+      if (!abs || abs === from || !inFolder(abs, from)) return m;
+      const dest = to + abs.slice(from.length), home = inFolder(fromDir, from) ? to + fromDir.slice(from.length) : fromDir;
+      const np = rootRel && fromDir ? dest : relPath(home, dest);
+      if (np === p) return m;
+      count++;
+      return pre + (pre.endsWith('<') ? np : mdUrl(np)) + tail;
+    })).join('');
+  });
+  return { text: out.join('\n'), count };
+}
+async function deleteFolder(path) {
+  if (S.readonly || !S.dirs.has(path)) return;
+  if (!(await flushSave())) return;
+  const name = baseOf(path), parent = dirOf(path);
+  if (!(await ask({ title: tx('df2.title', name), body: tx('df2.body', countIn(path)), ok: tx('df2.ok'), danger: true }))) return;
+  if (S.saving) { try { await S.saving; } catch (e) {} }
+  S.mutating = true;
+  let info = null;
+  try {
+    const pdir = await dirHandle(parent), src = await pdir.getDirectoryHandle(name);
+    const troot = await ensureDir(await trashRoot(true), parent);
+    const tname = await freeName(troot, name, '');
+    const dst = await troot.getDirectoryHandle(tname, { create: true });
+    if ((await copyDir(src, dst)) !== (await countFiles(src))) throw new Error('.trash');
+    await pdir.removeEntry(name, { recursive: true });
+    S.gen++; info = { parent, name, troot, tname };
+  } catch (e) { toast(tx('df2.fail') + (e.message || e), 5000); } finally { S.mutating = false; }
+  await afterFolderMove(path, null);
+  if (info) toast(tx('df2.done', name), 8000, { label: tx('undo'), fn: () => restoreFolder(info) });
+}
+async function restoreFolder({ parent, name, troot, tname }) {
+  if (S.readonly || !S.root) return;
+  if (!(await flushSave())) return;
+  S.mutating = true;
+  let ok = false;
+  try {
+    const pdir = await ensureDir(S.root, parent);
+    if (await exists(pdir, name)) throw new Error(tx('nf.exists'));
+    const src = await troot.getDirectoryHandle(tname), dst = await pdir.getDirectoryHandle(name, { create: true });
+    if ((await copyDir(src, dst)) !== (await countFiles(src))) throw new Error(name);
+    await troot.removeEntry(tname, { recursive: true });
+    S.gen++; ok = true;
+  } catch (e) { toast(tx('df2.undoFail') + (e.message || e), 5000); } finally { S.mutating = false; }
+  if (!ok) return;
+  const cur = S.current, was = S.mode;
+  if (await rescan()) {
+    const p = joinPath(parent, name);
+    if (S.current && !S.notes.has(S.current)) { S.current = null; showPane(false); }
+    if (S.dirs.has(p)) setView({ kind: 'folder', folder: p }); else { renderSide(); renderList(); }
+    const n = cur && S.notes.get(cur);
+    if (n && S.current === cur && was === 'read') renderArticle(n);
+  }
+  toast(tx('tr.restored'));
+}
 
 /* ---------- refresh when coming back to the page ---------- */
 async function refresh(force) {
@@ -2209,17 +3184,19 @@ function lineDiff(a, b) {
   for (let i = a.length - q; i < a.length; i++) out.push([' ', a[i]]);
   return { ops: out, big };
 }
+// The two versions side by side in one list. Neither is "right" or "wrong", so they get two neutral colours and
+// a word in the margin instead of red minus and green plus signs.
 async function renderDiff() {
   const n = S.notes.get(S.current); if (!n) return;
   const disk = await diskText(n);
   const mine = n.draft != null ? n.draft : n.text;
   const box = $('#diff');
-  const legend = `<div class="lg"><span class="del" data-s="−">${esc(tx('df.del'))}</span><span class="add" data-s="+">${esc(tx('df.add'))}</span></div>`;
+  const legend = `<div class="lg"><span class="del"><i></i>${esc(tx('df.del'))}</span><span class="add"><i></i>${esc(tx('df.add'))}</span></div>`;
   if (disk === null || disk === mine) { box.innerHTML = legend + `<div class="none">${esc(tx('df.none'))}</div>`; return; }
   const { ops, big } = lineDiff(disk.split('\n'), mine.split('\n'));
-  const rows = [], CTX = 3;
+  const rows = [], CTX = 3, sFile = esc(tx('df.sFile')), sMine = esc(tx('df.sMine'));
   for (let i = 0; i < ops.length;) {
-    if (ops[i][0] !== ' ') { const [s, l] = ops[i++]; rows.push(`<div class="dl ${s === '-' ? 'del' : 'add'}" data-s="${s === '-' ? '−' : '+'}">${esc(l)}</div>`); continue; }
+    if (ops[i][0] !== ' ') { const [s, l] = ops[i++]; rows.push(`<div class="dl ${s === '-' ? 'del' : 'add'}" data-s="${s === '-' ? sFile : sMine}">${esc(l)}</div>`); continue; }
     let j = i; while (j < ops.length && ops[j][0] === ' ') j++;
     const head = i === 0, tail = j === ops.length;
     const keepA = head ? 0 : CTX, keepB = tail ? 0 : CTX;
@@ -2363,6 +3340,7 @@ const CC_TPL = {
 - 每篇笔记是一个 \`.md\` 文件，UTF-8 编码。文件夹可以任意嵌套，文件夹名可能很长、带空格和中文，命令里的路径一律加引号。
 - 以 \`.\` 开头的文件和文件夹、\`node_modules\` 会被 Incognote 忽略。根目录的 \`CLAUDE.md\`、\`AGENTS.md\` 不算笔记。
 - 不要动 \`*.crswap\` 文件，那是 Chrome 保存时的临时文件。
+- \`.trash/\` 是 Incognote 的废纸篓，用户在页面里删除的笔记和文件夹会移到这里。不要读取、修改或清空它，除非用户明确要求。
 - 文件名就是笔记名，不能包含 \`\\ / : * ? " < > | # ^ [ ]\`，也不要以 \`.\` 开头。
 - 全库尽量不要有同名笔记（不同文件夹也算），否则 \`[[双链]]\` 会指向不明。
 
@@ -2452,6 +3430,7 @@ Incognote created this file. Edit it as you like; Incognote never overwrites it.
 - Each note is one \`.md\` file in UTF-8. Folders can be nested freely. Folder names can be long and contain spaces or non-ASCII characters, so always quote paths in commands.
 - Incognote ignores files and folders whose names start with \`.\`, and \`node_modules\`. \`CLAUDE.md\` and \`AGENTS.md\` at the top level are not notes.
 - Leave \`*.crswap\` files alone. Chrome creates them briefly while saving.
+- \`.trash/\` is Incognote’s Trash: notes and folders deleted in the page are moved there. Don’t read, change or empty it unless the user asks.
 - The file name is the note's name. It can't contain \`\\ / : * ? " < > | # ^ [ ]\` or start with \`.\`.
 - Avoid two notes with the same name anywhere in the notebook, even in different folders, or \`[[links]]\` become ambiguous.
 
@@ -2584,36 +3563,53 @@ function snippetFor(n, terms, byName) {
   if (byName) return n.snippet; // the hit is already highlighted in the title; show the note's preview
   return snipIn(n.body, terms) || snipIn(n.text, terms) || n.snippet;
 }
+const PAL_MAX = 60;
+// The folder shown at the right of a result. A folder named after its only note says nothing new, so go one level up.
+function whereOf(n) {
+  if (!n.folder) return S.rootName;
+  const b = baseOf(n.folder);
+  if (b !== n.name && !b.includes(n.title) && !n.title.includes(b)) return b;
+  const p = dirOf(n.folder);
+  return p ? baseOf(p) : S.rootName;
+}
 function runSearch() {
   const q = $('#q').value.trim().toLowerCase();
   const terms = q ? q.split(/\s+/) : [];
   P.terms = terms;
   const res = $('#results');
+  let all;
   if (!terms.length) {
-    const recent = visibleNotes().sort((a, b) => b.mtime - a.mtime).slice(0, 8);
-    P.items = recent.map((n) => ({ n, group: 'recent' }));
+    all = visibleNotes().sort((a, b) => b.mtime - a.mtime).slice(0, 8).map((n) => ({ n, group: 'recent' }));
   } else {
+    // Best match first: the whole query as the name or title, then at its start, then anywhere in it;
+    // for text matches, the notes that mention the words most. Newer notes win ties.
     const byName = [], byBody = [];
+    const times = (hay, t) => { let c = 0; for (let i = hay.indexOf(t); i >= 0 && c < 12; i = hay.indexOf(t, i + t.length)) c++; return c; };
     for (const n of visibleNotes()) {
-      const nameStr = (n.name + ' ' + n.title).toLowerCase();
-      if (terms.every((t) => nameStr.includes(t))) byName.push({ n, group: 'name' });
-      else if (terms.every((t) => n.lower.includes(t) || nameStr.includes(t))) byBody.push({ n, group: 'body' });
+      const name = n.name.toLowerCase(), title = n.title.toLowerCase(), nameStr = name + ' ' + title;
+      if (terms.every((t) => nameStr.includes(t))) {
+        byName.push({ n, group: 'name', s: name === q || title === q ? 4 : name.startsWith(q) || title.startsWith(q) ? 3 : name.includes(q) || title.includes(q) ? 2 : 1 });
+      } else if (terms.every((t) => n.lower.includes(t) || nameStr.includes(t))) {
+        let s = 0; for (const t of terms) s += times(n.lower, t);
+        byBody.push({ n, group: 'body', s });
+      }
     }
-    const sort = (a, b) => b.n.mtime - a.n.mtime;
-    P.items = [...byName.sort(sort), ...byBody.sort(sort)].slice(0, 60);
+    const sort = (a, b) => b.s - a.s || b.n.mtime - a.n.mtime;
+    all = [...byName.sort(sort), ...byBody.sort(sort)];
   }
+  const counts = {}; for (const it of all) counts[it.group] = (counts[it.group] || 0) + 1;
+  P.items = all.slice(0, PAL_MAX);
   P.idx = 0;
   let html = '', g = null;
-  const counts = {}; for (const it of P.items) counts[it.group] = (counts[it.group] || 0) + 1;
   P.items.forEach((it, i) => {
     if (it.group !== g) { g = it.group; html += `<div class="pal-g">${esc(tx('g.' + g))} · ${counts[g]}</div>`; }
     const n = it.n;
     const snip = terms.length ? snippetFor(n, terms, it.group === 'name') : n.snippet;
     html += `<button class="res" data-i="${i}">${icon('doc', 20)}<span class="mid"><span class="t">${hl(n.title, terms)}</span><span class="s">${hl(snip || '', terms)}</span></span>` +
-      `<span class="r">${esc(n.folder ? baseOf(n.folder) : S.rootName)}<br>${fmtDate(n.mtime)}</span></button>`;
+      `<span class="r">${esc(whereOf(n))}<br>${fmtDate(n.mtime)}</span></button>`;
   });
   res.innerHTML = html || `<div class="empty">${esc(tx('pal.none', q))}</div>`;
-  $('#pal-count').textContent = terms.length ? tx('pal.found', P.items.length, noteCount()) : tx('pal.total', noteCount());
+  $('#pal-count').textContent = !terms.length ? tx('pal.total', noteCount()) : all.length > PAL_MAX ? tx('pal.foundCap', all.length, PAL_MAX) : tx('pal.found', all.length, noteCount());
   markResult();
 }
 function markResult() {
@@ -2629,6 +3625,8 @@ async function pickResult(i) {
 
 /* ---------- keyboard ---------- */
 document.addEventListener('keydown', (e) => {
+  if (!$('#dlg').hidden) return;               // the dialog handles its own keys
+  if (!$('#zoom').hidden) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeZoom(); } return; }
   if (!$('#sheet').hidden) { if (e.key === 'Escape') closeSheet(); return; }
   if (e.key === 'Escape' && !$('#help').hidden) { closeHelp(); return; }
   if (S.opening) return;
@@ -2636,8 +3634,10 @@ document.addEventListener('keydown', (e) => {
   if (mod && (e.key === 'k' || e.key === 'K' || (e.shiftKey && (e.key === 'f' || e.key === 'F')))) { e.preventDefault(); $('#palette').hidden ? openPalette() : closePalette(); }
   else if (mod && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveNow(true); }
   else if (mod && e.key === 'e' && S.current) { e.preventDefault(); setMode(S.mode === 'read' ? 'edit' : 'read'); }
-  else if (e.key === 'Escape' && !$('#cc').hidden) { closeCC(); $('#change-folder').focus(); }
-  else if (e.key === 'Escape' && !$('#menu').hidden) { $('#menu').hidden = true; if ($('#menu').dataset.kind === 'folders') $('#change-folder').focus(); }
+  else if (mod && e.code === 'Backslash' && !$('#app').hidden && $('#palette').hidden && $('#cc').hidden) { e.preventDefault(); e.shiftKey ? toggleFocus() : toggleNav(); }
+  else if (e.key === 'Escape' && !$('#cc').hidden) { closeCC(); $('#lib-more').focus(); }
+  else if (e.key === 'Escape' && !$('#menu').hidden) closeMenu(true);
+  else if (e.key === 'Escape' && NAV.drawer) { closeDrawer(); $('#nav-toggle').focus(); }
 });
 
 /* ---------- toast ---------- */
@@ -2653,7 +3653,8 @@ function toast(msg, ms = 2600, act = null) {
 function hideToast() { $('#toast').hidden = true; }
 
 LANG = ['zh', 'en'].includes(prefs.get('lang', null)) ? prefs.get('lang', null) : detectLang();
-for (const b of [$('#w-lang'), $('#side-lang')]) b.onclick = () => { setLang(LANG === 'zh' ? 'en' : 'zh'); prefs.set('lang', LANG); };
+$('#w-lang').onclick = () => { setLang(LANG === 'zh' ? 'en' : 'zh'); prefs.set('lang', LANG); };
+applyTheme();
 applyStatic();
 // Go straight into the last folder when Chrome still allows access (for example after “Allow on every visit”).
 (async () => {
