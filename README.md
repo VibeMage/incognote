@@ -21,13 +21,17 @@ You only need one file.
 1. Download **[incognote.html](https://github.com/VibeMage/incognote/releases/latest/download/incognote.html)** from the [latest release](https://github.com/VibeMage/incognote/releases/latest) and put it anywhere, for example next to your notes.
    You can also open [incognote.html](incognote.html) in this repository and click **Download raw file**. It is the same file.
 2. Open it in **Chrome or Edge** (double-clicking the file is fine, no server needed).
-3. Click **Choose folder**, pick your notes folder and allow **View and edit** files.
+3. Pick where your notes live:
+   - **No notes yet?** Click **New notes folder**. In the folder picker, click **New Folder**, name it (for example “Notes”), select it and confirm, then allow Chrome to **edit** files. Incognote adds three short getting-started notes (welcome, a Markdown cheat sheet, links and images) in their own folder, so you can delete them later in one go. Chrome doesn't allow Documents, Desktop or Downloads themselves, so pick or make a folder inside them. If you pick a folder that already has other files, Incognote makes an “Incognote Notes” folder inside it and leaves everything else alone.
+   - **Already have Markdown notes?** Click **Open an existing notes folder**, pick that folder and allow **View and edit** files.
 4. Next time, Incognote reopens the same folder. If Chrome asks again, click **Open “your folder”** and choose **Allow on every visit** in the prompt; from then on the page goes straight to your notes.
-5. To switch folders, click the folder name at the bottom of the sidebar. It lists recently opened folders and lets you open another one.
+5. To switch folders or start another one, click the folder name at the bottom of the sidebar. It lists recently opened folders and lets you open or create another one.
+
+If the folder you open has no `.md` files, Incognote says so and offers to choose another folder, add the getting-started notes, or start writing. While editing, **Markdown help** in the bottom bar shows a short cheat sheet.
 
 ![Choosing a folder](docs/screenshots/en/welcome.png)
 
-Safari and Firefox do not support writing to local folders. In those browsers Incognote opens the folder **read-only**, so you can browse and search but not edit.
+Safari and Firefox do not support writing to local folders. In those browsers Incognote opens the folder **read-only**, so you can browse and search but not edit. They may call choosing a folder an “upload”; the files are only read by the page and never leave your computer. Phone and tablet browsers can't open local folders.
 
 > The interface is in English or Chinese. It follows your browser language, and you can switch with the **中文 / EN** button at the top of the sidebar. Notes can be in any language.
 

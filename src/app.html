@@ -89,6 +89,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 #w-pick{min-width:240px;max-width:100%}
 #w-pick .t{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .w-hint{max-width:440px;margin-top:-8px;color:var(--label-secondary);text-wrap:pretty}
+.w-alt{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px}
 .rrow{display:flex;align-items:center;gap:2px}
 .rrow .row{flex:1;min-width:0}
 .rrow .rm{flex:none;color:var(--label-secondary)}
@@ -281,7 +282,41 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .pal-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:10px 16px 4px;margin-top:6px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
 
 #suggest{position:fixed;z-index:25;width:min(340px,calc(100vw - 24px));max-width:min(340px,calc(100vw - 24px));max-height:320px;overflow-x:hidden;overflow-y:auto}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;padding:10px 18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-glass),var(--shadow-float);font-size:15px;line-height:20px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:8px;max-width:calc(100vw - 32px);padding:10px 18px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-glass),var(--shadow-float);font-size:15px;line-height:20px}
+
+#toast-b{margin:-4px -10px -4px 0;flex:none}
+
+/* first use: new-library sheet, empty folder guide, Markdown help */
+#sheet{position:fixed;inset:0;z-index:35;background:var(--overlay);display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;overflow:auto}
+.sheet{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 24px 20px;background:var(--bg-elevated);border-radius:36px;box-shadow:var(--shadow-float);text-align:center}
+.sheet h2{margin:4px 0 0;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.26px}
+.sheet p{margin:0;color:var(--label-secondary);font-size:15px;line-height:20px;text-wrap:pretty}
+.tile.sm{width:56px;height:56px}
+.steps{width:100%;margin:4px 0;padding:6px 16px;list-style:none;counter-reset:st;text-align:left;background:var(--bg-secondary);border-radius:20px}
+.steps li{counter-increment:st;display:flex;gap:12px;padding:10px 0;font-size:15px;line-height:20px}
+.steps li+li{border-top:1px solid var(--separator)}
+.steps li::before{content:counter(st);flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:13px;line-height:22px;font-weight:600;text-align:center}
+.sheet-actions{display:flex;gap:10px;width:100%;margin-top:8px}
+.sheet-actions .btn{flex:1;height:44px}
+.guide{max-width:440px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.guide h2{margin:4px 0 0;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.26px;color:var(--label);text-wrap:balance}
+.guide p{margin:0;font-size:15px;line-height:20px;text-wrap:pretty}
+.guide .acts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px}
+.guide .acts .btn{height:44px;padding:0 20px}
+.guide .alt{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 8px}
+.tile.warn{background:#ff8d28}
+.item.more-empty{font-size:15px;color:var(--label-secondary)}
+.item.more-empty .lbl{white-space:normal}
+.linkbtn{all:unset;color:var(--link);cursor:pointer;border-radius:4px}
+.linkbtn:hover{text-decoration:underline}
+.linkbtn:focus-visible{box-shadow:var(--focus-ring)}
+.help{background:var(--bg-elevated);-webkit-backdrop-filter:none;backdrop-filter:none;width:min(420px,calc(100vw - 24px));max-width:min(420px,calc(100vw - 24px));max-height:min(560px,calc(100vh - 24px));overflow:auto;padding:14px 16px}
+.help h3{margin:0 0 8px;font-size:15px;line-height:20px;font-weight:600}
+.help dl{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:6px 14px;margin:0;font-size:13px;line-height:18px}
+.help dt{min-width:0;overflow-wrap:anywhere}
+.help dt code{font-family:var(--font-mono);font-size:12px;padding:1px 5px;border-radius:5px;background:var(--fill-tertiary);white-space:pre-wrap}
+.help dd{margin:0;color:var(--label-secondary)}
+.help .keys{margin-top:12px;padding-top:10px;border-top:1px solid var(--separator);font-size:12px;line-height:16px;color:var(--label-secondary)}
 
 @media (max-width: 1100px){#list{flex-basis:280px;width:280px}#side{flex-basis:240px;width:240px}.side-title{font-size:24px;letter-spacing:0}.wide-only{display:none}.lang-btn{padding-left:8px;padding-right:8px}}
 @media (max-width: 860px){#app{flex-direction:column;height:auto;overflow:visible}#side,#list{flex:none;width:auto;max-height:none}#side .panel{max-height:50vh}.list-b{max-height:50vh}#main{min-height:80vh}}
@@ -303,9 +338,9 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
     <div id="w-unsupported" class="notice" hidden data-i18n="w.unsupported"></div>
     <div class="w-actions">
       <button class="btn filled large" id="w-pick"></button>
-      <button class="btn plain" id="w-other" hidden data-i18n="w.other"></button>
+      <div class="w-alt"><button class="btn plain" id="w-other" hidden></button><button class="btn plain" id="w-new" hidden data-i18n="w.new"></button></div>
     </div>
-    <div class="footnote w-hint" id="w-hint" hidden data-i18n="w.hint"></div>
+    <div class="footnote w-hint" id="w-hint" hidden></div>
     <input type="file" id="w-input" webkitdirectory multiple hidden>
     <div class="group" id="w-recent" hidden>
       <div class="group-h" data-i18n="w.recent"></div>
@@ -341,7 +376,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 
   <main id="main">
     <div class="pane" id="pane">
-      <div class="placeholder" id="empty-pane"><div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)" data-i18n="pane.pick"></div><div class="sub" style="margin-top:6px" data-i18n="pane.orSearch"></div></div></div>
+      <div class="placeholder" id="empty-pane"></div>
       <div class="toolbar" id="toolbar" hidden>
         <nav class="crumb" id="crumb" data-i18n-aria="crumb"></nav>
         <div class="tools">
@@ -355,7 +390,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="scroll" id="diffv" hidden><div class="diff" id="diff"></div></div>
       <div class="scroll" id="reader" hidden><article class="md" id="article"></article></div>
       <div class="editor-wrap" id="editor" hidden><textarea id="ed" spellcheck="false" data-i18n-aria="ed.aria"></textarea></div>
-      <div class="statusbar" id="edbar" hidden><span id="edbar-l" data-i18n="ed.hint"></span><span id="edbar-r"></span></div>
+      <div class="statusbar" id="edbar" hidden><span id="edbar-l"><button class="linkbtn" id="md-help" aria-haspopup="dialog" data-i18n="help.btn"></button><span class="dot-sep"> · </span><span data-i18n="ed.hint"></span></span><span id="edbar-r"></span></div>
     </div>
   </main>
 </div>
@@ -381,8 +416,19 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
   </div>
 </div>
 <div class="menu" id="menu" hidden></div>
+<div class="menu help" id="help" role="dialog" data-i18n-aria="help.title" hidden></div>
+<div id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t">
+    <div class="tile sm" id="sh-ic"></div>
+    <h2 id="sh-t" data-i18n="nl.title"></h2>
+    <p id="sh-d" data-i18n="nl.desc"></p>
+    <ol class="steps" id="sh-steps"></ol>
+    <p class="footnote secondary" id="sh-note" data-i18n="nl.note"></p>
+    <div class="sheet-actions"><button class="btn gray" id="sh-cancel" data-i18n="cancel"></button><button class="btn filled" id="sh-go" data-i18n="nl.go"></button></div>
+  </div>
+</div>
 <div class="menu" id="suggest" hidden></div>
-<div id="toast" hidden></div>
+<div id="toast" hidden role="status"><span id="toast-t"></span><button class="btn plain small" id="toast-b" hidden></button></div>
 
 <script>/*@@MDIT@@*/</script>
 <script>/*@@PURIFY@@*/</script>
@@ -412,7 +458,8 @@ const S = {
   view: { kind: 'all', folder: '' },
   current: null, mode: 'read', dirty: false, gen: 0, scanning: null, conflict: false,
   closed: new Set(), treeOpen: true,
-  imgUrls: new Map(), saving: null, timer: 0, opening: false
+  imgUrls: new Map(), saving: null, timer: 0, opening: false,
+  walked: 0, stopScan: false, showEmpty: false
 };
 
 /* ---------- persistence of the folder handle (IndexedDB, this computer only) ---------- */
@@ -450,13 +497,32 @@ const prefs = {
 // Interface text in Chinese and English. Default follows the browser; the choice is remembered.
 const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || '') || /Mac OS X/.test(navigator.userAgent);
 const MOD = IS_MAC ? '⌘' : 'Ctrl+';
+const IS_MOBILE = /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent) || (/Mac/.test(navigator.platform || '') && navigator.maxTouchPoints > 1);
 const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : many}`;
 const STR = {
   zh: {
     'lang.other': 'EN', 'lang.aria': 'Switch to English',
-    'w.title': '打开你的笔记文件夹',
-    'w.desc': '笔记仍然是这个文件夹里的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。',
-    'w.unsupported': '这个浏览器不能写入本地文件夹。请用 Chrome 或 Edge 打开这个文件；也可以先以只读方式浏览。',
+    'w.title': '笔记存在你自己的文件夹里',
+    'w.desc': '每篇笔记都是一个普通的 .md 文件。这个页面只在你的电脑上读写它们，不联网，也不上传任何内容。',
+    'w.new': '新建笔记库', 'w.openExisting': '打开已有的笔记文件夹',
+    'w.hintFirst': '还没有笔记？点“新建笔记库”，跟着提示建一个文件夹就能开始写。已经有一个放 .md 笔记的文件夹，就点“打开已有的笔记文件夹”。Chrome 会问能否编辑这个文件夹里的文件，选“允许”。',
+    'w.unsupported': '这个浏览器不能保存到本地文件夹，只能先以只读方式浏览。要编辑和保存，请用电脑上的 Chrome 或 Edge 打开这个文件。浏览器可能会把选择文件夹叫作“上传”，其实文件只在这个页面里读取，不会离开你的电脑。',
+    'w.mobile': '手机和平板上的浏览器还不能打开本地的笔记文件夹。请在电脑上用 Chrome 或 Edge 打开这个文件。',
+    'nl.title': '新建笔记库', 'nl.desc': '笔记会存在你电脑上的一个文件夹里。点“继续”后会弹出选择文件夹的窗口：',
+    'nl.s1': '找一个放笔记的位置，比如“文稿”。',
+    'nl.s2': IS_MAC ? '点左下角的“新建文件夹”，起个名字，比如“笔记”。' : '点窗口上方的“新建文件夹”，起个名字，比如“笔记”。',
+    'nl.s3': '选中这个新文件夹，点右下角的按钮确认。Chrome 问能否编辑文件时，选“允许”。',
+    'nl.note': '选的文件夹里如果已经有文件，会在里面另建一个“Incognote 笔记”文件夹，不会动原来的文件。“文稿”“桌面”“下载”这几个文件夹本身 Chrome 不让直接选，选它们里面的文件夹就行。',
+    'nl.go': '继续', 'lib.name': 'Incognote 笔记',
+    'lib.made': (x) => `笔记库“${x}”已建好，先看看这几篇入门笔记吧`, 'lib.madeIn': (p, x) => `已在“${p}”里新建笔记库“${x}”`, 'lib.fail': '新建笔记库失败：',
+    'ep.emptyT': '这个文件夹里还没有笔记', 'ep.emptyD': '每篇笔记都是一个 .md 文件。可以先放几篇入门笔记看看怎么用，也可以直接开始写。',
+    'ep.starter': '放入入门笔记', 'ep.write': '写第一篇', 'ep.starterNote': '入门笔记会放进“Incognote 入门”文件夹，用完直接删掉就行。',
+    'ep.noMdT': '这里没有 Markdown 笔记', 'ep.noMdD': (n) => `Incognote 只显示 .md 文件，这个文件夹里有 ${n.toLocaleString()} 个其他文件，可能选错了文件夹。`,
+    'ep.repick': '选择其他文件夹', 'ep.here': '或者就在这里开始：', 'ep.roD': 'Incognote 只显示 .md 文件，请选择存放笔记的文件夹。',
+    'starter.added': '已放入入门笔记', 'starter.fail': '放入入门笔记失败：',
+    'side.emptyMore': (n) => `${n} 个文件夹没有笔记`, 'side.emptyHide': (n) => `隐藏 ${n} 个没有笔记的文件夹`,
+    'loadingN': (n) => `正在读取笔记… 已查看 ${n.toLocaleString()} 个文件`, 'loadingBig': '。文件很多，可能选了太大的文件夹', 'loadCancelled': '已取消读取',
+    'help.btn': 'Markdown 速查', 'help.title': 'Markdown 速查', 'menu.help': 'Markdown 速查', 'fm.newlib': '新建笔记库…',
     'w.titleBack': '欢迎回来', 'w.descBack': '点一下，回到上次的笔记文件夹。笔记只在你的电脑上读写，不联网，也不上传任何内容。',
     'w.openX': (x) => `打开“${x}”`, 'w.other': '选择其他文件夹',
     'w.hint': 'Chrome 会问你是否允许访问这个文件夹。如果提示里有“每次访问时都允许”，选它，以后打开这个页面就会直接进入笔记。',
@@ -508,9 +574,27 @@ const STR = {
   },
   en: {
     'lang.other': '中文', 'lang.aria': '切换到中文',
-    'w.title': 'Open your notes folder',
-    'w.desc': 'Your notes stay as .md files in this folder. This page reads and writes them only on your computer. It never goes online and never uploads anything.',
-    'w.unsupported': 'This browser can’t write to local folders. Open this file in Chrome or Edge, or browse read-only for now.',
+    'w.title': 'Notes that live in your own folder',
+    'w.desc': 'Every note is a plain .md file. This page reads and writes them only on your computer. It never goes online and never uploads anything.',
+    'w.new': 'New notes folder', 'w.openExisting': 'Open an existing notes folder',
+    'w.hintFirst': 'No notes yet? Click “New notes folder” and follow the steps to make one. If you already keep .md notes in a folder, open that instead. Chrome will ask whether this page may edit the files there; choose “Allow”.',
+    'w.unsupported': 'This browser can’t save to local folders, so you can only browse read-only. To edit and save, open this file in Chrome or Edge on a computer. The browser may call choosing a folder an “upload”, but the files are only read by this page and never leave your computer.',
+    'w.mobile': 'Phone and tablet browsers can’t open a local notes folder yet. Please open this file in Chrome or Edge on a computer.',
+    'nl.title': 'New notes folder', 'nl.desc': 'Your notes will live in a folder on your computer. After you click Continue, a folder picker opens:',
+    'nl.s1': 'Go to where you want to keep your notes, such as Documents.',
+    'nl.s2': IS_MAC ? 'Click “New Folder” at the bottom left and give it a name, such as “Notes”.' : 'Click “New folder” at the top of the window and give it a name, such as “Notes”.',
+    'nl.s3': 'Select the new folder and click the button at the bottom right. When Chrome asks whether to allow editing, choose “Allow”.',
+    'nl.note': 'If the folder you pick already has files in it, a new “Incognote Notes” folder is made inside it and nothing else is touched. Chrome won’t let you pick Documents, Desktop, or Downloads themselves; pick a folder inside them.',
+    'nl.go': 'Continue', 'lib.name': 'Incognote Notes',
+    'lib.made': (x) => `“${x}” is ready. Start with these getting-started notes.`, 'lib.madeIn': (p, x) => `Created the notes folder “${x}” in “${p}”`, 'lib.fail': 'Couldn’t create the notes folder: ',
+    'ep.emptyT': 'No notes in this folder yet', 'ep.emptyD': 'Every note is a .md file. Add a few getting-started notes to see how things work, or just start writing.',
+    'ep.starter': 'Add getting-started notes', 'ep.write': 'Write your first note', 'ep.starterNote': 'They go in a “Getting Started with Incognote” folder. Delete it whenever you like.',
+    'ep.noMdT': 'No Markdown notes here', 'ep.noMdD': (n) => `Incognote only shows .md files. This folder has ${plural(n, 'other file', 'other files')}, so it may be the wrong folder.`,
+    'ep.repick': 'Choose another folder', 'ep.here': 'Or start here:', 'ep.roD': 'Incognote only shows .md files. Please choose the folder where you keep your notes.',
+    'starter.added': 'Added the getting-started notes', 'starter.fail': 'Couldn’t add the getting-started notes: ',
+    'side.emptyMore': (n) => `${plural(n, 'folder', 'folders')} without notes`, 'side.emptyHide': (n) => `Hide ${plural(n, 'folder', 'folders')} without notes`,
+    'loadingN': (n) => `Reading notes… ${plural(n, 'file', 'files')} checked`, 'loadingBig': '. That’s a lot of files; this may be too big a folder', 'loadCancelled': 'Stopped reading the folder',
+    'help.btn': 'Markdown help', 'help.title': 'Markdown cheat sheet', 'menu.help': 'Markdown help', 'fm.newlib': 'New notes folder…',
     'w.titleBack': 'Welcome back', 'w.descBack': 'One click takes you back to your notes folder. Your notes are read and written only on this computer, never online.',
     'w.openX': (x) => `Open “${x}”`, 'w.other': 'Choose another folder',
     'w.hint': 'Chrome will ask whether to allow access to this folder. If the prompt offers “Allow on every visit”, choose it, and this page will open straight into your notes from then on.',
@@ -577,7 +661,8 @@ function applyStatic() {
 }
 function setLang(l) {
   LANG = l === 'zh' ? 'zh' : 'en';
-  applyStatic(); hideToast(); $('#menu').hidden = true;
+  applyStatic(); hideToast(); $('#menu').hidden = true; $('#help').hidden = true;
+  if (!$('#sheet').hidden) openNewSheet();
   if (!$('#welcome').hidden) { showWelcome(); return; }
   if ($('#app').hidden) return;
   renderSide(); renderListKeepScroll();
@@ -775,7 +860,9 @@ const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 async function walk(dir, prefix, mdList) {
   S.dirs.set(prefix, dir);
   for await (const [name, h] of dir.entries()) {
+    if (S.stopScan) throw new DOMException('Stopped', 'AbortError');
     if (name.startsWith('.') || name === 'node_modules') continue;
+    S.walked++;
     const p = prefix ? prefix + '/' + name : name;
     if (h.kind === 'directory') await walk(h, p, mdList);
     else if (MD_RE.test(name)) mdList.push([p, h]);
@@ -805,6 +892,7 @@ async function scan(first) {
     const queue = mdList.slice(), touched = new Set(), updates = [];
     async function worker() {
       while (queue.length) {
+        if (S.stopScan) throw new DOMException('Stopped', 'AbortError');
         const [p, h] = queue.shift();
         const f = await h.getFile();
         const old = oldNotes.get(p);
@@ -863,13 +951,21 @@ async function showWelcome() {
   $('#w-tile').innerHTML = icon('folder', 40);
   $('#w-foot').innerHTML = icon('lock', 15) + ' ' + esc(tx('w.local') + (canWrite ? '' : tx('w.roNow')));
   $('#w-unsupported').hidden = canWrite;
+  $('#w-unsupported').textContent = tx(IS_MOBILE ? 'w.mobile' : 'w.unsupported');
   const list = welcomeList = canWrite ? await folders.list() : [];
   const last = list[0], back = !!last;
   $('#w-title').textContent = tx(back ? 'w.titleBack' : 'w.title');
   $('#w-desc').textContent = tx(back ? 'w.descBack' : 'w.desc');
-  $('#w-pick').innerHTML = icon('folder', 20) + `<span class="t">${esc(back ? tx('w.openX', last.name) : canWrite ? tx('w.pick') : tx('w.pickRO'))}</span>`;
+  // First visit: making a new notes folder is the main action; opening an existing one sits below it.
+  const first = canWrite && !back;
+  $('#w-pick').innerHTML = icon(first ? 'folder.badge.plus' : 'folder', 20) +
+    `<span class="t">${esc(back ? tx('w.openX', last.name) : first ? tx('w.new') : tx('w.pickRO'))}</span>`;
   $('#w-pick').title = back ? last.name : '';
-  $('#w-other').hidden = !back; $('#w-hint').hidden = !back;
+  $('#w-pick').hidden = !canWrite && IS_MOBILE;
+  $('#w-other').textContent = tx(back ? 'w.other' : 'w.openExisting');
+  $('#w-other').hidden = !canWrite; $('#w-new').hidden = !back;
+  $('#w-hint').hidden = !canWrite;
+  $('#w-hint').textContent = tx(back ? 'w.hint' : 'w.hintFirst');
   const rest = list.slice(1);
   $('#w-recent').hidden = !rest.length;
   $('#w-recents').innerHTML = rest.map((x, i) =>
@@ -880,8 +976,9 @@ async function showWelcome() {
   if (back && document.activeElement === document.body) $('#w-pick').focus();   // Return opens the last folder
 }
 const fmtDay = (t) => { const d = new Date(t); return d.toDateString() === new Date().toDateString() ? d.toLocaleTimeString(LANG === 'zh' ? 'zh-CN' : enLocale(), { hour: '2-digit', minute: '2-digit' }) : tx(d.getFullYear() === new Date().getFullYear() ? 'date.md' : 'date.ymd', d); };
-$('#w-pick').onclick = () => (welcomeList[0] ? openSaved(welcomeList[0].h) : pickFolder());
+$('#w-pick').onclick = () => (welcomeList[0] ? openSaved(welcomeList[0].h) : canWrite ? openNewSheet() : pickFolder());
 $('#w-other').onclick = () => pickFolder();
+$('#w-new').onclick = () => openNewSheet();
 $('#w-recents').onclick = async (e) => {
   const rm = e.target.closest('[data-rm]'), row = e.target.closest('[data-i]');
   if (rm) { const x = welcomeList[+rm.dataset.rm]; if (x) { await folders.forget(x.h); showWelcome(); } return; }
@@ -913,14 +1010,22 @@ async function openRoot(h) {
   if (S.opening) return false;
   S.opening = true; $('#app').inert = true; $('#welcome').inert = true; $('#menu').hidden = true;
   toast(tx('loading'), 0);
+  // Big folders take a while: after a moment show how far reading has got, with a way to stop.
+  S.walked = 0; S.stopScan = false;
+  const t0 = Date.now();
+  const tick = setInterval(() => {
+    if (Date.now() - t0 < 800) return;
+    toast(tx('loadingN', S.walked) + (S.walked > 20000 ? tx('loadingBig') : ''), 0, { label: tx('cancel'), fn: () => { S.stopScan = true; } });
+  }, 250);
   const prev = { root: S.root, rootName: S.rootName, readonly: S.readonly, notes: S.notes, files: S.files, dirs: S.dirs };
   try {
     try { await loadFromHandle(h); } catch (e) {
       Object.assign(S, prev);
-      toast(e && e.name === 'NotFoundError' ? tx('gone', h.name) : tx('loadFail') + ((e && e.message) || e), 5000);
+      clearInterval(tick);
+      toast(S.stopScan ? tx('loadCancelled') : e && e.name === 'NotFoundError' ? tx('gone', h.name) : tx('loadFail') + ((e && e.message) || e), 5000);
       return false;
     }
-  } finally { S.opening = false; $('#app').inert = false; $('#welcome').inert = false; }
+  } finally { clearInterval(tick); S.stopScan = false; S.opening = false; $('#app').inert = false; $('#welcome').inert = false; }
   hideToast();
   await folders.remember(h);
   enterApp();
@@ -941,6 +1046,7 @@ $('#change-folder').onclick = async (e) => {
         `<button class="rm" data-rm="${i}" aria-label="${esc(tx('w.forget') + ': ' + x.name)}" title="${esc(tx('w.forget'))}">${icon('xmark', 14)}</button></div>`).join('') +
     (list.length ? '<div class="sep"></div>' : '') +
     `<button data-act="other"><span>${esc(tx('fm.other'))}</span>${icon('folder', 18, 'cur')}</button>` +
+    `<button data-act="newlib"><span>${esc(tx('fm.newlib'))}</span>${icon('folder.badge.plus', 18, 'cur')}</button>` +
     (S.root && !S.readonly ? `<div class="sep"></div><button data-act="claude"><span>${esc(tx('fm.claude'))}</span>${icon('doc', 18, 'cur')}</button>` : '');
   menu.hidden = false;
   const r = btn.getBoundingClientRect();
@@ -959,6 +1065,384 @@ function enterApp() {
   startWatch();
 }
 
+/* ---------- first use: new notes folder, getting-started notes, empty folder guide ---------- */
+const nonDot = async (dir) => { for await (const [name] of dir.entries()) if (!name.startsWith('.')) return true; return false; };
+// A subfolder called `base` (or “base 2”, “base 3”…) that is new or still empty, so nothing existing is ever overwritten.
+async function freshDir(parent, base) {
+  for (let i = 1; i < 100; i++) {
+    const name = i === 1 ? base : `${base} ${i}`;
+    let h = null;
+    try { h = await parent.getDirectoryHandle(name); } catch (e) {
+      if (e && e.name === 'TypeMismatchError') continue;     // a file has that name
+      if (!e || e.name !== 'NotFoundError') throw e;
+    }
+    if (!h) return parent.getDirectoryHandle(name, { create: true });
+    if (!(await nonDot(h))) return h;
+  }
+  throw new Error(base);
+}
+async function writeNew(dir, name, data) {
+  const fh = await dir.getFileHandle(name, { create: true });
+  const w = await fh.createWritable(); await w.write(data); await w.close();
+}
+function openNewSheet() {
+  if (!canWrite || S.opening) return;
+  $('#menu').hidden = true;
+  $('#sh-ic').innerHTML = icon('folder.badge.plus', 30);
+  $('#sh-steps').innerHTML = ['nl.s1', 'nl.s2', 'nl.s3'].map((k) => `<li><span>${esc(tx(k))}</span></li>`).join('');
+  S.sheetFrom = document.activeElement;
+  $('#sheet').hidden = false;
+  $('#sh-go').focus();
+}
+function closeSheet() {
+  if ($('#sheet').hidden) return;
+  $('#sheet').hidden = true;
+  const f = S.sheetFrom; S.sheetFrom = null;
+  if (f && f.isConnected && !f.closest('[hidden]')) f.focus();
+}
+$('#sh-cancel').onclick = closeSheet;
+$('#sheet').addEventListener('mousedown', (e) => { if (e.target.id === 'sheet') closeSheet(); });
+$('#sheet').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeSheet(); return; }
+  if (e.key === 'Tab') {                         // keep focus inside the sheet
+    const a = $('#sh-cancel'), b = $('#sh-go');
+    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); b.focus(); }
+    else if (!e.shiftKey && document.activeElement === b) { e.preventDefault(); a.focus(); }
+  }
+});
+// The picker must open straight from this click, so nothing is awaited before it.
+$('#sh-go').onclick = async () => {
+  $('#sheet').hidden = true; S.sheetFrom = null;
+  if (S.opening) return;
+  let h;
+  try { h = await window.showDirectoryPicker({ mode: 'readwrite', id: 'newlib', startIn: 'documents' }); }
+  catch (e) { if (e && e.name !== 'AbortError') toast(e && e.name === 'SecurityError' ? tx('tryAgain') : tx('cantOpen')); return; }
+  if (!(await flushSave())) return;
+  let lib = h, inside = false, start;
+  try {
+    // An empty folder becomes the notes folder; a folder that already holds files gets a new one inside it.
+    if (await nonDot(h)) { lib = await freshDir(h, tx('lib.name')); inside = true; }
+    start = await writeStarter(lib);
+  } catch (e) { toast(tx('lib.fail') + ((e && e.message) || e), 5000); return; }
+  if (!(await openRoot(lib))) return;
+  if (S.notes.has(start)) openNote(start);
+  toast(inside ? tx('lib.madeIn', h.name, lib.name) : tx('lib.made', lib.name), 5000);
+};
+// Write the getting-started notes into a new subfolder of `root`; returns the path of the welcome note.
+async function writeStarter(root) {
+  const k = starterNotes();
+  const dir = await freshDir(root, k.folder);
+  for (const [name, body] of k.notes) await writeNew(dir, name + '.md', body);
+  await writeNew(await dir.getDirectoryHandle('assets', { create: true }), 'incognote-sample.svg', k.svg);
+  return joinPath(dir.name, k.notes[0][0] + '.md');
+}
+async function addStarter() {
+  if (S.readonly || !S.root || S.opening) return;
+  try {
+    const start = await writeStarter(S.root);
+    if (S.scanning) { try { await S.scanning; } catch (e) {} }
+    await scan(true);
+    S.showEmpty = false;
+    renderSide(); renderListKeepScroll();
+    if (S.notes.has(start)) openNote(start);
+    toast(tx('starter.added'));
+  } catch (e) { toast(tx('starter.fail') + ((e && e.message) || e), 5000); }
+}
+// The note pane before a note is open: a plain hint when there are notes, a guide when there are none.
+function renderEmptyPane() {
+  const el = $('#empty-pane');
+  if (S.notes.size) {
+    el.innerHTML = `<div><div style="font-size:20px;line-height:25px;font-weight:600;color:var(--label)">${esc(tx('pane.pick'))}</div>` +
+      `<div class="sub" style="margin-top:6px">${esc(tx('pane.orSearch'))}</div></div>`;
+    return;
+  }
+  const other = S.files.size;
+  const btn = (act, cls, label, ic) => `<button class="btn ${cls}" data-guide="${act}">${ic ? icon(ic, 18) : ''}<span>${esc(tx(label))}</span></button>`;
+  let h;
+  if (S.readonly) {
+    h = `<div class="tile sm warn">${icon('doc', 30)}</div><h2>${esc(tx('ep.noMdT'))}</h2><p>${esc(tx('ep.roD'))}</p>` +
+      `<div class="acts">${btn('repick', 'filled', 'ep.repick', 'folder')}</div>`;
+  } else if (other) {
+    h = `<div class="tile sm warn">${icon('exclamationmark.triangle', 30)}</div><h2>${esc(tx('ep.noMdT'))}</h2><p>${esc(tx('ep.noMdD', other))}</p>` +
+      `<div class="acts">${btn('repick', 'filled', 'ep.repick', 'folder')}</div>` +
+      `<p class="footnote" style="margin-top:8px">${esc(tx('ep.here'))}</p><div class="alt">${btn('starter', 'plain', 'ep.starter')}${btn('write', 'plain', 'ep.write')}</div>`;
+  } else {
+    h = `<div class="tile sm">${icon('square.and.pencil', 30)}</div><h2>${esc(tx('ep.emptyT'))}</h2><p>${esc(tx('ep.emptyD'))}</p>` +
+      `<div class="acts">${btn('starter', 'filled', 'ep.starter')}${btn('write', 'gray', 'ep.write')}</div>` +
+      `<p class="footnote">${esc(tx('ep.starterNote'))}</p>`;
+  }
+  el.innerHTML = `<div class="guide">${h}</div>`;
+}
+$('#empty-pane').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-guide]'); if (!b) return;
+  const act = b.dataset.guide;
+  if (act === 'repick') pickFolder();
+  else if (act === 'starter') addStarter();
+  else if (act === 'write') $('#new-note').click();
+});
+
+/* ---------- Markdown help ---------- */
+const HELP = {
+  zh: [['# 标题', '一级标题，## 是二级'], ['**粗体**', '粗体'], ['*斜体*', '斜体'], ['~~删除线~~', '删除线'],
+    ['- 项目', '列表'], ['1. 项目', '编号列表'], ['- [ ] 待办', '待办，阅读时点一下就能勾上'], ['> 引用', '引用'],
+    ['`代码`', '行内代码'], ['```\n代码块\n```', '代码块'], ['[文字](https://…)', '网页链接'],
+    ['[[笔记名]]', '链接到另一篇笔记，输入 [[ 会提示'], ['[[笔记名|显示文字]]', '换一种显示文字'],
+    ['![](assets/图.png)', '图片，也可以直接粘贴'], ['---', '分割线'], ['| 列 | 列 |\n| - | - |', '表格']],
+  en: [['# Heading', 'Heading; ## for a smaller one'], ['**bold**', 'Bold'], ['*italic*', 'Italic'], ['~~strike~~', 'Strikethrough'],
+    ['- item', 'Bulleted list'], ['1. item', 'Numbered list'], ['- [ ] task', 'To-do; click it while reading to check it off'], ['> quote', 'Quote'],
+    ['`code`', 'Inline code'], ['```\ncode block\n```', 'Code block'], ['[text](https://…)', 'Web link'],
+    ['[[Note name]]', 'Link to another note; typing [[ suggests names'], ['[[Note name|label]]', 'Show different text'],
+    ['![](assets/pic.png)', 'Image; you can also just paste one'], ['---', 'Divider'], ['| col | col |\n| - | - |', 'Table']]
+};
+function openHelp(anchor) {
+  const el = $('#help');
+  if (!el.hidden) { el.hidden = true; return; }
+  $('#menu').hidden = true;
+  const keys = LANG === 'zh'
+    ? `${MOD}E 切换阅读和编辑 · ${MOD}S 保存 · ${MOD}K 搜索`
+    : `${MOD}E read/edit · ${MOD}S save · ${MOD}K search`;
+  el.innerHTML = `<h3>${esc(tx('help.title'))}</h3><dl>` +
+    HELP[LANG].map(([a, b]) => `<dt><code>${esc(a)}</code></dt><dd>${esc(b)}</dd>`).join('') + `</dl><div class="keys">${esc(keys)}</div>`;
+  el.hidden = false;
+  const r = anchor.getBoundingClientRect();
+  const left = Math.max(12, Math.min(r.left, innerWidth - el.offsetWidth - 12));
+  const above = r.top > innerHeight / 2;
+  el.style.left = left + 'px';
+  el.style.top = Math.max(12, above ? r.top - 8 - el.offsetHeight : r.bottom + 8) + 'px';
+  el.tabIndex = -1; el.focus();
+  S.helpFrom = anchor;
+}
+function closeHelp() { if ($('#help').hidden) return; $('#help').hidden = true; const f = S.helpFrom; S.helpFrom = null; if (f && f.isConnected && !f.closest('[hidden]')) f.focus(); }
+$('#md-help').onclick = (e) => openHelp(e.currentTarget);
+document.addEventListener('mousedown', (e) => { if (!e.target.closest('#help,#md-help,#more,#menu')) $('#help').hidden = true; });
+$('#help').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeHelp(); } });
+
+// Getting-started notes, written into the user's folder only when they ask for them. All examples are made up.
+function starterNotes() {
+  const fm = IS_MAC ? (LANG === 'zh' ? '访达' : 'Finder') : (LANG === 'zh' ? '文件资源管理器' : 'File Explorer');
+  const F = '```';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="240" viewBox="0 0 640 240">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#5e5ce6"/></linearGradient></defs>
+<rect width="640" height="240" rx="28" fill="url(#g)"/>
+<g transform="translate(64 52)"><rect width="104" height="136" rx="16" fill="#fff"/>
+<g stroke="#0a84ff" stroke-width="8" stroke-linecap="round"><path d="M24 38h56"/><path d="M24 64h56" opacity=".5"/><path d="M24 90h40" opacity=".5"/></g></g>
+<text x="204" y="112" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#fff">Incognote</text>
+<text x="206" y="152" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="20" fill="#fff" fill-opacity=".85">${LANG === 'zh' ? '示例图片 · 存在 assets 文件夹里' : 'Sample image · kept in the assets folder'}</text>
+</svg>
+`;
+  if (LANG === 'zh') return {
+    folder: 'Incognote 入门', svg,
+    notes: [
+      ['欢迎使用 Incognote', `# 欢迎使用 Incognote
+
+这是一篇入门笔记。和你以后写的笔记一样，它只是这个文件夹里的一个普通 \`.md\` 文件，用任何文本编辑器都能打开。换电脑时，把整个文件夹复制过去就行。
+
+## 常用操作
+
+- **新建笔记**：点笔记列表右上角的 **+**。
+- **编辑**：点右上角的“编辑”，或者按 ${MOD}E。改动会自动保存，也可以随时按 ${MOD}S。
+- **搜索**：按 ${MOD}K，在所有笔记的文件名和正文里找。
+- **整理**：笔记放在哪个子文件夹里，左边栏就按那个文件夹显示。子文件夹在${fm}里新建就行。
+
+## 试试看
+
+- [ ] 点一下左边的方框，把这一项勾上
+- [ ] 打开 [[Markdown 速查]]，看看各种格式怎么写
+- [ ] 打开 [[双链和图片]]，看看笔记之间怎么互相链接
+- [ ] 点“编辑”，看看这篇笔记的原文长什么样
+
+## 用完以后
+
+这几篇入门笔记都在“Incognote 入门”文件夹里。熟悉之后，在${fm}里把整个文件夹删掉就行，不会影响其他笔记。
+
+> 你的笔记只在这台电脑上读写。Incognote 不联网，也不上传任何内容。
+`],
+      ['Markdown 速查', `# Markdown 速查
+
+Markdown 用几个简单的符号表示格式。点右上角的“编辑”，就能看到这篇笔记的原文是怎么写的。编辑时点底栏的“Markdown 速查”，随时可以查。
+
+## 标题
+
+${F}
+# 一级标题
+## 二级标题
+### 三级标题
+${F}
+
+## 文字
+
+**粗体**、*斜体*、~~删除线~~ 和 \`行内代码\`，分别写成 \`**粗体**\`、\`*斜体*\`、\`~~删除线~~\` 和 \`\` \`行内代码\` \`\`。
+
+## 列表
+
+- 用减号开头就是列表
+- 再来一项
+  - 前面空两格就是下一级
+
+1. 用数字开头就是编号列表
+2. 第二步
+
+- [x] 这样写是已完成的待办
+- [ ] 这样写是没完成的待办
+
+## 引用
+
+> 用大于号开头就是引用。
+
+## 链接
+
+[这是一个网页链接](https://example.com)，写成 \`[文字](网址)\`。链接到另一篇笔记更简单，见 [[双链和图片]]。
+
+## 表格
+
+| 星期 | 计划 |
+| --- | --- |
+| 周一 | 整理周报 |
+| 周三 | 读完一章书 |
+
+## 代码块
+
+${F}
+三个反引号之间的内容按原样显示
+${F}
+
+---
+
+上面那条横线是分割线，写成三个减号 \`---\`。
+`],
+      ['双链和图片', `# 双链和图片
+
+## 链接到另一篇笔记
+
+用两对方括号把笔记名括起来，就能链接到那篇笔记，比如 [[欢迎使用 Incognote]]。点一下就会打开它。
+
+编辑时输入 \`[[\`，会弹出笔记名供你挑选。
+
+想让链接显示别的文字，用竖线隔开，比如 [[Markdown 速查|格式怎么写]]。
+
+链接的笔记还不存在时，链接会显示成灰色虚线，比如 [[我的第一篇笔记]]。点一下就会新建这篇笔记。
+
+## 反向链接
+
+翻到这篇笔记的最底部，会看到“反向链接”，列出所有链接到这里的笔记。[[欢迎使用 Incognote]] 链接了这篇，所以它会出现在那里。
+
+## 图片
+
+把截图或图片直接粘贴到编辑区，Incognote 会把它存进当前文件夹下的 \`assets\` 文件夹，并写好图片链接，像这样：
+
+![示例图片](assets/incognote-sample.svg)
+
+也可以自己写：\`![说明文字](assets/图片名.png)\`。网上的图片不会显示，因为这个页面从不联网。
+`]
+    ]
+  };
+  return {
+    folder: 'Getting Started with Incognote', svg,
+    notes: [
+      ['Welcome to Incognote', `# Welcome to Incognote
+
+This is a getting-started note. Like every note you write, it's just a plain \`.md\` file in this folder, and any text editor can open it. To move to another computer, copy the whole folder.
+
+## The basics
+
+- **New note**: click **+** at the top right of the note list.
+- **Edit**: click Edit at the top right, or press ${MOD}E. Changes save automatically, and you can press ${MOD}S at any time.
+- **Search**: press ${MOD}K to search the names and text of all your notes.
+- **Organize**: the sidebar follows the subfolders your notes are in. Make new subfolders in ${fm}.
+
+## Try it
+
+- [ ] Click the box on the left to check this off
+- [ ] Open [[Markdown Cheat Sheet]] to see how formatting works
+- [ ] Open [[Links and Images]] to see how notes link to each other
+- [ ] Click Edit to see what this note looks like as text
+
+## When you're done
+
+These notes all live in the “Getting Started with Incognote” folder. Once you're comfortable, delete that folder in ${fm}; your other notes won't be affected.
+
+> Your notes are read and written only on this computer. Incognote never goes online and never uploads anything.
+`],
+      ['Markdown Cheat Sheet', `# Markdown Cheat Sheet
+
+Markdown uses a few simple symbols for formatting. Click Edit at the top right to see how this note is written. While editing, click “Markdown help” in the bottom bar for a quick reference.
+
+## Headings
+
+${F}
+# Heading 1
+## Heading 2
+### Heading 3
+${F}
+
+## Text
+
+**Bold**, *italic*, ~~strikethrough~~ and \`inline code\` are written \`**bold**\`, \`*italic*\`, \`~~strikethrough~~\` and \`\` \`inline code\` \`\`.
+
+## Lists
+
+- Start a line with a dash for a list
+- Another item
+  - Indent two spaces for a sub-item
+
+1. Start with a number for a numbered list
+2. Step two
+
+- [x] A finished to-do looks like this
+- [ ] An open to-do looks like this
+
+## Quotes
+
+> Start a line with > for a quote.
+
+## Links
+
+[This is a web link](https://example.com), written \`[text](address)\`. Linking to another note is even easier; see [[Links and Images]].
+
+## Tables
+
+| Day | Plan |
+| --- | --- |
+| Monday | Write the weekly update |
+| Wednesday | Finish a chapter |
+
+## Code blocks
+
+${F}
+Text between three backticks is shown exactly as typed
+${F}
+
+---
+
+The line above is a divider, written as three dashes \`---\`.
+`],
+      ['Links and Images', `# Links and Images
+
+## Linking to another note
+
+Put a note's name in double square brackets to link to it, like [[Welcome to Incognote]]. Click it to open that note.
+
+While editing, type \`[[\` and Incognote suggests note names.
+
+To show different text, add a vertical bar: [[Markdown Cheat Sheet|how formatting works]].
+
+If the note doesn't exist yet, the link shows as a gray dashed line, like [[My First Note]]. Click it to create that note.
+
+## Backlinks
+
+Scroll to the very bottom of this note to see Backlinks: every note that links here. [[Welcome to Incognote]] links to this note, so it's listed there.
+
+## Images
+
+Paste a screenshot or image straight into the editor. Incognote saves it in an \`assets\` folder next to the note and writes the image link for you, like this:
+
+![Sample image](assets/incognote-sample.svg)
+
+You can also write it yourself: \`![description](assets/picture.png)\`. Images from the web aren't shown, because this page never goes online.
+`]
+    ]
+  };
+}
 /* ---------- sidebar ---------- */
 const visibleNotes = () => [...S.notes.values()].filter((n) => !n.sys);
 function noteCount() { let c = 0; for (const n of S.notes.values()) if (!n.sys) c++; return c; }
@@ -974,10 +1458,18 @@ function renderSide() {
   for (const d of S.dirs.keys()) if (d) { const p = dirOf(d); if (!kids.has(p)) kids.set(p, []); kids.get(p).push(d); }
   for (const v of kids.values()) v.sort((a, b) => baseOf(a).localeCompare(baseOf(b), 'zh'));
   const rows = [];
+  // Folders without any notes (a Documents folder full of other files, say) fold into one row that can be expanded.
+  const counts = new Map();
+  for (const d of S.dirs.keys()) if (d) counts.set(d, countIn(d));
+  const skip = (d) => /(^|\/)assets$/i.test(d) && !counts.get(d);
+  const picked = (d) => S.view.kind === 'folder' && (S.view.folder === d || S.view.folder.startsWith(d + '/'));
+  const shown = (d) => !skip(d) && (counts.get(d) > 0 || S.showEmpty || picked(d));
+  let empty = 0;
+  for (const d of counts.keys()) if (!skip(d) && !counts.get(d) && !picked(d)) empty++;
   const visit = (dir, depth) => {
     for (const d of kids.get(dir) || []) {
-      if (/(^|\/)assets$/i.test(d) && !countIn(d)) continue;
-      const has = (kids.get(d) || []).some((x) => countIn(x) || (kids.get(x) || []).length);
+      if (!shown(d)) continue;
+      const has = (kids.get(d) || []).some(shown);
       const open = !S.closed.has(d);
       const sel = S.view.kind === 'folder' && S.view.folder === d;
       rows.push(`<button class="item${sel ? ' sel' : ''}" data-folder="${esc(d)}" style="padding-left:${12 + Math.round(depth <= 4 ? depth * 12 : 48 + (depth - 4) * 6)}px" title="${esc(d)}">` +
@@ -987,6 +1479,7 @@ function renderSide() {
     }
   };
   visit('', 0);
+  if (empty) rows.push(`<button class="item more-empty" data-empty-toggle aria-expanded="${S.showEmpty}"><span class="lbl">${esc(tx(S.showEmpty ? 'side.emptyHide' : 'side.emptyMore', empty))}</span></button>`);
   $('#tree').innerHTML = rows.join('') || `<div class="footnote secondary" style="padding:4px 12px">${esc(tx('side.noSub'))}</div>`;
   $('#tree').hidden = !S.treeOpen;
   $('#foot-ic').innerHTML = icon('folder', 18);
@@ -998,6 +1491,7 @@ function renderSide() {
 $('#side').addEventListener('click', async (e) => {
   const tw = e.target.closest('[data-twisty]');
   if (tw && !tw.classList.contains('none')) { const d = tw.dataset.twisty; S.closed.has(d) ? S.closed.delete(d) : S.closed.add(d); renderSide(); return; }
+  if (e.target.closest('[data-empty-toggle]')) { S.showEmpty = !S.showEmpty; renderSide(); const t = $('[data-empty-toggle]'); if (t) t.focus(); return; }
   const b = e.target.closest('[data-view],[data-folder]');
   if (!b) return;
   S.view = b.dataset.view ? { kind: b.dataset.view, folder: '' } : { kind: 'folder', folder: b.dataset.folder };
@@ -1032,12 +1526,14 @@ function renderList() {
     `<button class="note${n.path === S.current ? ' sel' : ''}" data-path="${esc(n.path)}"><span class="t">${n.unseen ? `<span class="udot" role="img" aria-label="${esc(tx('unseen'))}" title="${esc(tx('unseen'))}"></span>` : ''}${esc(n.title)}</span>` +
     `<span class="m"><span class="d">${fmtDate(n.mtime)}</span><span class="s">${esc(n.snippet || tx('list.noMore'))}</span></span></button>`).join('')
     : `<div class="empty">${esc(tx('list.empty'))}${S.readonly ? '' : '<br>' + esc(tx('list.emptyHint'))}</div>`;
+  if (!S.current) renderEmptyPane();          // the guide changes once the folder gains or loses its last note
 }
 $('#notes').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (b) openNote(b.dataset.path); });
 
 /* ---------- main pane ---------- */
 function showPane(on) {
   $('#empty-pane').hidden = on;
+  if (!on) renderEmptyPane();
   for (const id of ['#toolbar']) $(id).hidden = !on;
   if (!on) { $('#reader').hidden = true; $('#editor').hidden = true; $('#edbar').hidden = true; $('#diffv').hidden = true; $('#cbar').hidden = true; S.diffOpen = false; }
 }
@@ -1485,6 +1981,7 @@ $('#more').onclick = (e) => {
   menu.innerHTML = `<button data-act="rename" ${S.readonly ? 'disabled' : ''}><span>${esc(tx('menu.rename'))}</span></button>` +
     `<button data-act="copy"><span>${esc(tx('menu.copy'))}</span><span class="s">[[${esc(n.name)}]]</span></button>` +
     `<button data-act="refresh"><span>${esc(tx('menu.refresh'))}</span></button>` +
+    `<button data-act="help"><span>${esc(tx('menu.help'))}</span>${icon('questionmark.circle', 18, 'cur')}</button>` +
     (S.readonly ? '' : `<div class="sep"></div><button data-act="delete" style="color:var(--danger)"><span>${esc(tx('menu.delete'))}</span></button>`);
   menu.hidden = false;
   const r = e.currentTarget.getBoundingClientRect();
@@ -1502,6 +1999,8 @@ $('#menu').addEventListener('click', async (e) => {
   if (b.dataset.act === 'noop') return;
   if (b.dataset.act === 'other') { pickFolder(); return; }
   if (b.dataset.act === 'claude') { openCC(); return; }
+  if (b.dataset.act === 'newlib') { openNewSheet(); return; }
+  if (b.dataset.act === 'help') { openHelp($('#more')); return; }
   if (b.dataset.act === 'folder') { const x = welcomeList[+b.dataset.i]; if (x) openSaved(x.h); return; }
   const n = S.notes.get(S.current);
   if (b.dataset.act === 'rename') renameNote();
@@ -2029,6 +2528,8 @@ async function pickResult(i) {
 
 /* ---------- keyboard ---------- */
 document.addEventListener('keydown', (e) => {
+  if (!$('#sheet').hidden) { if (e.key === 'Escape') closeSheet(); return; }
+  if (e.key === 'Escape' && !$('#help').hidden) { closeHelp(); return; }
   if (S.opening) return;
   const mod = e.metaKey || e.ctrlKey;
   if (mod && (e.key === 'k' || e.key === 'K' || (e.shiftKey && (e.key === 'f' || e.key === 'F')))) { e.preventDefault(); $('#palette').hidden ? openPalette() : closePalette(); }
@@ -2040,7 +2541,14 @@ document.addEventListener('keydown', (e) => {
 
 /* ---------- toast ---------- */
 let toastT = 0;
-function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); if (ms) toastT = setTimeout(hideToast, ms); }
+// A short message at the bottom; `act` adds one button ({ label, fn }). Re-showing with the same button keeps it, so a click is never lost.
+function toast(msg, ms = 2600, act = null) {
+  const t = $('#toast'), b = $('#toast-b');
+  $('#toast-t').textContent = msg; t.hidden = false;
+  b.hidden = !act;
+  if (act) { b.textContent = act.label; b.onclick = () => { hideToast(); act.fn(); }; } else b.onclick = null;
+  clearTimeout(toastT); if (ms) toastT = setTimeout(hideToast, ms);
+}
 function hideToast() { $('#toast').hidden = true; }
 
 LANG = ['zh', 'en'].includes(prefs.get('lang', null)) ? prefs.get('lang', null) : detectLang();
