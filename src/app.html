@@ -723,9 +723,9 @@ const STR = {
     'cc.gSet': '设置…', 'cc.gSetX': '设置在其他项目里使用这个笔记本', 'cc.gRe': '重新设置', 'cc.gReX': '重新设置在其他项目里使用这个笔记本', 'cc.gHas': '已设置',
     'cc.gAt': (p) => `登记的位置：${p}。搬了位置或换了电脑，就重新设置一次。`, 'cc.gStale': (p) => `登记的是另一个位置（${p}），可能是搬过或复制来的。在这台电脑上重新设置一次。`,
     'cc.g1': IS_MAC ? '在终端里进入这个笔记文件夹：输入 cd 和一个空格，把笔记文件夹从访达拖进终端窗口，按回车。' : '在终端里进入这个笔记文件夹（输入 cd、空格和文件夹的路径，按回车）。需要 macOS 或 Linux 的终端。',
-    'cc.g2': IS_MAC ? '粘贴这条命令，按回车：' : '粘贴这条命令运行：', 'cc.gCopied': '命令已复制，到终端里粘贴运行', 'cc.gMade': (a, b) => `。也已建好${a && b ? ' CLAUDE.md 和笔记技能' : a ? ' CLAUDE.md' : '笔记技能'}，它会用到`,
+    'cc.g2': IS_MAC ? '粘贴这条命令，按回车：' : '粘贴这条命令运行：', 'cc.gCopied': '命令已复制，到终端里粘贴运行', 'cc.gMade': (a, b) => `。也已建好${a && b ? ' CLAUDE.md 和笔记技能' : a ? ' CLAUDE.md' : '笔记技能'}，它会用到${a && b ? '这两个文件' : '这个文件'}`,
     'cc.gNote': '只需运行一次，回到这里会显示“已设置”。已经在这个文件夹里开着 Claude Code 的话，也可以在里面输入 ! 再粘贴。Claude Code 第一次在某个项目里用到时，会问要不要使用 incognote 这个 skill，选“不再询问”那项即可。笔记文件夹搬了位置，就在新位置再运行一次；要撤销，在命令后面加上 remove。',
-    'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：',
+    'cc.open': '打开 CLAUDE.md', 'cc.done': '已生成，Claude Code 下次在这个文件夹启动时就会用上', 'cc.fail': '生成失败：', 'cc.undoFail': '没能恢复：',
     'saveFail': '保存失败：', 'cf.title': '放弃这篇笔记没保存的修改？', 'cf.body': '这些修改没能保存。留在这里可以继续处理。', 'cf.ok': '放弃修改', 'cf.stay': '留在这里',
     'paste.saved': '图片已存到 assets/', 'paste.fail': '图片保存失败：',
     'sg.create': (x) => `链接到新笔记「${x}」`, 'untitled': '未命名', 'createFail': '新建失败：',
@@ -823,7 +823,7 @@ const STR = {
     'cc.g1': IS_MAC ? 'In Terminal, go to this notes folder: type cd and a space, drag the notes folder from Finder into the Terminal window, and press Return.' : 'In a terminal, go to this notes folder (type cd, a space and the folder’s path, then press Enter). This needs a macOS or Linux terminal.',
     'cc.g2': IS_MAC ? 'Paste this command and press Return:' : 'Paste this command and run it:', 'cc.gCopied': 'Command copied. Paste it in Terminal', 'cc.gMade': (a, b) => `. ${a && b ? 'CLAUDE.md and the notes skill were' : a ? 'CLAUDE.md was' : 'The notes skill was'} created too, since it uses ${a && b ? 'them' : 'it'}`,
     'cc.gNote': 'You only need to run it once; this row shows “Set up” when you come back. If Claude Code is already open in this folder, you can type ! there and paste instead. The first time Claude Code uses it in a project, it asks whether to use the incognote skill: choose the “don’t ask again” option. If you move the notes folder, run it again in the new place. To undo, add remove after the command.',
-    'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ',
+    'cc.open': 'Open CLAUDE.md', 'cc.done': 'Created. Claude Code will use them next time it starts in this folder.', 'cc.fail': 'Couldn’t create the files: ', 'cc.undoFail': 'Couldn’t restore it: ',
     'saveFail': 'Couldn’t save: ', 'cf.title': 'Discard the unsaved changes to this note?', 'cf.body': 'They couldn’t be saved. Stay here to sort it out.', 'cf.ok': 'Discard changes', 'cf.stay': 'Stay here',
     'paste.saved': 'Image saved to assets/', 'paste.fail': 'Couldn’t save the image: ',
     'sg.create': (x) => `Link to new note “${x}”`, 'untitled': 'Untitled', 'createFail': 'Couldn’t create the note: ',
@@ -1302,7 +1302,7 @@ function enterApp() {
   renderSide(); renderList();
   try { history.replaceState({ inc: 1, root: S.rootName, path: null }, ''); } catch (e) {}
   const last = prefs.get('last:' + S.rootName, null);
-  if (last && S.notes.has(last)) openNote(last, { replace: true }); else showPane(false);
+  if (last && S.notes.has(last)) openNote(last, { replace: true, keepView: true }); else showPane(false);
   startWatch();
 }
 
@@ -1362,7 +1362,15 @@ window.addEventListener('popstate', async (e) => {
   const st = e.state;
   if (!st || !st.inc || st.root !== S.rootName || $('#app').hidden || S.opening || !$('#dlg').hidden) return;
   if (!st.path) {                                   // back before the first note
-    if (S.current && (await flushSave())) { const n = S.notes.get(S.current); if (n) n.draft = null; S.current = null; S.dirty = false; clearConflict(); showPane(false); renderList(); }
+    const was = S.current; if (!was) return;
+    closePalette();
+    let ok; histLock = true;
+    try { ok = await flushSave(); } finally { histLock = false; }
+    // Only put away the note that was open when Back was pressed (or what a rename on leaving turned it into).
+    const n = S.notes.get(S.current);
+    if (!ok || !n || (S.current !== was && S.notes.has(was))) return;
+    n.draft = null; S.current = null; S.dirty = false; clearConflict(); showPane(false); renderList();
+    prefs.set('last:' + S.rootName, null);
     return;
   }
   if (!S.notes.has(st.path) || st.path === S.current) return;
@@ -1921,6 +1929,7 @@ async function leaveNote() {
   if (!(await flushSave()) || !S.current || notesInView().length) return;
   const n = S.notes.get(S.current); if (n) n.draft = null;
   S.current = null; S.dirty = false; clearConflict(); showPane(false);
+  prefs.set('last:' + S.rootName, null);
 }
 // Arrow keys: up and down move through the rows, right and left open and close a folder.
 $('#side').addEventListener('keydown', (e) => {
@@ -2023,10 +2032,11 @@ async function openNote(path, opts = {}) {
   if (!(await flushSave())) return;
   if (!S.notes.has(path)) return;             // gone while the previous note was being saved
   const prev = S.notes.get(S.current); if (prev) prev.draft = null;
+  S.autoMark = null;
   S.current = path; S.dirty = false; clearConflict();
   // Opened from somewhere else (search, a link, a backlink) while the list shows a folder it is not in: show the
   // folder it is in, so the list and the note agree. The top folder, not a deep one-note folder, keeps the tree calm.
-  if ((S.view.kind === 'folder' && !inFolder(n.folder, S.view.folder)) || (S.view.kind === 'root' && n.folder)) {
+  if (!opts.keepView && !n.sys && ((S.view.kind === 'folder' && !inFolder(n.folder, S.view.folder)) || (S.view.kind === 'root' && n.folder))) {
     const top = n.folder.split('/')[0];
     setView(top ? { kind: 'folder', folder: top } : { kind: 'root', folder: '' });
   }
@@ -2102,7 +2112,7 @@ function setMode(mode, opts = {}) {
     ed.value = n.draft != null ? n.draft : n.text;
     updateEdBar();
     ed.focus();
-    if (opts.selectTitle) { const m = ed.value.match(/^#\s+(.*)$/m); if (m) { const s = ed.value.indexOf(m[1]); ed.setSelectionRange(s, s + m[1].length); S.autoMark = { ls: m.index, text: m[0].slice(0, m[0].length - m[1].length), title: true }; } }
+    if (opts.selectTitle) { const m = ed.value.match(/^#\s+(.*)$/m); if (m) { const s = ed.value.indexOf(m[1]); ed.setSelectionRange(s, s + m[1].length); S.autoMark = { ls: m.index, text: m[0].slice(0, m[0].length - m[1].length), title: true, path: S.current }; } }
     else { ed.setSelectionRange(0, 0); ed.scrollTop = 0; }
   }
 }
@@ -2313,7 +2323,7 @@ function updateEdBar() {
 function dedupeMarker() {
   const ed = $('#ed'), am = S.autoMark; if (!am || ed.selectionStart !== ed.selectionEnd) return false;
   const v = ed.value, pos = ed.selectionStart, ls = v.lastIndexOf('\n', pos - 1) + 1, head = v.slice(ls, pos);
-  if (ls !== am.ls || !head.startsWith(am.text)) { S.autoMark = null; return false; }
+  if (am.path !== S.current || ls !== am.ls || !head.startsWith(am.text)) { S.autoMark = null; return false; }
   const rest = head.slice(am.text.length), pre = am.text.match(/^[ \t]*(?:>[ \t]?)*/)[0];
   let keep = null;
   if (am.title) { if (/^#{1,6} $/.test(rest)) keep = am.text; }                        // the first line stays the title
@@ -2333,6 +2343,9 @@ $('#ed').addEventListener('input', (e) => {
   suggestCheck();
 });
 $('#ed').addEventListener('click', () => { updateEdBar(); suggestCheck(); });
+// Moving the caret by hand ends the chance that the next marker typed doubles one the editor put there.
+$('#ed').addEventListener('mousedown', () => { S.autoMark = null; });
+$('#ed').addEventListener('keydown', (e) => { if (/^(Arrow|Home$|End$|Page|Backspace$|Delete$|Escape$)/.test(e.key)) S.autoMark = null; }, true);
 $('#ed').addEventListener('keyup', (e) => { if (!['ArrowUp', 'ArrowDown', 'Enter', 'Tab', 'Escape'].includes(e.key)) { updateEdBar(); suggestCheck(); } });
 // `leaving` is set when the note is about to be left (another note, another folder): the last moment to name a new note.
 async function saveNow(explicit, accept, leaving) {
@@ -2376,7 +2389,7 @@ S.mine = new Set();
 const UNTITLED_RE = /^(未命名|untitled)( \d+)?$/i;
 async function autoName(n, force) {
   if (!UNTITLED_RE.test(n.name) || !S.mine.has(n.path) || S.readonly || n.sys || n.gone || S.conflict || S.renaming || S.notes.get(n.path) !== n || !n.handle) return;
-  const want = cleanName((n.h1 || '').replace(/^(#+\s*)+/, '').replace(/[*_`~]/g, '')).replace(/\s+/g, ' ').slice(0, 80).trim();
+  const want = cleanName((n.h1 || '').replace(/^(#+\s+)+/, '').replace(/[*_`~]/g, '')).replace(/\s+/g, ' ').slice(0, 80).trim();
   if (!want || UNTITLED_RE.test(want)) return;
   if (!force && S.current === n.path && S.mode === 'edit' && document.activeElement === $('#ed')) {
     const ed = $('#ed'), v = ed.value, ls = v.lastIndexOf('\n', ed.selectionStart - 1) + 1, le = v.indexOf('\n', ls);
@@ -2414,12 +2427,13 @@ function continueList() {
   const le = v.indexOf('\n', pos), rest = v.slice(pos, le < 0 ? v.length : le);
   if (head.length === m[0].length && !rest.trim()) {
     ed.setSelectionRange(ls, pos + rest.length); document.execCommand('delete');
+    S.autoMark = null;
     return true;
   }
   const num = marker.match(/^(\d+)([.)])([ \t]+)/);
   const next = num ? (+num[1] + 1) + num[2] + num[3] + (/\[[ xX]\]/.test(marker) ? '[ ] ' : '') : marker.replace(/\[[xX]\]/, '[ ]');
   document.execCommand('insertText', false, '\n' + lead + next);
-  S.autoMark = { ls: pos + 1, text: lead + next };
+  S.autoMark = { ls: pos + 1, text: lead + next, path: S.current };
   return true;
 }
 $('#ed').addEventListener('paste', async (e) => {
@@ -2772,7 +2786,7 @@ async function moveNote() {
   const to = await ask({ title: tx('mv.title', n.title), input: '', filter: true, placeholder: tx('mv.filter'), list: folderRows(n.folder), none: tx('mv.none') });
   if (to == null || to === n.folder || S.notes.get(n.path) !== n) return;
   const ok = await locked(() => relocate(n, to, n.name));
-  if (ok && ((S.view.kind === 'folder' && !inFolder(to, S.view.folder)) || (S.view.kind === 'root' && to))) setView({ kind: 'folder', folder: to || S.view.folder });
+  if (ok && ((S.view.kind === 'folder' && !inFolder(to, S.view.folder)) || (S.view.kind === 'root' && to))) setView(to ? { kind: 'folder', folder: to.split('/')[0] } : { kind: 'root', folder: '' });
 }
 
 /* ---------- menus ---------- */
@@ -2907,7 +2921,8 @@ async function deleteNote() {
     S.notes.delete(n.path); S.current = null; S.dirty = false; clearConflict();
     showPane(false); renderListKeepScroll();
   } catch (e) { toast(tx('del.fail') + (e.message || e), 5000); return; } finally { S.mutating = false; }
-  if (next && S.notes.get(next.path) === next) await openNote(next.path, { keepDrawer: true });
+  if (next && S.notes.get(next.path) === next) await openNote(next.path, { keepDrawer: true, replace: true });
+  else prefs.set('last:' + S.rootName, null);
   toast(tx('del.done', n.title), 8000, { label: tx('undo'), fn: () => restoreNote(info, true) });
 }
 // Put a note from the trash back where it was (under a free name if that name is taken again).
@@ -3392,13 +3407,17 @@ async function ccWrite(which, mode) {
   }
   await writeText(dir, name, text);
   // Undo puts the old file back, as long as nobody changed the new one since (the backup stays either way).
+  const root = S.root;
   const undo = async () => {
+    if (S.root !== root || ccBusy) return;
+    const open = S.notes.get(S.current);
+    if (open && open.sys && S.dirty && which === 'guide') { toast(tx('cc.dirty'), 4000); return; }
     try {
       if ((await readOrNull(dir, name)) !== text) { toast(tx('cc.undoGone', name), 5000); return; }
       await writeText(dir, name, old); await refresh(false);
       if (!$('#cc').hidden) await openCC();
       toast(tx('cc.undone', name));
-    } catch (x) { toast(tx('cc.fail') + ((x && x.message) || x), 5000); }
+    } catch (x) { toast(tx('cc.undoFail') + ((x && x.message) || x), 5000); }
   };
   return saved ? [tx('cc.replaced', name, saved), 8000, 'replaced', undo] : [tx('cc.created', name), 4000, 'created'];
 }
@@ -3663,9 +3682,12 @@ async function globalLinked() {
   try {
     let d = S.root; for (const k of GLOBAL_DIR) d = await d.getDirectoryHandle(k);
     const f = await (await d.getFileHandle('linked')).getFile();
-    const at = ((await f.text()).split('\n')[1] || '').trim();
+    const lines = (await f.text()).split('\n').map((x) => x.trim()), at = lines[1] || '';
     ccLinkedAt = at;
-    if (at && baseOf(at.replace(/\/+$/, '')) !== S.rootName) return -(f.lastModified || 1);     // stale: shown as not set up
+    // Compared loosely: macOS may hand back the name in another Unicode form, and a disk may ignore letter case.
+    // Line 3 is the path as typed (symlinks kept), line 2 the resolved one; either name matching is enough.
+    const key = (x) => baseOf(x.replace(/\/+$/, '')).normalize('NFC').toLowerCase();
+    if (at && ![at, lines[2] || ''].some((x) => x && key(x) === key(S.rootName))) return -(f.lastModified || 1);   // stale
     return f.lastModified || 1;
   } catch (x) { ccLinkedAt = ''; return 0; }
 }
@@ -3727,7 +3749,7 @@ trap 'rm -f "$tmp"' EXIT
 printf '%s\n' \
   ${skill.map(shLine).join(' \\\n  ')} > "$tmp"
 mv -f "$tmp" "$SK"
-printf '%s\n%s\n' "$SK" "$NB" > "$MARK"
+printf '%s\n%s\n%s\n' "$SK" "$NB" "$(cd -- "$(dirname -- "$0")/../.." >/dev/null && pwd -L)" > "$MARK"
 if [ -n "$old" ] && [ "$old" != "$NB" ]; then
   rm -f "$old/.claude/incognote/linked"
   ${say(shq(T.moved), '"  $old"')}
@@ -3834,8 +3856,9 @@ $('#q').addEventListener('input', () => { P.max = PAL_MAX; runSearch(); });
 $('#q').addEventListener('keydown', (e) => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     e.preventDefault(); if (!P.items.length) return;
-    P.idx = (P.idx + (e.key === 'ArrowDown' ? 1 : -1) + P.items.length) % P.items.length; markResult();
-  } else if (e.key === 'Enter') { e.preventDefault(); pickResult(P.idx); }
+    const n = P.items.length + ($('#results [data-more]') ? 1 : 0);      // "Show more" counts as the last row
+    P.idx = (P.idx + (e.key === 'ArrowDown' ? 1 : -1) + n) % n; markResult();
+  } else if (e.key === 'Enter') { e.preventDefault(); if (P.idx === P.items.length && $('#results [data-more]')) $('#results [data-more]').click(); else pickResult(P.idx); }
   else if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
 });
 function hl(text, terms) {
@@ -3929,7 +3952,7 @@ function runSearch() {
   markResult();
 }
 function markResult() {
-  for (const b of document.querySelectorAll('.res')) b.classList.toggle('on', +b.dataset.i === P.idx);
+  for (const b of document.querySelectorAll('.res')) b.classList.toggle('on', b.dataset.more != null ? P.idx === P.items.length : +b.dataset.i === P.idx);
   const on = document.querySelector('.res.on'); if (on) on.scrollIntoView({ block: 'nearest' });
 }
 $('#results').addEventListener('click', (e) => {
