@@ -1926,7 +1926,9 @@ $('#side').addEventListener('click', (e) => {
   if (S.current && !notesInView().length) leaveNote();
 });
 async function leaveNote() {
+  const was = S.current;
   if (!(await flushSave()) || !S.current || notesInView().length) return;
+  if (S.current !== was && S.notes.has(was)) return;     // another note was opened meanwhile (a rename on leaving is fine)
   const n = S.notes.get(S.current); if (n) n.draft = null;
   S.current = null; S.dirty = false; clearConflict(); showPane(false);
   prefs.set('last:' + S.rootName, null);
@@ -2068,7 +2070,8 @@ $('#crumb').addEventListener('click', (e) => {
   const c = e.target.closest('[data-crumb]');
   if (c) {
     const f = c.dataset.crumb;
-    setView(f && S.dirs.has(f) ? { kind: 'folder', folder: f } : !f && $('#tree [data-view="root"]') ? { kind: 'root', folder: '' } : { kind: 'all', folder: '' });
+    const cn = S.notes.get(S.current);
+    setView(f && S.dirs.has(f) ? { kind: 'folder', folder: f } : !f && cn && !cn.folder && $('#tree [data-view="root"]') ? { kind: 'root', folder: '' } : { kind: 'all', folder: '' });
     if (!listInline()) { NAV.drawer = true; layout(); const sel = document.querySelector('#notes .note.sel') || document.querySelector('#notes .note'); if (sel) sel.focus(); }
     return;
   }
@@ -2324,14 +2327,20 @@ function dedupeMarker() {
   const ed = $('#ed'), am = S.autoMark; if (!am || ed.selectionStart !== ed.selectionEnd) return false;
   const v = ed.value, pos = ed.selectionStart, ls = v.lastIndexOf('\n', pos - 1) + 1, head = v.slice(ls, pos);
   if (am.path !== S.current || ls !== am.ls || !head.startsWith(am.text)) { S.autoMark = null; return false; }
-  const rest = head.slice(am.text.length), pre = am.text.match(/^[ \t]*(?:>[ \t]?)*/)[0];
+  const rest = head.slice(am.text.length), done = am.done || 0;
   let keep = null;
-  if (am.title) { if (/^#{1,6} $/.test(rest)) keep = am.text; }                        // the first line stays the title
-  else if (/^> $/.test(rest) && /^[ \t]*>/.test(am.text)) keep = am.text;              // "> " again in a quote
-  else if (/^(?:[-*+]|\d{1,9}[.)]) $/.test(rest)) keep = pre + rest;                    // "- " again, or another kind of list
-  else if (/^\[[ xX]\] $/.test(rest) && /\[[ xX]\][ \t]+$/.test(am.text)) keep = am.text;   // "[ ] " after an automatic "- [ ] "
-  if (keep == null) { if (rest.length > 4) S.autoMark = null; return false; }
-  S.autoMark = null;
+  if (am.text.slice(done).startsWith(rest)) {            // typing the editor's marker again, piece by piece ("> " then "- ")
+    keep = am.text; am.done = done + rest.length;
+    if (am.done >= am.text.length) S.autoMark = null;
+  } else {
+    if (rest === '[ ' && /\[[ xX]\][ \t]+$/.test(am.text)) return false;              // half-way through typing "[ ] "
+    S.autoMark = null;
+    const pre = am.text.match(/^[ \t]*(?:>[ \t]?)*/)[0];
+    if (am.title) { if (/^#{1,6} $/.test(rest)) keep = am.text; }                     // the first line stays the title
+    else if (!done && /^(?:[-*+]|1[.)]) $/.test(rest)) keep = pre + rest;               // switching to another kind of list
+    else if (/^\[[ xX]\] $/.test(rest) && /\[[ xX]\][ \t]+$/.test(am.text)) keep = am.text;  // "[ ] " after an automatic "- [ ] "
+  }
+  if (keep == null) return false;
   ed.setSelectionRange(ls, pos); document.execCommand('insertText', false, keep);
   return true;
 }
