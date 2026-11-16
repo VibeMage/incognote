@@ -2838,7 +2838,7 @@ function outlineMenu() {
 }
 // The menu next to the name: things that concern the whole notes folder and the page itself.
 // Filled in by build.py, so the page can say which release it is.
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 function libMenu() {
   const rw = S.root && !S.readonly, th = ['light', 'dark'].includes(prefs.get('theme', 'auto')) ? prefs.get('theme', 'auto') : 'auto';
   showMenu('lib', (rw ? mi('claude', tx('fm.claude')) + mi('trash', tx('tr.menu')) + mi('refresh', tx('lib.reload')) + SEP : '') +
