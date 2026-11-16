@@ -3,7 +3,7 @@
 import json, pathlib
 
 here = pathlib.Path(__file__).parent
-VERSION = '1.4.0'    # shown in the page; keep in step with the release tag
+VERSION = '1.4.1'    # shown in the page; keep in step with the release tag
 src = (here / 'src/app.html').read_text(encoding='utf-8')
 icons = json.loads((here / 'src/icons.json').read_text(encoding='utf-8'))
 need = ['chevron.right', 'chevron.down', 'chevron.up.chevron.down', 'plus', 'magnifyingglass', 'folder', 'tray', 'clock',
